@@ -1,0 +1,620 @@
+swagger: "2.0"
+info:
+  description: "FiatConnect provides a standardized server-side API specification for CICO providers to provide cash-in/cash-out functionality to clients."
+  version: "1.0.0"
+  title: "FiatConnect Specification"
+tags:
+- name: "quote"
+  description: "Requests quotes for transfers with the user's desired parameters"
+- name: "kyc"
+  description: "Operations around a user's Know Your Customer information and status"
+- name: "fiat account"
+  description: "Operations around a user's fiat accounts"
+- name: "transfer"
+  description: "Initiate and monitor transfers"
+schemes:
+- "https"
+- "http"
+paths:
+  /quote/in:
+    get:
+      tags:
+      - "quote"
+      summary: "Retrieve a quote for a transfer from fiat to crypto"
+      description: ""
+      operationId: "getQuoteIn"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information about the transfer"
+        required: true
+        schema:
+          $ref: "#/definitions/QuoteRequest"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              kycStatus:
+                $ref: '#/definitions/QuoteResponse'
+        "400":
+          description: "failed operation"
+          schema:
+            $ref: '#/definitions/QuoteErrorResponse'
+      security:
+        - dek_auth: []
+  /quote/out:
+    get:
+      tags:
+      - "quote"
+      summary: "Retrieve a quote for a transfer from crypto to fiat"
+      description: ""
+      operationId: "getQuoteOut"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information about the transfer"
+        required: true
+        schema:
+          $ref: "#/definitions/QuoteRequest"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              kycStatus:
+                $ref: '#/definitions/QuoteResponse'
+        "400":
+          description: "failed operation"
+          schema:
+            $ref: '#/definitions/QuoteErrorResponse'
+      security:
+        - dek_auth: []
+  /kyc/{kycSchema}:
+    post:
+      tags:
+      - "kyc"
+      summary: "Provide KYC data of a particular schema to the server"
+      description: ""
+      operationId: "addKyc"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "The user's KYC information"
+        required: true
+        schema:
+          $ref: "#/definitions/KycInfo"
+      - name: "kycSchema"
+        allOf:
+          - $ref: '#/definitions/KycSchemaEnum'
+        in: "path"
+        description: "The type of kyc schema to provide"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              kycStatus:
+                $ref: '#/definitions/KycStatusEnum'
+        "400":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/SchemaErrorEnum'
+        "409":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceExists'
+      security:
+        - dek_auth: []
+    delete:
+      tags:
+      - "kyc"
+      summary: "Delete a KYC record for a particular KYC schema"
+      description: ""
+      operationId: "deleteKyc"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "kycSchema"
+        allOf:
+          - $ref: '#/definitions/KycSchemaEnum'
+        in: "path"
+        description: "The type of kyc schema to delete"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "object"
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - dek_auth: []
+  /kyc/{kycSchema}/status:
+    get:
+      tags:
+      - "kyc"
+      summary: "Query the status of a KYC verification for a specific schema type"
+      description: ""
+      operationId: "getKycStatus"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "kycSchema"
+        allOf:
+          - $ref: '#/definitions/KycSchemaEnum'
+        in: "path"
+        description: "The type of kyc schema to query"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              kycStatus:
+                $ref: '#/definitions/KycStatusEnum'
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - dek_auth: []
+  /accounts/{fiatAccountSchema}:
+    post:
+      tags:
+      - "fiat account"
+      summary: "Provide fiat account data of a particular schema to the server"
+      description: ""
+      operationId: "addFiatAccount"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "The user's fiat account information"
+        required: true
+        schema:
+          $ref: "#/definitions/FiatAccountInfoBody"
+      - name: "fiatAccountSchema"
+        allOf:
+          - $ref: '#/definitions/FiatAccountSchemaEnum'
+        in: "path"
+        description: "The type of fiat account schema being provided"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/FiatAccountInfoResponse'
+        "400":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/SchemaErrorEnum'
+        "409":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceExists'
+      security:
+        - dek_auth: []
+  /accounts:
+    get:
+      tags:
+      - "fiat account"
+      summary: "Query for all fiat accounts on file for a user"
+      description: ""
+      operationId: "getFiatAccounts"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: object
+            properties:
+              <FiatAccountTypeEnum>:
+                type: "array"
+                items:  
+                  $ref: '#/definitions/FiatAccountInfoResponse'
+      security:
+        - dek_auth: []
+  /account/{fiatAccountId}:
+    delete:
+      tags:
+      - "fiat account"
+      summary: "Delete fiat account information for a particular user"
+      description: ""
+      operationId: "deleteFiatAccount"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "fiatAccountId"
+        type: string
+        in: "path"
+        description: "The id of the fiat account being deleted"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "object"
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - dek_auth: []
+  /transfer/in:
+    post:
+      tags:
+      - "transfer"
+      summary: "Initiate a new transfer from fiat to crypto"
+      description: ""
+      operationId: "transferIn"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information necessary to make the transfer"
+        required: true
+        schema:
+          $ref: "#/definitions/TransferRequest"
+      - name: "Idempotency-Key"
+        type: string
+        in: "header"
+        description: "An indepotency key generated by the client"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/TransferResponse'
+        "400":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/TransferErrorEnum'
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - dek_auth: []
+  /transfer/out:
+    post:
+      tags:
+      - "transfer"
+      summary: "Initiate a new transfer from crypto to fiat"
+      description: ""
+      operationId: "transferOut"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information necessary to make the transfer"
+        required: true
+        schema:
+          $ref: "#/definitions/TransferRequest"
+      - name: "Idempotency-Key"
+        type: string
+        in: "header"
+        description: "An indepotency key generated by the client"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/TransferResponse'
+        "400":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/TransferErrorEnum'
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - dek_auth: []
+  /transfer/{transferId}/status:
+    get:
+      tags:
+      - "transfer"
+      summary: "Check the status of a transfer"
+      description: ""
+      operationId: "getTransferStatus"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "transferId"
+        type: string
+        in: "path"
+        description: "The id of the tranfer being requested"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/TransferStatusResponse'
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - dek_auth: []
+securityDefinitions:
+  dek_auth:
+    type: "basic"
+definitions:
+  KycInfo:
+    type: "object"
+  KycStatusEnum:
+    type: "string"
+    enum:
+      - KycNotCreated
+      - KycPending
+      - KycApproved
+      - KycDenied
+      - KycExpired
+  KycSchemaEnum:
+    type: "string"
+    enum:
+      - NameAndAddress
+      - IdAndSelfie
+  FiatType:
+    type: "string"
+    enum:
+      - USD
+      - EUR
+  CryptoType:
+    type: "string"
+    enum:
+      - cUSD
+      - cEUR
+      - CELO
+  FeeType:
+    type: "string"
+    enum:
+      - KycFee
+      - PlatformFee
+  FeeFrequency:
+    type: "string"
+    enum:
+      - OneTime
+      - Recurring
+  FiatAccountTypeEnum:
+    type: "string"
+    enum:
+      - CreditCard
+      - DebitCard
+      - CheckingAccount
+  FiatAccountSchemaEnum:
+    type: "string"
+  QuoteRequest:
+    type: "object"
+    properties:
+      fiatType:
+        $ref: '#/definitions/FiatType'
+      cryptoType:
+        $ref: '#/definitions/CryptoType'
+      fiatAmount:
+        type: "number"
+      cryptoAmount:
+        type: "number"
+  QuoteResponse:
+    type: "object"
+    properties:
+      quote:
+        type: "object"
+        properties:
+          fiatType:
+            $ref: '#/definitions/FiatType'
+          cryptoType:
+            $ref: '#/definitions/CryptoType'
+          fiatAmount:
+            type: "number"
+          cryptoAmount:
+            type: "number"
+          guaranteedUntil?:
+            type: "string"
+      kyc:
+        type: "object"
+        properties:
+          kycRequired: 
+            type: "boolean"
+          kycSchemas:
+            type: "array"
+            items:
+              $ref: '#/definitions/KycSchemaEnum'
+      fiatAccount:
+        type: "object"
+        properties:
+          <FiatAccountTypeEnum>:
+            type: "object"
+            properties:
+              fiatAccountSchemas:
+                type: "array"
+                items:
+                  $ref: '#/definitions/FiatAccountSchemaEnum'
+              fee?:
+                type: "number"
+              feeType?:
+                $ref: '#/definitions/FeeType'
+              feeFrequency?:
+                $ref: '#/definitions/FeeFrequency'
+              settlementTimeLowerBound?:
+                type: "string"
+              settlementTimeUpperBound?:
+                type: "string"
+  QuoteErrorResponse:
+    type: "object"
+    properties:
+      error:
+         $ref: '#/definitions/QuoteErrorEnum'
+      minimumFiatAmount?:
+        type: "number"
+      maximumFiatAmount?:
+        type: "number"
+      minimumCryptoAmount?:
+        type: "number"
+      maximumCryptoAmount?:
+        type: "number"
+  FiatAccountInfoBody:
+    type: "object"
+    properties:
+      fiatAccountId:
+        type: "string"
+      name:
+        type: "string"
+      institution:
+        type: "string"
+      fiatAccountType:
+        $ref: '#/definitions/FiatAccountTypeEnum'
+  FiatAccountInfoResponse:
+    type: "object"
+    properties: 
+      fiatAccountId: 
+        type: "string"
+      name: 
+        type: "string"
+      institution:
+        type: "string"
+      fiatAccountType: 
+        $ref: '#/definitions/FiatAccountTypeEnum'
+  TransferRequest:
+    type: "object"
+    properties:
+      fiatType:
+        $ref: '#/definitions/FiatType'
+      cryptoType:
+        $ref: '#/definitions/CryptoType'
+      amount:
+        type: "number"
+      fiatAccountId:
+        type: "string"
+  TransferResponse:
+    type: "object"
+    properties:
+      transferId: 
+        type: "string"
+      transferStatus: 
+        $ref: '#/definitions/TransferStatusEnum'
+      transferAddress:
+        type: "string"
+  TransferStatusEnum:
+    type: "string"
+    enum:
+      - TransferStarted
+      - TransferPending
+      - TransferComplete
+      - TransferFailed
+  TransferStatusResponse:
+    type: "object"
+    properties:
+      status:
+        $ref: '#/definitions/TransferStatusEnum'
+      transferType:
+        type: "string"
+        enum:
+          - TransferIn
+          - TransferOut
+      fiatType:
+        $ref: '#/definitions/FiatType'
+      cryptoType:
+        $ref: '#/definitions/CryptoType'
+      amountProvided:
+        type: "number"
+      amountRecieved:
+        type: "number"
+      fee:
+        type: "number"
+      fiatAccountId:
+        type: "string"
+  TransferErrorEnum:
+    type: "string"
+    enum:
+      - TransferNotAllowed
+      - KycExpired
+  SchemaErrorEnum:
+    type: "string"
+    enum:
+      - UnsupportedSchema
+      - InvalidSchema
+  QuoteErrorEnum:
+    type: "string"
+    enum:
+      - GeoNotSupported
+      - CryptoAmountTooLow
+      - CryptoAmountTooHigh
+      - FiatAmountTooLow
+      - FiatAmountTooHigh
+      - CryptoNotSupported
+      - FiatNotSupported
+  ResourceExists:
+    type: "string"
+    enum: 
+      - ResourceExists
+  ResourceNotFound:
+    type: "string"
+    enum: 
+      - ResourceNotFound
