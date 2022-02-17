@@ -201,6 +201,8 @@
     + [8.2.1. Data Encryption Key](#821-data-encryption-key)
     + [8.2.2. Webhook Best Practices](#822-webhook-best-practices)
     + [8.2.3. Idempotency Keys](#823-idempotency-keys)
+    + [8.2.4. ISO 3166-1](#824-iso-3166-1)
+    + [8.2.5. ISO 3166-2](#825-iso-3166-2)
 
 # 1. Introduction
 
@@ -363,16 +365,19 @@ This section presents the formal specification of the FiatConnect API, including
 ## 3.1. Geolocation
 
 Throughout the specification, many references are made to "geo", "geographical location", "region", etc. These are all meant to refer
-to the actual geographical location of the client. This is an important *implicit* parameter of client requests, since regulatory
+to the actual geographical location of the client. Having access to geolocation information about an end-user is important, since regulatory
 constraints may dictate that providers implement different requirements on requests from different geographical regions.
 
-Since it is ultimately up to the provider to ensure that a transfer meets e.g., regulatory requirements for a particular geo,
-it is the provider's responsibility to infer the actual geolocation of the user from their request. If a provider requires this
-information, the provider MAY infer the geographical location of the user from, e.g., the origin IP address of their request.
-We assume that geolcation data provided by the client cannot be trusted. The server-side semantics of geolocation support and ultimately
-determining whether or not a transfer is allowed is left to the implementor; it seems likely that a reasonable way of dealing with
-this is by failing a user's KYC verification when the KYC data (likely from a third party server-side integration) reports that a user's
-geolocation does not match the request's origin IP.
+When requesting a quote, a client will explicitly provide its location through request parameters. The server must respond to this
+request assuming that the client is being honest about its location. We expect that a server's actual source of truth about an
+end-user's location will come from KYC verification.
+
+As an example, a client using a VPN should still be able to interact with FiatConnect APIs; when requesting a quote,
+this client would provide their actual country, and *not* the one implied by their request IP. If their self-reported location
+is allowed for transfers, and their actual location (as collected through KYC) matches this, their KYC will be accepted and they
+will be allowed to initiate a transfer. In the case where a user submits KYC details for a geolocation that is *not* supported by a
+provider, they will never be able to initiate a transfer, regardless of what location they submit to the quote endpoint, since the KYC
+verification should be denied.
 
 ## 3.2. Authentication & Authorization
 
@@ -510,6 +515,10 @@ used for the transfer.
   - The amount of the selected fiat type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of crypto specified for the quote.
 * `cryptoAmount`: {`float`}
   - The amount of the selected crypto type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
+* `country`: {`string`} [REQUIRED]
+  - An ISO 3166-1 country code representing the country where the quote should be requested for.
+* `region`: {`string`}
+  - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 
 ##### 3.3.1.1.2. Responses
 
@@ -559,13 +568,12 @@ On failure, the server MUST return an HTTP `400`, with a response body as follow
 
 ##### 3.3.1.1.3. Semantics
 
-All transfer in quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. If these requirements
-are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support a transfer in for the requested details. If
-the requested quote is not supported, the server MUST return an HTTP `400` error.
+All transfer in quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
+If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support a transfer in for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
 
 ###### 3.3.1.1.3.1. Success
 
-A successful response indicates that the provider is able to perform a transfer for the requested quote.
+A successful response indicates that the provider is able to perform a transfer for the requested quote in the specified country/region.
 If `fiatAmount` is provided, the `quote.cryptoAmount` field returned in the success body MUST correspond to the amount of crypto the user should expect to
 receive by providing `fiatAmount` worth of the fiat currency. If `cryptoAmount` is provided, the `quote.fiatAmount` field MUST correspond to the amount
 of fiat currency required in order to receive the requested amount of crypto.
@@ -654,6 +662,10 @@ The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out 
   - The amount of the selected fiat type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of crypto specified for the quote.
 * `cryptoAmount`: {`float`}
   - The amount of the selected crypto type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
+* `country`: {`string`} [REQUIRED]
+  - An ISO 3166-1 country code representing the country where the quote should be requested for.
+* `region`: {`string`}
+  - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 
 ##### 3.3.1.2.2. Responses
 
@@ -704,13 +716,13 @@ On failure, the MUST return an HTTP `400`, with a response body as follows. Refe
 
 ##### 3.3.1.2.3. Semantics
 
-All transfer out quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. If these requirements
-are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support a transfer out for the requested details. If
-the requested quote is not supported, the server MUST return an HTTP `400` error.
+All transfer out quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
+If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support
+a transfer out for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
 
 ###### 3.3.1.2.3.1. Success
 
-A successful response indicates that the provider is able to perform a transfer for the requested quote.
+A successful response indicates that the provider is able to perform a transfer for the requested quote for the specified country/region.
 If `fiatAmount` is provided, the `quote.cryptoAmount` field returned in the success body MUST correspond to the amount of crypto the user must provide
 in order to recieve `fiatAmount` worth of the fiat currency. If `cryptoAmount` is provided, the `quote.fiatAmount` field MUST correspond to the amount
 of fiat currency the user should expect to recieve in exchange for `cryptoAmount` worth of the cryptocurrency.
@@ -1667,3 +1679,11 @@ Persona, "Best Practices", <https://docs.withpersona.com/docs/best-practices>.
 ### 8.2.3. Idempotency Keys
 
 J. Jena, The Idempotency-Key HTTP Header Field, July 2021, <https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header-00>
+
+### 8.2.4. ISO 3166-1
+
+ISO 3166-1 <https://en.wikipedia.org/wiki/ISO_3166-1>
+
+### 8.2.5. ISO 3166-2
+
+ISO 3166-2 <https://en.wikipedia.org/wiki/ISO_3166-2>
