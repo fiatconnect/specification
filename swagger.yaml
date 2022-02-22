@@ -461,6 +461,10 @@ definitions:
         type: "number"
       cryptoAmount:
         type: "number"
+      country:
+        type: "string"
+      region:
+        type: "string"
   QuoteResponse:
     type: "object"
     properties:
