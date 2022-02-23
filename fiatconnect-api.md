@@ -16,11 +16,11 @@
 - [3. API Specification](#3-api-specification)
   * [3.1. Geolocation](#31-geolocation)
   * [3.2. Authentication & Authorization](#32-authentication---authorization)
-    + [3.2.1. DEK-based JWT Authentication](#321-dek-based-jwt-authentication)
+    + [3.2.1. JWT Authentication](#321-jwt-authentication)
       - [3.2.1.1. JWT Header](#3211-jwt-header)
       - [3.2.1.2. JWT Payload](#3212-jwt-payload)
         * [3.2.1.2.1. `"sub"` Claim](#32121---sub---claim)
-        * [3.2.1.2.2. `"iss"` Claim](#32122---iss---claim)
+		* [3.2.1.2.2. `"iss"` Claim](#32122---iss---claim)
         * [3.2.1.2.3. `"exp"` Claim](#32123---exp---claim)
       - [3.2.1.3. Communicating JWT](#3213-communicating-jwt)
     + [3.2.2. Client API Token Authentication](#322-client-api-token-authentication)
@@ -198,11 +198,10 @@
     + [8.1.2. [RFC8174]](#812--rfc8174-)
     + [8.1.3. [RFC7519]](#813--rfc7519-)
   * [8.2. Informative References](#82-informative-references)
-    + [8.2.1. Data Encryption Key](#821-data-encryption-key)
-    + [8.2.2. Webhook Best Practices](#822-webhook-best-practices)
-    + [8.2.3. Idempotency Keys](#823-idempotency-keys)
-    + [8.2.4. ISO 3166-1](#824-iso-3166-1)
-    + [8.2.5. ISO 3166-2](#825-iso-3166-2)
+    + [8.2.1. Webhook Best Practices](#821-webhook-best-practices)
+    + [8.2.2. Idempotency Keys](#822-idempotency-keys)
+    + [8.2.3. ISO 3166-1](#823-iso-3166-1)
+    + [8.2.4. ISO 3166-2](#824-iso-3166-2)
 
 # 1. Introduction
 
@@ -385,12 +384,11 @@ The FiatConnect API specifies *two* types of authentication; the first authentic
 the second authenticates the *client*, and is optionally required, depending on whether or not it has been configured by the client
 with the provider.
 
-### 3.2.1. DEK-based JWT Authentication
+### 3.2.1. JWT Authentication
 
 Only users with a registered address on the Celo blockchain may make requests to a FiatConnect API. The FiatConnect API specification
-requires servers to recognize a JWT token encrypted with the user's private key, decryptable with the user's public *Data Encryption Key*.
-The [Data Encryption Key](https://docs.celo.org/developer-resources/contractkit/data-encryption-key) (or *DEK*) is a Celo-specific concept.
-Using JSON Web Token (JWT) based auth signed using a user's DEK, servers can both:
+requires servers to recognize a JWT token signed with the user's private key, and verifiable with the user's public key. With this authentication
+scheme, a server can:
 
 1. Associate a user's Celo blockchain address with the request, and
 2. Verify the requester's ownership of the provided address.
@@ -399,7 +397,7 @@ Servers MUST parse and recognize JWT tokens according to the following format. S
 
 #### 3.2.1.1. JWT Header
 
-Servers MUST support the following JWT header:
+Servers MUST support the following JWT header, using an elliptic curve digital signature algorithm (ECDSA):
 
 ```json
 {
@@ -414,9 +412,9 @@ Servers MAY support other algorithms, but this is not required.
 
 Servers MUST recognize the following *registered claims* within the JWT payload.
 
-* `iss`, or *issuer*
 * `exp`, or *expiration time*
 * `sub`, or *subject*
+* `iss`, or *issuer*
 
 The semantics of these claims are below:
 
@@ -429,15 +427,9 @@ source of/destination for crypto funds during transfers. The address should be f
 
 ##### 3.2.1.2.2. `"iss"` Claim
 
-The `iss`, or *issuer* claim is an *optional* claim; the client may or may not choose to include it. If present, it represents the user's PEM-encoded public DEK.
-This is an optional field, since the a user's public DEK can always be queried on-chain, using the user's account address required in the `sub` claim.
-If this field is present, the server SHOULD use it as a user's DEK. If it is not present, the server MUST query the user's public DEK on-chain.
-
-If the issuer claim is present and is used by the server as a source of truth for the user's public DEK, the server MUST verify that the client-provided
-DEK matches the on-chain DEK for the address provided in the `sub` claim. This is *critically* important. If this is not done, a
-malicious client may sign the JWT using a private key that does not correspond to the account address given in the `sub` claim, in an attempt
-to authenticate as an address for which they do not possess the private key. When performing this check, if the public DEK provided in the `iss` claim
-does not match the on-chain public DEK associated with the account address in the `sub` claim, the server MUST return an HTTP `401` error.
+The `iss`, or *subject* claim represents the user's Celo address public key, dervied from their private key. This is a required claim. If it is missing, the server MUST respond to the client with an HTTP `400` error. The server MUST use this claim to verify the JWT signature.
+Since the address provided in the `"sub"` claim may not correspond to the public/private keypair used to sign and verify the JWT, the
+server MUST validate that the signature does indeed correspond to the address provided in the `"sub"` claim.
 
 ##### 3.2.1.2.3. `"exp"` Claim
 
@@ -1668,22 +1660,18 @@ M. Jones, "JSON Web Token", RFC7519, May 2015, <https://datatracker.ietf.org/doc
 
 ## 8.2. Informative References
 
-### 8.2.1. Data Encryption Key
-
-Celo Foundation, "Data Encryption Key", <https://docs.celo.org/developer-resources/contractkit/data-encryption-key>.
-
-### 8.2.2. Webhook Best Practices
+### 8.2.1. Webhook Best Practices
 
 Persona, "Best Practices", <https://docs.withpersona.com/docs/best-practices>.
 
-### 8.2.3. Idempotency Keys
+### 8.2.2. Idempotency Keys
 
 J. Jena, The Idempotency-Key HTTP Header Field, July 2021, <https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header-00>
 
-### 8.2.4. ISO 3166-1
+### 8.2.3. ISO 3166-1
 
 ISO 3166-1 <https://en.wikipedia.org/wiki/ISO_3166-1>
 
-### 8.2.5. ISO 3166-2
+### 8.2.4. ISO 3166-2
 
 ISO 3166-2 <https://en.wikipedia.org/wiki/ISO_3166-2>
