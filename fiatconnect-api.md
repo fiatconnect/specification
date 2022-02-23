@@ -20,7 +20,8 @@
       - [3.2.1.1. JWT Header](#3211-jwt-header)
       - [3.2.1.2. JWT Payload](#3212-jwt-payload)
         * [3.2.1.2.1. `"sub"` Claim](#32121---sub---claim)
-        * [3.2.1.2.2. `"exp"` Claim](#32122---exp---claim)
+		* [3.2.1.2.2. `"iss"` Claim](#32122---iss---claim)
+        * [3.2.1.2.3. `"exp"` Claim](#32123---exp---claim)
       - [3.2.1.3. Communicating JWT](#3213-communicating-jwt)
     + [3.2.2. Client API Token Authentication](#322-client-api-token-authentication)
       - [3.2.2.1. Communicating API Tokens](#3221-communicating-api-tokens)
@@ -413,6 +414,7 @@ Servers MUST recognize the following *registered claims* within the JWT payload.
 
 * `exp`, or *expiration time*
 * `sub`, or *subject*
+* `iss`, or *issuer*
 
 The semantics of these claims are below:
 
@@ -423,7 +425,13 @@ to the client with an HTTP `400` error. This claim SHOULD be interpreted and use
 source of/destination for crypto funds during transfers. The address should be formatted as 42 hexadecimal characters prefixed by the string literal
 `0x`. If the `sub` claim does not match this format, the server MUST respond to the client with an HTTP `400` error.
 
-##### 3.2.1.2.2. `"exp"` Claim
+##### 3.2.1.2.2. `"iss"` Claim
+
+The `iss`, or *subject* claim represents the user's Celo address public key, dervied from their private key. This is a required claim. If it is missing, the server MUST respond to the client with an HTTP `400` error. The server MUST use this claim to verify the JWT signature.
+Since the address provided in the `"sub"` claim may not correspond to the public/private keypair used to sign and verify the JWT, the
+server MUST validate that the signature does indeed correspond to the address provided in the `"sub"` claim.
+
+##### 3.2.1.2.3. `"exp"` Claim
 
 The `exp`, or *expiration time* claim represents the time until which the provided JWT should be accepted by the server. The `exp` claim should be provided
 as a numeric timestamp, defined as the number of seconds since Epoch. If this field is missing, a server MUST return an HTTP `400` error.
