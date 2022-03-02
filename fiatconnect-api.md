@@ -1657,11 +1657,20 @@ A KYC schema containing personal data about a user, as well as documents such as
 		month: `string`,
 		year: `string`
 	},
+	address: {
+		address1: `string`,
+		address2?: `string`,
+		isoCountryCode: `string`,
+		isoRegionCode: `string`,
+		city: `string`,
+		postalCode?: `string`
+	},
 	phoneNumber: `string`,
 	selfieDocument: `string`,
 	identificationDocument: `string`
 }
 ```
+
 The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
 
 ## 7.3. Initial Entity Support
