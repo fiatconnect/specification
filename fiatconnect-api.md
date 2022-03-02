@@ -529,11 +529,21 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 	},
 	kyc: {
 		kycRequired: `boolean`,
-		kycSchemas: `KycSchemaEnum[]`
+		kycSchemas: {
+			kycSchema: `KycSchemaEnum`,
+			allowedValues: {
+				[string]: `string[]`
+			}
+		}[]
 	},
 	fiatAccount: {
 		[FiatAccountTypeEnum]: {
-			fiatAccountSchemas: `FiatAccountSchemaEnum[]`,
+			fiatAccountSchemas: {
+				fiatAccountSchema: `FiatAccountSchemaEnum`,
+				allowedValues: {
+					[string]: `string[]`
+				}
+			}[],
 			fee?: `float`,
 			feeType?: `FeeTypeEnum`,
 			feeFrequency?: `FeeFrequencyEnum`,
@@ -581,8 +591,10 @@ SHOULD try to honor the advertised settlement time bounds when performing a rela
 
 In addition to returning quote data, a successful response must also return information about which KYC schemas are acceptable/required in order to initiate a transfer
 with the given quote parameters. If KYC is required, the server MUST set `kyc.kycRequired` to `true` in the response body. Likewise, if no KYC is required, this value MUST be
-`false`. If `kyc.kycRequired` is `true`, the `kyc.kycSchemas` field MUST be present, and should contain a list of acceptable
-schemas that can be used to transfer KYC data to the server. This list MUST contain at least one entry.
+`false`. If `kyc.kycRequired` is `true`, the `kyc.kycSchemas` field MUST be present. `kyc.kycSchemas` is a list of objects. Each object corresponds to a single acceptable KYC schema.
+The `kycSchema` field within this object represents the type of KYC schema that can be used. The `allowedValues` object is an optional mapping from any number of keys in the selected
+KYC schema to values that are allowed for that key. For example, if a server wants to limit the selection for certain fields on the schema, `allowedValues` can contain lists of selectable
+values for those fields. On the client-side, this could be used to render a list of options, for example.
 
 Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, what schemas are allowed to communicate
 those account details, and what fee, if any, is associated with the requested quote when using a fiat accout of a particular type.
@@ -590,8 +602,10 @@ those account details, and what fee, if any, is associated with the requested qu
 On success, the server MUST return a mapping from fiat account types to lists of schemas that the client may use to add a new account of that
 type. This is expected to vary by geographical region as well as quote details provided by the query parameters.
 Each `fiatAccount[FiatAccountTypeEnum]` MUST correspond to a fiat account type that is allowed to be used for the requested quote.
-`fiatAccount[FiatAccountTypeEnum].fiatAccountSchemas` is a list of fiat account schemas that can be used to communicate data about the corresponding
-fiat account type.
+`fiatAccount[FiatAccountTypeEnum].fiatAccountSchemas` is a list of objects, where each object represents a fiat account schema that can be used to communicate data
+about the corresponding fiat account type. Each object MUST contain a `fiatAccountSchema` field representing the actual fiat account schema that can be used, and an
+optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
+This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
 
 The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee for the transfer
 when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
@@ -672,15 +686,25 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `float`,
 		cryptoAmount: `float`,
-		guaranteedUntil: `string`
+		guaranteedUntil?: `string`
 	},
 	kyc: {
 		kycRequired: `boolean`,
-		kycSchemas: `KycSchemaEnum[]`
+		kycSchemas: {
+			kycSchema: `KycSchemaEnum`,
+			allowedValues: {
+				[string]: `string[]`
+			}
+		}[]
 	},
 	fiatAccount: {
 		[FiatAccountTypeEnum]: {
-			fiatAccountSchemas: `FiatAccountSchemaEnum[]`,
+			fiatAccountSchemas: {
+				fiatAccountSchema: `FiatAccountSchemaEnum`,
+				allowedValues: {
+					[string]: `string[]`
+				}
+			}[],
 			fee?: `float`,
 			feeType?: `FeeTypeEnum`,
 			feeFrequency?: `FeeFrequencyEnum`,
@@ -730,8 +754,10 @@ SHOULD try to honor the advertised settlement time bounds when performing a rela
 
 In addition to returning quote data, a successful response must also return information about which KYC schemas are acceptable/required in order to initiate a transfer
 with the given quote parameters. If KYC is required, the server MUST set `kyc.kycRequired` to `true` in the response body. Likewise, if no KYC is required, this value MUST be
-`false`. If `kyc.kycRequired` is `true`, the `kyc.kycSchemas` field MUST be present, and should contain a list of acceptable
-schemas that can be used to transfer KYC data to the server. This list MUST contain at least one entry.
+`false`. If `kyc.kycRequired` is `true`, the `kyc.kycSchemas` field MUST be present. `kyc.kycSchemas` is a list of objects. Each object corresponds to a single acceptable KYC schema.
+The `kycSchema` field within this object represents the type of KYC schema that can be used. The `allowedValues` object is an optional mapping from any number of keys in the selected
+KYC schema to values that are allowed for that key. For example, if a server wants to limit the selection for certain fields on the schema, `allowedValues` can contain lists of selectable
+values for those fields. On the client-side, this could be used to render a list of options, for example.
 
 Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, what schemas are allowed to communicate
 those account details, and what fee, if any, is associated with the requested quote when using a fiat accout of a particular type.
@@ -739,8 +765,10 @@ those account details, and what fee, if any, is associated with the requested qu
 On success, the server MUST return a mapping from fiat account types to lists of schemas that the client may use to add a new account of that
 type. This is expected to vary by geographical region as well as quote details provided by the query parameters.
 Each `fiatAccount[FiatAccountTypeEnum]` MUST correspond to a fiat account type that is allowed to be used for the requested quote.
-`fiatAccount[FiatAccountTypeEnum].fiatAccountSchemas` is a list of fiat account schemas that can be used to communicate data about the corresponding
-fiat account type.
+`fiatAccount[FiatAccountTypeEnum].fiatAccountSchemas` is a list of objects, where each object represents a fiat account schema that can be used to communicate data
+about the corresponding fiat account type. Each object MUST contain a `fiatAccountSchema` field representing the actual fiat account schema that can be used, and an
+optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
+This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
 
 The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee for the transfer
 when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
