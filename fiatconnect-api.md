@@ -1030,7 +1030,7 @@ On failure, the server MUST return an HTTP `400` error code, along with a respon
 
 ###### 3.3.3.1.2.3. HTTP `409`
 
-On conflict, the server MUST return an HTTP `400` error code, along with a response body with the following schema:
+On conflict, the server MUST return an HTTP `409` error code, along with a response body with the following schema:
 
 ```
 {
