@@ -1596,7 +1596,13 @@ An enum listing the types of crypto tokens suppored by FiatConnect.
 
 ### 7.2.3. `KycSchemaEnum`
 
-An enum listing the KYC schema types recognized by the FiatConnect specification. To be determined once initial KYC schemas are known.
+An enum listing the KYC schema types recognized by the FiatConnect specification.
+
+```
+[
+	`PersonalDataAndDocuments`
+]
+```
 
 ### 7.2.4. `FiatAccountTypeEnum`
 
@@ -1636,6 +1642,36 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 ### 7.2.7. `FiatAccountSchemaEnum`
 
 An enum listing the Fiat Account schemas recognized by the FiatConnect specification. To be determined once initial Fiat Account schemas are known.
+
+### 7.2.8. `PersonalDataAndDocuments`
+
+A KYC schema containing personal data about a user, as well as documents such as an ID photo and selfie.
+
+```
+{
+	firstName: `string`,
+	middleName?: `string`,
+	lastName: `string`,
+	dateOfBirth: {
+		day: `string`,
+		month: `string`,
+		year: `string`
+	},
+	address: {
+		address1: `string`,
+		address2?: `string`,
+		isoCountryCode: `string`,
+		isoRegionCode: `string`,
+		city: `string`,
+		postalCode?: `string`
+	},
+	phoneNumber: `string`,
+	selfieDocument: `string`,
+	identificationDocument: `string`
+}
+```
+
+The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
 
 ## 7.3. Initial Entity Support
 
