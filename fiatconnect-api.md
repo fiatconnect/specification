@@ -1180,6 +1180,8 @@ The request body must contain the following fields:
   - The amount of fiat currency to transfer in.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
+* `destinationAddress`: {`string`} 
+  - An optional address to receive the transfer, in place of account associated with fiatAccountId 
 
 ##### 3.3.4.1.2. Responses
 
@@ -1274,6 +1276,9 @@ The request body must contain the following fields:
   - The amount of cryptocurrency to transfer out.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
+* `sourceAddress`: {`string`} 
+  - An optional address designating where the transfer will come from, in place of account associated  with fiatAccountId 
+
 
 ##### 3.3.4.2.2. Responses
 
