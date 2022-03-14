@@ -22,9 +22,8 @@
         * [3.2.1.2.1. `"sub"` Claim](#32121---sub---claim)
 		* [3.2.1.2.2. `"iss"` Claim](#32122---iss---claim)
         * [3.2.1.2.3. `"exp"` Claim](#32123---exp---claim)
+        * [3.2.1.2.4. `"client"` Claim](#32123---client---claim)
       - [3.2.1.3. Communicating JWT](#3213-communicating-jwt)
-    + [3.2.2. Client API Token Authentication](#322-client-api-token-authentication)
-      - [3.2.2.1. Communicating API Tokens](#3221-communicating-api-tokens)
   * [3.3. Formal Specification](#33-formal-specification)
     + [3.3.1. Quote Endpoints](#331-quote-endpoints)
       - [3.3.1.1. `GET /quote/in`](#3311--get--quote-in-)
@@ -416,6 +415,10 @@ Servers MUST recognize the following *registered claims* within the JWT payload.
 * `sub`, or *subject*
 * `iss`, or *issuer*
 
+Servers MUST also recognize the following *private claims* within the JWT payload.
+
+* `client`, or *client API key*
+
 The semantics of these claims are below:
 
 ##### 3.2.1.2.1. `"sub"` Claim
@@ -427,40 +430,53 @@ source of/destination for crypto funds during transfers. The address should be f
 
 ##### 3.2.1.2.2. `"iss"` Claim
 
-The `iss`, or *subject* claim represents the user's Celo address public key, dervied from their private key. This is a required claim. If it is missing, the server MUST respond to the client with an HTTP `400` error. The server MUST use this claim to verify the JWT signature.
+The `iss`, or *subject* claim represents the user's Celo address public key, dervied from their private key. This is a required claim.
+The public key MUST be in compressed form (see [here](https://docs.ethers.io/v5/api/utils/signing-key/) for more details), and exactly 33 bytes
+long.
+
+If it is missing, the server MUST respond to the client with an HTTP `400` error. The server MUST use this claim to verify the JWT signature.
 Since the address provided in the `"sub"` claim may not correspond to the public/private keypair used to sign and verify the JWT, the
 server MUST validate that the signature does indeed correspond to the address provided in the `"sub"` claim.
 
 ##### 3.2.1.2.3. `"exp"` Claim
 
 The `exp`, or *expiration time* claim represents the time until which the provided JWT should be accepted by the server. The `exp` claim should be provided
-as a numeric timestamp, defined as the number of seconds since Epoch. If this field is missing, a server MUST return an HTTP `400` error.
-A server MUST also return an HTTP `400` error if the provided `exp` field is later than the current time with respect to Epoch.
+as a numeric timestamp, defined as the number of seconds since Epoch. The `exp` claim MUST be present for all endpoints *except* the following:
 
-#### 3.2.1.3. Communicating JWT
+* `GET /quote/in`
+* `GET /quote/out`
+* `GET /kyc/:kycSchema/status`
+* `GET /transfer/:transferId/status`
 
-The JWT should be communicated to the server using the `Bearer` authentication scheme within the `Authorization` header. Because FiatConnect also supports
-simaltaneous API token authentication, the JWT should be the first field value present in the `Authorization` header. e.g., if a client *only* sends a JWT, the
-header would look like: `Authorization: Bearer <jwt>`. If the header is not present, or is malformed, the server MUST return an HTTP `400` error.
+The rationale behind not requiring an `exp` claim for these endpoints is that these endpoints are *non-mutating*; calling them does not affect server-side
+state in any way. Since these endpoints are less security-critical, an `exp` claim is not required as a convenience to clients.
+While these endpoints do not require the `exp` claim to be present, *all endpoints* MUST honor the `exp` claim *if it is* present in the
+JWT payload. For endpoints where the `exp` claim is required, the server MUST return an HTTP `400` if it is not present.
+A server MUST return an HTTP `401` error if the provided `exp` field is later than the current time with respect to Epoch. If an `exp` claim is
+included in a request, it MUST NOT exceed 24 hours from the current time with respect to Epoch. If the `exp` claim is more than 24 hours into the future, the
+server MUST return an HTTP `400` error. This is required in order to prevent clients from generating excessivley long-lived JWTs that would pose a security
+risk if leaked.
 
-### 3.2.2. Client API Token Authentication
+##### 3.2.1.2.4. `"client"` Claim
 
-Servers must also support API token based authentication. Recall the webhook-based status monitoring mentioned earlier in this document. In order to
-support status monitoring via webhooks, individual clients will need to be able to register a URL pointing to an API able to handle webhook updates
-from the server. Once a client has registered a webhook URL with the provider, the client needs a way to identify itself to the server. To uniquely
-identify clients in order to know where to send webhook-based status updates, a server may allow clients to register an API key. The exact mechanism
-by which servers allocate API keys to clients and allow them to register webhook URLs is out of scope of this document.
+In addition to public-private key authentication, servers must also support API token based authentication. Recall the webhook-based status monitoring
+mentioned earlier in this document. In order to support status monitoring via webhooks, individual clients will need to be able to register a URL pointing
+to an API able to handle webhook updates from the server. Once a client has registered a webhook URL with the provider, the client needs a way to identify
+itself to the server. To uniquely identify clients in order to know where to send webhook-based status updates, a server may allow clients to register an API key.
+The exact mechanism by which servers allocate API keys to clients and allow them to register webhook URLs is out of scope of this document.
 
 A server MUST support API token authentication, and MAY *require* that clients include an API key in each request. If a server requires
 that clients include an API key in each request, it MUST respond to the client with an HTTP `400` error if the API key is missing from the request.
 Regardless of whether or not a server requires an API key on every request, it MUST return an HTTP `401` error if an API key is
 provided but does not correspond to any registered client; likewise it MUST return an HTTP `400` error if the API key is poorly formed.
 
-#### 3.2.2.1. Communicating API Tokens
+The `client`, or *client API key* claim is a *private claim* that is FiatConnect-specific. This is an optional claim. This claim contains a client
+API key as discussed above; the details of the server's response with respect to this claim MUST follow the semantics outlined above.
 
-API tokens should be communicated via the `Bearer` authentication scheme within the `Authorization` header. Because FiatConnect requires JWT auth for all requests
-and API token-based auth is optional, the API token should be the second field value in the authorization header. For example: `Authorization: Bearer <jwt>, Bearer <token>`.
-If the header is not present, or is malformed, the server MUST return an HTTP `400` error.
+#### 3.2.1.3. Communicating JWT
+
+The JWT should be communicated to the server using the `Bearer` authentication scheme within the `Authorization` header. In particular, this header
+must look like: `Authorization: Bearer <jwt>`. If the header is not present, or is malformed, the server MUST return an HTTP `400` error.
 
 ## 3.3. Formal Specification
 
