@@ -702,7 +702,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `float`,
 		cryptoAmount: `float`,
-		guaranteedUntil: `string`
+		guaranteedUntil?: `string`
 	},
 	kyc: {
 		kycRequired: `boolean`,
