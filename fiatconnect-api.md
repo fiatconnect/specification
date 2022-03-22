@@ -42,6 +42,7 @@
             - [3.3.1.1.3.2.5. `FiatAmountTooHigh`](#3311325--fiatamounttoohigh-)
             - [3.3.1.1.3.2.6. `CryptoNotSupported`](#3311326--cryptonotsupported-)
             - [3.3.1.1.3.2.7. `FiatNotSupported`](#3311327--fiatnotsupported-)
+			- [3.3.1.1.3.2.8. `InvalidParameters`](#3311328--invalidparameters-)
       - [3.3.1.2. `GET /quote/out`](#3312--get--quote-out-)
         * [3.3.1.2.1. Parameters](#33121-parameters)
           + [3.3.1.2.1.1. Query Parameters](#331211-query-parameters)
@@ -58,6 +59,7 @@
             - [3.3.1.2.3.2.5. `FiatAmountTooHigh`](#3312325--fiatamounttoohigh-)
             - [3.3.1.2.3.2.6. `CryptoNotSupported`](#3312326--cryptonotsupported-)
             - [3.3.1.2.3.2.7. `FiatNotSupported`](#3312327--fiatnotsupported-)
+			- [3.3.1.2.3.2.8. `InvalidParameters`](#3311328--invalidparameters-)
     + [3.3.2. KYC Endpoints](#332-kyc-endpoints)
       - [3.3.2.1. `POST /kyc/:kycSchema`](#3321--post--kyc--kycschema-)
         * [3.3.2.1.1. Parameters](#33211-parameters)
@@ -668,6 +670,11 @@ the server MUST return a `CryptoNotSupported` error.
 If the provided `fiatType` is unsupported in the user's current region, but the server supports other transfers in their region,
 the server MUST return a `FiatNotSupported` error.
 
+###### 3.3.1.1.3.2.8. `InvalidParameters`
+
+If the request is missing any required parameters, or if the parameters are poorly formed, the server MUST respond
+with an `InvalidParameters` error.
+
 #### 3.3.1.2. `GET /quote/out`
 
 The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out from crypto to fiat currencies.
@@ -830,6 +837,11 @@ the server MUST return a `CryptoNotSupported` error.
 
 If the provided `fiatType` is unsupported in the user's current region, but the server supports other transfers in their region,
 the server MUST return a `FiatNotSupported` error.
+
+###### 3.3.1.2.3.2.8. `InvalidParameters`
+
+If the request is missing any required parameters, or if the parameters are poorly formed, the server MUST respond
+with an `InvalidParameters` error.
 
 ### 3.3.2. KYC Endpoints
 
@@ -1575,6 +1587,7 @@ An enum listing the error types used by various endpoints.
 	`ResourceNotFound`,
 	`TransferNotAllowed`,
 	`KycExpired`
+	`InvalidParameters`
 ]
 ```
 
