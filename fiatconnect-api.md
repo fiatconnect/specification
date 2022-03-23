@@ -1507,7 +1507,7 @@ facilitate AML checks, if required.
 
 # 6. Sandbox Environment
 
-In order to facilitate ease of client integration and testing against FiatConnect-compliant APIs, each FiatConnect API SHOULD have a corresponding *sandbox*
+In order to facilitate ease of client integration and testing against FiatConnect-compliant APIs, each FiatConnect API MUST have a corresponding *sandbox*
 API available. This sandbox API should be identical in behavior to the production FiatConnect API in every way, except for a number of key differences.
 
 ## 6.1. Celo Network
