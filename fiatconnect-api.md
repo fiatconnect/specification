@@ -191,6 +191,10 @@
     + [7.2.6. `FeeFrequencyEnum`](#726--feetypeenum-)
     + [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
   * [7.3. Initial Entity Support](#73-initial-entity-support)
+    + [7.3.1. KYC Schemas](#731-kyc-schemas)
+	  - [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
+	+ [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
+	  - [7.3.2.1. `NGBankTransfer`](#7311--ngbanktransfer-)
 - [8. References](#8-references)
   * [8.1. Normative References](#81-normative-references)
     + [8.1.1. [RFC2119]](#811--rfc2119-)
@@ -1655,9 +1659,7 @@ represents what *kind* of account that schema represents; e.g., Debit Card, Cred
 
 ```
 [
-	`CheckingAccount`,
-	`DebitCard`,
-	`CreditCard`
+	`BankTransfer`
 ]
 ```
 
@@ -1685,9 +1687,17 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 
 ### 7.2.7. `FiatAccountSchemaEnum`
 
-An enum listing the Fiat Account schemas recognized by the FiatConnect specification. To be determined once initial Fiat Account schemas are known.
+```
+[
+	`NGBankTransfer`
+]
+```
 
-### 7.2.8. `PersonalDataAndDocuments`
+## 7.3. Initial Entity Support
+
+### 7.3.1. KYC Schemas
+
+#### 7.3.1.1. `PersonalDataAndDocuments`
 
 A KYC schema containing personal data about a user, as well as documents such as an ID photo and selfie.
 
@@ -1717,10 +1727,22 @@ A KYC schema containing personal data about a user, as well as documents such as
 
 The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
 
-## 7.3. Initial Entity Support
+### 7.3.2. Fiat Account Schemas
 
-This section details the initial entity support for FiatConnect. In particular, the initial KYC and Fiat Account schemas that the FiatConnect specification
-should support for initial integrators. This section is pending further research and feedback from potential CICO providers.
+All Fiat Account Schemas supported by FiatConnect MUST contain the `name`, `institution`, and `fiatAccountType` fields. `name` is a friendly, user-definable name for the account.
+`institution` is the financial institution/organization the account is with, and `fiatAccountType` is a `FiatAccountTypeEnum` value, representing the type of fiat account this
+schema represents.
+
+####  7.3.2.1. `NGBankTransfer`
+
+```
+{
+	name: `string`,
+	institution: `string`,
+	accountNumber: `string`,
+	fiatAccountType: `FiatAccountTypeEnum.BankTransfer`
+}
+```
 
 # 8. References
 
