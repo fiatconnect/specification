@@ -1655,7 +1655,7 @@ An enum listing the KYC schema types recognized by the FiatConnect specification
 ### 7.2.4. `FiatAccountTypeEnum`
 
 An enum listing the *types* of Fiat Accounts recognized by the FiatConnect specification. A Fiat Account Type is a property of each Fiat Account Schema, and
-represents what *kind* of account that schema represents; e.g., Debit Card, Credit Card, Checking Account, etc.
+represents what *kind* of account that schema represents.
 
 ```
 [
@@ -1689,7 +1689,7 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 
 ```
 [
-	`NGBankTransfer`
+	`AccountNumber`
 ]
 ```
 
@@ -1730,19 +1730,27 @@ The `selfieDocument` and `identificationDocument` fields should be base64 encode
 ### 7.3.2. Fiat Account Schemas
 
 All Fiat Account Schemas supported by FiatConnect MUST contain the `name`, `institution`, and `fiatAccountType` fields. `name` is a friendly, user-definable name for the account.
-`institution` is the financial institution/organization the account is with, and `fiatAccountType` is a `FiatAccountTypeEnum` value, representing the type of fiat account this
-schema represents.
+`institution` is a user-friendly name representing the financial institution/organization the account is with, and `fiatAccountType` is a `FiatAccountTypeEnum` value,
+representing the type of fiat account this schema represents. The `institution` and `name` fields are required in order for the API to return obfuscated but distinguishable
+account information from the `GET /accounts` endpoint.
 
-####  7.3.2.1. `NGBankTransfer`
+####  7.3.2.1. `AccountNumber`
+
+`AccountNumber` is a Fiat Account schema that represents accounts where the only identifying information required is some `accountNumber` string.
 
 ```
 {
 	name: `string`,
 	institution: `string`,
 	accountNumber: `string`,
+	country: `string`
 	fiatAccountType: `FiatAccountTypeEnum.BankTransfer`
 }
 ```
+
+The `country` field is meant to provide a way for providers to specify which country this data is meant for. For example, if a provider is expecting an `AccountNumber`
+schema for Nigeria, they can set the `allowedValues` field for `country` in the quote endpoint response to `['NG']`. With this information, the client will know
+to prompt the user for a Nigeria-specific account number.
 
 # 8. References
 
