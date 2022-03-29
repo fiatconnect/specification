@@ -1060,8 +1060,8 @@ On success, the server MUST respond with an HTTP `200` status code, along with a
 ```
 {
 	fiatAccountId: `string`,
-	name: `string`,
-	institution: `string`,
+	accountName: `string`,
+	institutionName: `string`,
 	fiatAccountType: `FiatAccountTypeEnum`
 }
 ```
@@ -1134,8 +1134,8 @@ this is a mapping from fiat account types that the user has on file to metadata 
 {
 	[FiatAccountTypeEnum]: [{
 		fiatAccountId: `string`,
-		name: `string`,
-		institution: `string`,
+		accountName: `string`,
+		institutionName: `string`,
 		fiatAccountType: `FiatAccountTypeEnum`
 	}]
 }
@@ -1659,7 +1659,7 @@ represents what *kind* of account that schema represents.
 
 ```
 [
-	`BankTransfer`
+	`BankAccount`
 ]
 ```
 
@@ -1729,9 +1729,9 @@ The `selfieDocument` and `identificationDocument` fields should be base64 encode
 
 ### 7.3.2. Fiat Account Schemas
 
-All Fiat Account Schemas supported by FiatConnect MUST contain the `name`, `institution`, and `fiatAccountType` fields. `name` is a friendly, user-definable name for the account.
-`institution` is a user-friendly name representing the financial institution/organization the account is with, and `fiatAccountType` is a `FiatAccountTypeEnum` value,
-representing the type of fiat account this schema represents. The `institution` and `name` fields are required in order for the API to return obfuscated but distinguishable
+All Fiat Account Schemas supported by FiatConnect MUST contain the `accountName`, `institutionName`, and `fiatAccountType` fields. `accountName` is a friendly, user-definable name for the account.
+`institutionName` is a user-friendly name representing the financial institution/organization the account is with, and `fiatAccountType` is a `FiatAccountTypeEnum` value,
+representing the type of fiat account this schema represents. The `institutionName` and `accountName` fields are required in order for the API to return obfuscated but distinguishable
 account information from the `GET /accounts` endpoint.
 
 ####  7.3.2.1. `AccountNumber`
@@ -1740,11 +1740,11 @@ account information from the `GET /accounts` endpoint.
 
 ```
 {
-	name: `string`,
-	institution: `string`,
+	accountName: `string`,
+	institutionName: `string`,
 	accountNumber: `string`,
 	country: `string`
-	fiatAccountType: `FiatAccountTypeEnum.BankTransfer`
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
 }
 ```
 
