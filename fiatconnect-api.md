@@ -555,6 +555,10 @@ greater than two weeks (1209600 seconds) ahead of the `issued-at` field, the ser
 is formatted correctly, the server MUST authenticate the user's session, and return an HTTP `200`. The server MUST attach the fields from the signed message to the session internally,
 in order to access data about the user and their session in other endpoints.
 
+Once a server authenticates a session using a particular nonce, the server MUST NOT allow any other sessions to be created using that nonce, until `expiration-time` of the session created
+using that nonce has been reached. The implementation of this is up to the server, but will require storing some global state about nonces in order to check if a client is attempting
+to sign-in using a nonce that is temporarily forbidden. Careful consideration should be taken to make sure that nonce management works correctly when scaling server resources.
+
 ###### 3.2.1.3.3.2. Failure
 
 On failure, the server MUST return an HTTP `401` error, along with an error code that details exactly why the request failed.
