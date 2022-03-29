@@ -16,14 +16,37 @@
 - [3. API Specification](#3-api-specification)
   * [3.1. Geolocation](#31-geolocation)
   * [3.2. Authentication & Authorization](#32-authentication---authorization)
-    + [3.2.1. JWT Authentication](#321-jwt-authentication)
-      - [3.2.1.1. JWT Header](#3211-jwt-header)
-      - [3.2.1.2. JWT Payload](#3212-jwt-payload)
-        * [3.2.1.2.1. `"sub"` Claim](#32121---sub---claim)
-		* [3.2.1.2.2. `"iss"` Claim](#32122---iss---claim)
-        * [3.2.1.2.3. `"exp"` Claim](#32123---exp---claim)
-        * [3.2.1.2.4. `"client"` Claim](#32123---client---claim)
-      - [3.2.1.3. Communicating JWT](#3213-communicating-jwt)
+    + [3.2.1. Sign-In With Ethereum](#321-sign-in-with-ethereum)
+	  - [3.2.1.1. SIWE Sessions](#3211-siwe-sessions)
+	  - [3.2.1.2. `GET /auth/login`](#3212--get--auth-login-)
+	    * [3.2.1.2.1. Parameters](#32121-parameters)
+		  + [3.2.1.2.1.1. Query Parameters](#321211-query-parameters)
+	    * [3.2.1.2.2. Responses](#32122-responses)
+		  + [3.2.1.2.2.1. HTTP `200`](#321221-http--200-)
+		  + [3.2.1.2.2.2. HTTP `400`](#321222-http--400-)
+	    * [3.2.1.2.3. Semantics](#32123-semantics)
+		  + [3.2.1.2.3.1. Success](#321231-success)
+		  + [3.2.1.2.3.2. Failure](#321231-failure)
+		    - [3.2.1.2.3.2.1. `InvalidAddress`](#3212321--invalidaddress-)
+		    - [3.2.1.2.3.2.2. `InvalidDuration`](#3212322--invalidduration-)
+		    - [3.2.1.2.3.2.3. `DurationTooLong`](#3212323--durationtoolong-)
+	  - [3.2.1.3. `POST /auth/login`](#3213--post--auth-login-)
+	    * [3.2.1.3.1. Parameters](#32131-parameters)
+		  + [3.2.1.3.1.1. Request Body](#321311-request-body)
+	    * [3.2.1.3.2. Responses](#32132-responses)
+		  + [3.2.1.3.2.1. HTTP `200`](#321321-http--200-)
+		  + [3.2.1.3.2.2. HTTP `401`](#321322-http--401-)
+	    * [3.2.1.3.3. Semantics](#32133-semantics)
+		  + [3.2.1.3.3.1. Success](#321331-success)
+		  + [3.2.1.3.3.2. Failure](#321331-failure)
+		    - [3.2.1.3.3.2.1. `InvalidSignature`](#3213321--invalidsignature-)
+		    - [3.2.1.3.3.2.2. `InvalidParameters`](#3213322--invalidparameters-)
+	  - [3.2.1.4. Using Sessions](#3214-using-sessions)
+	    * [3.2.1.4.1. Non-Privileged Endpoints](#32141-non-privileged-endpoints)
+	    * [3.2.1.4.2. Privileged Endpoints](#32142-privileged-endpoints)
+	    * [3.2.1.4.3. Privileged, Time-Restricted Endpoints](#32143-privileged--time-restricted-endpoints)
+	  - [3.2.1.5. SIWE Resources](#3215-siwe-resources)
+    + [3.2.2.Client API Key](#322-client-api-key)
   * [3.3. Formal Specification](#33-formal-specification)
     + [3.3.1. Quote Endpoints](#331-quote-endpoints)
       - [3.3.1.1. `GET /quote/in`](#3311--get--quote-in-)
@@ -383,105 +406,241 @@ The FiatConnect API specifies *two* types of authentication; the first authentic
 the second authenticates the *client*, and is optionally required, depending on whether or not it has been configured by the client
 with the provider.
 
-### 3.2.1. JWT Authentication
+### 3.2.1. Sign-In With Ethereum
 
-Only users with a registered address on the Celo blockchain may make requests to a FiatConnect API. The FiatConnect API specification
-requires servers to recognize a JWT token signed with the user's private key, and verifiable with the user's public key. With this authentication
-scheme, a server can:
+FiatConnect-compliant APIs are required to use the *Sign-In With Ethereum* standard, otherwise known as [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361)
+in order to identify users and confirm ownership of a Celo blockchain address (private/public keypair). At a high level, the Sign-In With Ethereum standard
+requires the client to use a user's private key to sign a plaintext message containing a number of standardized fields, and send that signed message to the
+server to prove account ownership. FiatConnect APIs MUST use the SIWE standard to create authenticated sessions for the user, and return session cookies to
+the client. More detail on exactly how this should be structured is provided below.
 
-1. Associate a user's Celo blockchain address with the request, and
-2. Verify the requester's ownership of the provided address.
+#### 3.2.1.1. SIWE Sessions
 
-Servers MUST parse and recognize JWT tokens according to the following format. Servers MUST validate these tokens on every request.
+At a high level, the client will initiate a login request with a server by requesting a SIWE-compliant message to sign from a `GET /auth/login` endpoint. This
+`GET /auth/login` endpoint will take a number of parameters relating to the nature of the login session being requested by the client, and return a plaintext SIWE
+message that it expects the client to sign.
 
-#### 3.2.1.1. JWT Header
+Once the client receives the SIWE-compliant message, it will sign it using the user's private key, and send the signed message to the server at a `POST /auth/login` endpoint.
+The server will validate the signature, and check that all the included fields in the signed message are valid. If everything checks out, the server will create a session
+for the user according to the details in the signed message. Once the server has created the session, it responds to the client with a `200`, and returns session cookies that
+the client can use in subsequent requests to priveleged endpoints on behalf of the signed-in address.
 
-Servers MUST support the following JWT header, using an elliptic curve digital signature algorithm (ECDSA):
+#### 3.2.1.2. `GET /auth/login`
 
-```json
+FiatConnect APIs must implement a `GET /auth/login` method that clients can use to request a message to sign. This endpoint also has the important job of generating a nonce
+for the signed message, as a security measure to prevent replay attacks where an attacker gains access to a signed message in transit. Additionally, this endpoint allows
+client and server to coordinate their clocks to avoid confusion around session expiration times.
+
+##### 3.2.1.2.1. Parameters
+
+###### 3.2.1.2.1.1. Query Parameters
+
+* `sessionDuration`: {`string`} [REQUIRED]
+  - A string number that represents the requested login session duration, in seconds.
+* `address`: {`string`} [REQUIRED]
+  - The EIP-55 formatted Celo address of the user attempting to sign in
+
+##### 3.2.1.2.2. Responses
+
+###### 3.2.1.2.2.1. HTTP `200`
+
+On success, the server MUST return an HTTP `200`, with the following *plaintext* response body template, subject to the conditions discussed below.
+
+```
+${domain} wants you to sign in with your Ethereum account:
+${address}
+
+URI: ${uri}
+Version: 1
+Chain ID: 42220
+Nonce: ${nonce}
+Issued At: ${issued-at}
+Expiration Time: ${expiration-time}
+Request ID: ${request-id}
+```
+
+###### 3.2.1.2.2.2. HTTP `400`
+
+On failure, the server MUST return an HTTP `400`, with the following response body.
+
+```
 {
-	"alg": "ES256",
-	"typ": "JWT"
+	error: `ErrorEnum`,
 }
 ```
 
-Servers MAY support other algorithms, but this is not required.
+##### 3.2.1.2.3. Semantics
 
-#### 3.2.1.2. JWT Payload
+This endpoint is meant to serve as the first endpoint a client hits when they wish to begin authentication against a FiatConnect API; as long as the query parameters
+provided are valid, the server MUST respond with a message that the client can sign and return to `POST /auth/login` in order to create/refresh a login session.
 
-Servers MUST recognize the following *registered claims* within the JWT payload.
+###### 3.2.1.2.3.1. Success
 
-* `exp`, or *expiration time*
-* `sub`, or *subject*
-* `iss`, or *issuer*
+On success, the server MUST respond with a message template that corresponds to the message template given above. The template fields in the message above
+correspond to those outlined in the [EIP-4361 specification](https://eips.ethereum.org/EIPS/eip-4361), but are described again here.
 
-Servers MUST also recognize the following *private claims* within the JWT payload.
+The `domain` field MUST correspond to the hostname of the API itself, e.g. `example.com`.
+The `address` field MUST correspond to the `address` provided in the query parameters.
+The `uri` field MUST correspond to the origin URL of the API, with the `/auth/login` path appended, e.g. `https://example.com/auth/login`.
+The `nonce` field MUST be a randomly generated, unique nonce chosen by the server, included for security purposes.
+The `issued-at` field MUST be the ISO 8601 datetime string of the current time at which the server generated the message.
+The `expiration-time` field MUST be an ISO 8601 datetime string that specifies when this message will no longer valid, and when a session created with this message
+will expire. This field MUST be calculated based off the `issued-at` field and the `sessionDuration` field provided in the query string.
+The `request-id` field MUST be a unique identifier for this sign-in request. The server MAY choose to log sign-in requests and refer to them by this field.
 
-* `client`, or *client API key*
+If a client calls the `GET /auth/login` endpoint without sending session cookies, the server MUST create a new session for the client and return cookies. Internally, the server MUST
+attach the nonce to this session, in order to verify it when recieving the signed message later. If the client already has a session (whether or not it is signed-in),
+the server MUST update the nonce on the session.
 
-The semantics of these claims are below:
+###### 3.2.1.2.3.2. Failure
 
-##### 3.2.1.2.1. `"sub"` Claim
+On failure, the endpoint MUST return an HTTP `400` error, along with an error code that details exactly why the request failed.
 
-The `sub`, or *subject* claim represents the user's Celo network address. This is a required claim. If it is missing, the server MUST respond
-to the client with an HTTP `400` error. This claim SHOULD be interpreted and used within server endpoints as a unique user identifier, and as the
-source of/destination for crypto funds during transfers. The address should be formatted as 42 hexadecimal characters prefixed by the string literal
-`0x`. If the `sub` claim does not match this format, the server MUST respond to the client with an HTTP `400` error.
+###### 3.2.1.2.3.2.1 `InvalidAddress`
 
-##### 3.2.1.2.2. `"iss"` Claim
+If the provided `address` query parameter is missing or poorly formed, the server MUST return an `InvalidAddress` error.
 
-The `iss`, or *subject* claim represents the user's Celo address public key, dervied from their private key. This is a required claim.
-The public key MUST be in compressed form (see [here](https://docs.ethers.io/v5/api/utils/signing-key/) for more details), and exactly 33 bytes
-long.
+###### 3.2.1.2.3.2.2 `InvalidDuration`
 
-If it is missing, the server MUST respond to the client with an HTTP `400` error. The server MUST use this claim to verify the JWT signature.
-Since the address provided in the `"sub"` claim may not correspond to the public/private keypair used to sign and verify the JWT, the
-server MUST validate that the signature does indeed correspond to the address provided in the `"sub"` claim.
+If the provided `sessionDuration` query parameter is missing or poorly formed, the server MUST return an `InvalidAddress` error.
 
-##### 3.2.1.2.3. `"exp"` Claim
+###### 3.2.1.2.3.2.2 `DurationTooLong`
 
-The `exp`, or *expiration time* claim represents the time until which the provided JWT should be accepted by the server. The `exp` claim should be provided
-as a numeric timestamp, defined as the number of seconds since Epoch. The `exp` claim MUST be present for all endpoints *except* the following:
+If the provided `sessionDuration` query parameter represents a duration that is longer than exactly two weeks (1209600 seconds), the server MUST return a `DurationTooLong` error.
+
+#### 3.2.1.3. `POST /auth/login`
+
+The `POST /auth/login` endpoint is responsible for actually verifying signed messages sent by clients, and authenticating the user's session.
+
+##### 3.2.1.3.1. Parameters
+
+###### 3.2.1.3.1.1. Request Body
+
+The *plaintext* request body for this endpoint MUST correspond to a signed SIWE message (as described above) in the [EIP-191](https://eips.ethereum.org/EIPS/eip-191)
+Signed Data Standard format, as required by the SIWE specification.
+
+##### 3.2.1.3.2. Responses
+
+###### 3.2.1.3.2.1. HTTP `200`
+
+On success, the server MUST return an HTTP `200`, and update the state of the user's session to be authenticated.
+
+###### 3.2.1.3.2.2. HTTP `401`
+
+On failure, the server MUST return an HTTP `400`, with the following response body.
+
+```
+{
+	error: `ErrorEnum`,
+}
+```
+
+##### 3.2.1.3.3. Semantics
+
+This endpoint performs validation on a signed SIWE-compliant message. In addition to checking that the signature itself is valid and corresponds to the included
+address, it also performs various safety and security checks on the contents of the message. If all checks pass, the server updates the client's session to be authenticated,
+and returns a `200`.
+
+###### 3.2.1.3.3.1. Success
+
+On success, the server MUST respond with a `200` status code. The server MUST only respond successfully after performing a variety of checks.
+
+If the client did not send session cookies, or if the included cookie does not correspond to a valid session with an expected nonce already attached, the server MUST fail the
+request. A server MUST verify that the signature is valid and corresponds to the `address` field included in the signed message. A server MUST verify that the `nonce` field corresponds
+exactly to the nonce already set on the user's session. A server MUST verify that the `domain` and `uri` fields correspond exactly to the values expected for the
+server's hostname/origin. A server MUST verify that the `Version` and `Chain ID` lines in the signed message are exactly `1` and `42220`, respectively.
+If the `issued-at` field in the signed message is before the server's current timestamp, or if the `issued-at` field is after the `expiration-time` field, the server
+MUST fail the request. If the server's current timestamp is past the `expiration-time` field, the server MUST fail the request. If the `expiration-time` field is
+greater than two weeks (1209600 seconds) ahead of the `issued-at` field, the server MUST fail the request. If all fields are acceptable, and the message
+is formatted correctly, the server MUST authenticate the user's session, and return an HTTP `200`. The server MUST attach the fields from the signed message to the session internally,
+in order to access data about the user and their session in other endpoints.
+
+###### 3.2.1.3.3.2. Failure
+
+On failure, the server MUST return an HTTP `401` error, along with an error code that details exactly why the request failed.
+
+###### 3.2.1.3.3.2.1 `InvalidSignature`
+
+If the signature is invalid or doesn't match the included `address` field, the server MUST return an `InvalidSignature` error.
+
+###### 3.2.1.3.3.2.2 `InvalidParameters`
+
+If the request body is missing, malformed, or fails to pass any of the required checks, the server MUST respond with an `InvalidParameters` error.
+
+#### 3.2.1.4. Using Sessions
+
+Once a client has established a session with a server, they can use that session (by sending the session cookie to the server) to access priveleged endpoints
+throughout the API. Certain endpoints impose different requirements on the in-use session. There are *three levels* of endpoints, with respect to their authentication
+requirements. These are explained below.
+
+##### 3.2.1.4.1. Non-Privileged Endpoints
+
+The first group of endpoints are those that *do not* require the user to have a logged-in session. These are:
 
 * `GET /quote/in`
 * `GET /quote/out`
+
+Since it may be a painful user experience (or impossible) to have a user log in to a provider just to get a quote, authentication is not required for these endpoints. Of course,
+clients may still access these endpoitns when logged in, but a logged-in session (or any session at all) is not required to access these endpoints.
+
+##### 3.2.1.4.2. Privileged Endpoints
+
+The second, and largest set of endpoints, are the ones that require a user to be logged in. These endpoints are the ones that deal with reading and writing user-specific data, *except*
+those that initiate transfers:
+
+* `POST /kyc/:kycSchema`
 * `GET /kyc/:kycSchema/status`
+* `DELETE /kyc/:kycSchema`
+* `POST /accounts/:fiatAccountSchema`
+* `GET /accounts`
+* `DELETE /account/:fiatAccountId`
 * `GET /transfer/:transferId/status`
 
-The rationale behind not requiring an `exp` claim for these endpoints is that these endpoints are *non-mutating*; calling them does not affect server-side
-state in any way. Since these endpoints are less security-critical, an `exp` claim is not required as a convenience to clients.
-While these endpoints do not require the `exp` claim to be present, *all endpoints* MUST honor the `exp` claim *if it is* present in the
-JWT payload. For endpoints where the `exp` claim is required, the server MUST return an HTTP `400` if it is not present.
-A server MUST return an HTTP `401` error if the provided `exp` field is later than the current time with respect to Epoch. If an `exp` claim is
-included in a request, it MUST NOT exceed 24 hours from the current time with respect to Epoch. If the `exp` claim is more than 24 hours into the future, the
-server MUST return an HTTP `400` error. This is required in order to prevent clients from generating excessivley long-lived JWTs that would pose a security
-risk if leaked.
+For these endpoints, a user only needs to be logged in with an authenticated session. This session may have the maximum expiration time allowed by the FiatConnect
+standard (two weeks). It does not matter how close to expiration the user's session is when accessing these endpoints. That means that a client can maintain a longer-lived session
+in order to access these endpoints.
 
-##### 3.2.1.2.4. `"client"` Claim
+If a client attempts to access any of these endpoints without a session, the server MUST return a `401` status code with an `Unauthorized` error.
+If a client tries to acces any of these endpoints with an expired session, the server MUST respond with an HTTP `401` status code with a `SessionExpired` error.
 
-In addition to public-private key authentication, servers must also support API token based authentication. Recall the webhook-based status monitoring
-mentioned earlier in this document. In order to support status monitoring via webhooks, individual clients will need to be able to register a URL pointing
-to an API able to handle webhook updates from the server. Once a client has registered a webhook URL with the provider, the client needs a way to identify
-itself to the server. To uniquely identify clients in order to know where to send webhook-based status updates, a server may allow clients to register an API key.
-The exact mechanism by which servers allocate API keys to clients and allow them to register webhook URLs is out of scope of this document.
+##### 3.2.1.4.3. Privileged, Time-Restricted Endpoints
+
+The final group of endpoints imposes the strictest requirements. The user must not only be logged in, but the session MUST NOT be older than exactly 4 hours. These endpoints are:
+
+* `POST /transfer/in`
+* `POST /transfer/out`
+
+This requirement exists in order to protect against longer-lived sessions being leaked and used to initiate transfers. Like the group of regularly priveleged endpoints, the server
+MUST respond with a `401` when the client accesses these endpoints without a session or with an expired one. In addition to this, if the `issued-at` field associated with the user's
+session is greater than 4 hours in the past, the server must additionally respond with a `401` code, and a `SessionTooOld` error. If this happens, the client must refresh their session
+by requesting a new message/nonce from `GET /auth/login`, signing the message, and returning it to `POST /auth/login`.
+
+#### 3.2.1.5. SIWE Resources
+
+SIWE has rich tooling and support across multiple languages; see [here](https://docs.login.xyz/) for more details, example implementations, and libraries for many popular
+languages.
+
+### 3.2.2. Client API Key
+
+In addition to the SIWE-based auth used to authenticate users and create sessions, the FiatConnect specification also supports a more traditional authentication standard, used
+*only* to identify specific clients with requests. Recall the webhook-based status monitoring mentioned earlier in this document. In order to support status
+monitoring via webhooks, individual clients will need to be able to register a URL pointing to an API able to handle webhook updates from the server.
+Once a client has registered a webhook URL with the provider, the client needs a way to identify itself to the server. To uniquely identify clients in order
+to know where to send webhook-based status updates, a server may allow clients to register an API key. The exact mechanism by which servers allocate API keys
+to clients and allow them to register webhook URLs is out of scope of this document.
+
+Once a client has registered an API key with a provider and associated it with a webhook URL, a client MAY provide it to a server through an `Authorization` header,
+using the `Bearer` authorization scheme. For example: `Authorization: Bearer <key>`, where `<key>` is the client's API key.
 
 A server MUST support API token authentication, and MAY *require* that clients include an API key in each request. If a server requires
 that clients include an API key in each request, it MUST respond to the client with an HTTP `400` error if the API key is missing from the request.
 Regardless of whether or not a server requires an API key on every request, it MUST return an HTTP `401` error if an API key is
 provided but does not correspond to any registered client; likewise it MUST return an HTTP `400` error if the API key is poorly formed.
 
-The `client`, or *client API key* claim is a *private claim* that is FiatConnect-specific. This is an optional claim. This claim contains a client
-API key as discussed above; the details of the server's response with respect to this claim MUST follow the semantics outlined above.
-
-#### 3.2.1.3. Communicating JWT
-
-The JWT should be communicated to the server using the `Bearer` authentication scheme within the `Authorization` header. In particular, this header
-must look like: `Authorization: Bearer <jwt>`. If the header is not present, or is malformed, the server MUST return an HTTP `400` error.
-
 ## 3.3. Formal Specification
 
-This section details the precise syntax and semantics of all the endpoints required by the FiatConnect specification. Endpoints are logically grouped, and roughly presented
-in order of dependency. The logical groupings are as follows:
+This section details the precise syntax and semantics of all the endpoints required by the FiatConnect specification, besides those devoted to authentication.
+Endpoints are logically grouped, and roughly presented in order of dependency. The logical groupings are as follows:
 
 * Quote Endpoints
 * KYC Endpoints
@@ -527,6 +686,8 @@ used for the transfer.
   - An ISO 3166-1 country code representing the country where the quote should be requested for.
 * `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
+* `address`: {`string`} [REQUIRED]
+  - An EIP-55 formatted address, representing the Celo address of the user to get the quote for.
 
 ##### 3.3.1.1.2. Responses
 
@@ -688,6 +849,8 @@ The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out 
   - An ISO 3166-1 country code representing the country where the quote should be requested for.
 * `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
+* `address`: {`string`} [REQUIRED]
+  - An EIP-55 formatted address, representing the Celo address of the user to get the quote for.
 
 ##### 3.3.1.2.2. Responses
 
@@ -1562,6 +1725,10 @@ An enum listing the error types used by various endpoints.
 
 ```
 [
+	`InvalidAddress`,
+	`InvalidDuration`,
+	`DurationTooLong`,
+	`InvalidSignature`
 	`GeoNotSupported`,
 	`CryptoAmountTooLow`,
 	`CryptoAmountTooHigh`,
@@ -1574,7 +1741,11 @@ An enum listing the error types used by various endpoints.
 	`ResourceExists`,
 	`ResourceNotFound`,
 	`TransferNotAllowed`,
-	`KycExpired`
+	`KycExpired`,
+	`Unauthorized`,
+	`SessionExpired`,
+	`SessionTooOld`,
+	`InvalidParameters`
 ]
 ```
 
