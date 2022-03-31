@@ -194,7 +194,7 @@
     + [7.3.1. KYC Schemas](#731-kyc-schemas)
 	  - [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
 	+ [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
-	  - [7.3.2.1. `NGBankTransfer`](#7311--ngbanktransfer-)
+	  - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
 - [8. References](#8-references)
   * [8.1. Normative References](#81-normative-references)
     + [8.1.1. [RFC2119]](#811--rfc2119-)
