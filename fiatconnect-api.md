@@ -138,8 +138,8 @@
           + [3.3.4.1.3.1. Success](#334131-success)
           + [3.3.4.1.3.2. Failure](#334132-failure)
             - [3.3.4.1.3.2.1. `KycExpired`](#3341321--kycexpired-)
-            - [3.3.4.1.3.2.2. `InvalidQuote`](#3341322--invalidquote-)
-            - [3.3.4.1.3.2.3. `TransferNotAllowed`](#3341323--transfernotallowed-)
+            - [3.3.4.1.3.2.2. `TransferNotAllowed`](#3341322--transfernotallowed-)
+            - [3.3.4.1.3.2.3. `InvalidQuote`](#3341323--invalidquote-)
             - [3.3.4.1.3.2.4. `ResourceNotFound`](#3341324--resourcenotfound-)
       - [3.3.4.2. `POST /transfer/out`](#3342--post--transfer-out-)
         * [3.3.4.2.1. Parameters](#33421-parameters)
@@ -1297,14 +1297,14 @@ This endpoint may fail for a number of reasons; the error code returned by the e
 
 If a user's KYC has expired for their current geo, the server MUST reject the transfer and return a `KycExpired` error.
 
-###### 3.3.4.1.3.2.2. `InvalidQuote`
+###### 3.3.4.1.3.2.2. `TransferNotAllowed`
+
+If a transfer is not allowed for a generic reason (such as unacceptable transfer parameters) the server MUST reject the transfer and return a `TransferNotAllowed` error.
+
+###### 3.3.4.1.3.2.3. `InvalidQuote`
 
 If the quote associated with `quoteId` is expired, or if no quote is found with a matching `quoteId`, the server MUST
 reject the transfer and return an `InvalidQuote` error.
-
-###### 3.3.4.1.3.2.3. `TransferNotAllowed`
-
-If a transfer is not allowed for a generic reason (such as unacceptable transfer parameters) the server MUST reject the transfer and return a `TransferNotAllowed` error.
 
 ###### 3.3.4.1.3.2.4. `ResourceNotFound`
 
