@@ -601,7 +601,7 @@ of fiat currency required in order to receive the requested amount of crypto.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. The `quote.quoteId` field
-is an identifier for the quote that is unique for the user who requested it, and is used by the client to initiate a transfer at the 
+is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the 
 conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee when initiating transfers until the time indicated in the `quote.guaranteedUntil` field.
 
@@ -765,7 +765,7 @@ of fiat currency the user should expect to recieve in exchange for `cryptoAmount
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. The `quote.quoteId` field
-is an identifier for the quote that is unique for the user who requested it, and is used by the client to initiate a transfer at the
+is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
 conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee when initiating transfers until the time indicated in the `quote.guaranteedUntil` field.
 
