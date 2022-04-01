@@ -1259,8 +1259,7 @@ return an HTTP `400` error code, along with the following response body:
 
 ###### 3.3.4.1.2.3. HTTP `404`
 
-If the selected fiat account does not exist, or if a quote with the quote ID given in the request does not exist,
-the server MUST respond with an HTTP `404` error code, along with the following response body:
+If the selected fiat account does not exist, the server MUST respond with an HTTP `404` error code, along with the following response body:
 
 ```
 {
