@@ -601,9 +601,9 @@ of fiat currency required in order to receive the requested amount of crypto.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. The `quote.quoteId` field
-is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the 
+is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
 conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
-provided conversion rate and fee when initiating transfers until the time indicated in the `quote.guaranteedUntil` field.
+provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
 
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
 a particular `FiatAccountType` respectively. A server MAY include these in the response. If included, these MUST be strings representing time deltas in number of seconds. If included, a server
@@ -706,7 +706,8 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `float`,
 		cryptoAmount: `float`,
-		guaranteedUntil?: `string`
+		quoteId: `string`,
+		guaranteedUntil: `string`
 	},
 	kyc: {
 		kycRequired: `boolean`,
@@ -767,7 +768,7 @@ The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoA
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. The `quote.quoteId` field
 is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
 conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
-provided conversion rate and fee when initiating transfers until the time indicated in the `quote.guaranteedUntil` field.
+provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
 
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
 a particular `FiatAccountType` respectively. A server MAY include these in the response. If included, these MUST be strings representing time deltas in number of seconds. If included, a server
