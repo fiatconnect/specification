@@ -541,7 +541,8 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `float`,
 		cryptoAmount: `float`,
-		guaranteedUntil?: `string`
+		quoteId: `string`,
+		guaranteedUntil: `string`
 	},
 	kyc: {
 		kycRequired: `boolean`,
@@ -597,9 +598,8 @@ receive by providing `fiatAmount` worth of the fiat currency. If `cryptoAmount` 
 of fiat currency required in order to receive the requested amount of crypto.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
-The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. A server MAY choose to provide this value. If it does not, the client should assume that
-the server makes no guarantees about the actual conversion rate when performing a transfer for the given quote. If a server provides this value in the response, it MUST honor the
-provided conversion rate when initiating transfers until the time indiciated in the `quote.guaranteedUntil` field.
+The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. A server MUST provide this value, and MUST honor the
+provided conversion rate when initiating transfers until the time indicated in the `quote.guaranteedUntil` field.
 
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
 a particular `FiatAccountType` respectively. A server MAY include these in the response. If included, these MUST be strings representing time deltas in number of seconds. If included, a server
@@ -762,7 +762,7 @@ of fiat currency the user should expect to recieve in exchange for `cryptoAmount
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. A server MAY choose to provide this value. If it does not, the client should assume that
 the server makes no guarantees about the actual conversion rate when performing a transfer for the given quote. If a server provides this value in the response, it MUST honor the
-provided conversion rate when initiating transfers until the time indiciated in the `quote.guaranteedUntil` field.
+provided conversion rate when initiating transfers until the time indicated in the `quote.guaranteedUntil` field.
 
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
 a particular `FiatAccountType` respectively. A server MAY include these in the response. If included, these MUST be strings representing time deltas in number of seconds. If included, a server
@@ -1224,6 +1224,8 @@ The request body must contain the following fields:
   - The amount of fiat currency to transfer in.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
+* `quoteId`: {`string`} [REQUIRED]
+  - Identifier of the quote to use for the transfer.
 
 ##### 3.3.4.1.2. Responses
 
@@ -1252,7 +1254,8 @@ return an HTTP `400` error code, along with the following response body:
 
 ###### 3.3.4.1.2.3. HTTP `404`
 
-If the selected fiat account does not exist, the server MUST respond with an HTTP `404` error code, along with the following response body:
+If the selected fiat account does not exist, or if a quote with the quote ID given in the request does not exist,
+the server MUST respond with an HTTP `404` error code, along with the following response body:
 
 ```
 {
@@ -1269,7 +1272,9 @@ respect to idempotency key errors.
 
 This endpoint allows a user to initiate a new transfer in request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
-and the user has non-expired KYC on file, the server MUST respond with an HTTP `200` and initiate the transfer. When a new transfer is initiated, the server MUST
+and the user has non-expired KYC on file, and the quote with `quoteId` has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
+For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the original quote MUST be used.
+When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks, and the server supports them, the server
 MUST call the user-specified webhook before returning an HTTP `200`. The response body MUST contain a `transferAddress`, indiciating the address that the provider will
 use to send funds to the user's address from.
@@ -1287,13 +1292,18 @@ This endpoint may fail for a number of reasons; the error code returned by the e
 
 If a user's KYC has expired for their current geo, the server MUST reject the transfer and return a `KycExpired` error.
 
-###### 3.3.4.1.3.2.2. `TransferNotAllowed`
+###### 3.3.4.1.3.2.2. `QuoteExpired`
+
+If the quote associated with `quoteId` is expired, the server MUST reject the transfer and return a `QuoteExpired` error.
+
+###### 3.3.4.1.3.2.3. `TransferNotAllowed`
 
 If a transfer is not allowed for a generic reason (such as unacceptable transfer parameters) the server MUST reject the transfer and return a `TransferNotAllowed` error.
 
-###### 3.3.4.1.3.2.3. `ResourceNotFound`
+###### 3.3.4.1.3.2.4. `ResourceNotFound`
 
-If the selected `fiatAccountId` is not found for the current user, the server MUST reject the transfer and return a `ResourceNotFound` error.
+If the selected `fiatAccountId` is not found for the current user, or if a quote with `quoteId` does not exist,
+the server MUST reject the transfer and return a `ResourceNotFound` error.
 
 #### 3.3.4.2. `POST /transfer/out`
 
@@ -1318,6 +1328,8 @@ The request body must contain the following fields:
   - The amount of cryptocurrency to transfer out.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
+* `quoteId`: {`string`} [REQUIRED]
+  - Identifier of the quote to use for the transfer.
 
 ##### 3.3.4.2.2. Responses
 
@@ -1363,7 +1375,9 @@ respect to idempotency key errors.
 
 This endpoint allows a user to initiate a new transfer out request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
-and the user has non-expired KYC on file, the server MUST respond with an HTTP `200` and initiate the transfer. When a new transfer is initiated, the server MUST
+and the user has non-expired KYC on file, and the quote with `quoteId` has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
+For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the quote MUST be used.
+When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks the server
 MUST call the user-specified webhook before returning an HTTP `200`. The server MUST also return a `transferAddress` representing the address that the user must send
 funds to in order to initiate the transfer.
@@ -1385,7 +1399,11 @@ If a user's KYC has expired for their current geo, the server MUST reject the tr
 
 If a transfer is not allowed for a generic reason (such as unacceptable transfer parameters) the server MUST reject the transfer and return a `TransferNotAllowed` error.
 
-###### 3.3.4.2.3.2.3. `ResourceNotFound`
+###### 3.3.4.2.3.2.3. `QuoteExpired`
+
+If the quote associated with `quoteId` is expired, the server MUST reject the transfer and return a `QuoteExpired` error.
+
+###### 3.3.4.2.3.2.4. `ResourceNotFound`
 
 If the selected `fiatAccountId` is not found for the current user, the server MUST reject the transfer and return a `ResourceNotFound` error.
 
