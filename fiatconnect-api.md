@@ -526,7 +526,7 @@ used for the transfer.
 * `cryptoAmount`: {`float`}
   - The amount of the selected crypto type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
 * `country`: {`string`} [REQUIRED]
-  - An ISO 3166-1 country code representing the country where the quote should be requested for.
+  - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
 * `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 
@@ -692,7 +692,7 @@ The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out 
 * `cryptoAmount`: {`float`}
   - The amount of the selected crypto type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
 * `country`: {`string`} [REQUIRED]
-  - An ISO 3166-1 country code representing the country where the quote should be requested for.
+  - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
 * `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 
