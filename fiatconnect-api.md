@@ -1277,7 +1277,7 @@ respect to idempotency key errors.
 
 This endpoint allows a user to initiate a new transfer in request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
-and the user has non-expired KYC on file, and a quote with a matching `quoteId` exists and has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
+and the user has non-expired KYC on file, and a quote with a matching `quoteId` exists for the user and has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
 For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the original quote MUST be used.
 When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks, and the server supports them, the server
@@ -1303,8 +1303,8 @@ If a transfer is not allowed for a generic reason (such as unacceptable transfer
 
 ###### 3.3.4.1.3.2.3. `InvalidQuote`
 
-If the quote associated with `quoteId` is expired, or if no quote is found with a matching `quoteId`, the server MUST
-reject the transfer and return an `InvalidQuote` error.
+If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST
+reject the transfer and return an `InvalidQuote` error. 
 
 ###### 3.3.4.1.3.2.4. `ResourceNotFound`
 
@@ -1380,7 +1380,7 @@ respect to idempotency key errors.
 
 This endpoint allows a user to initiate a new transfer out request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
-and the user has non-expired KYC on file, and a quote with a matching `quoteId` exists and has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
+and the user has non-expired KYC on file, and a quote with a matching `quoteId` exists for the user and has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
 For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the quote MUST be used.
 When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks the server
@@ -1406,7 +1406,7 @@ If a transfer is not allowed for a generic reason (such as unacceptable transfer
 
 ###### 3.3.4.2.3.2.3. `InvalidQuote`
 
-If the quote associated with `quoteId` is expired, or if no quote is found with a matching `quoteId`, the server MUST 
+If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST 
 reject the transfer and return an `InvalidQuote` error.
 
 ###### 3.3.4.2.3.2.4. `ResourceNotFound`
