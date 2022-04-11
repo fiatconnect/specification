@@ -1752,6 +1752,11 @@ The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wi
 schema for Nigeria, they can set the `allowedValues` field for `country` in the quote endpoint response to `['NG']`. With this information, the client will know
 to prompt the user for a Nigeria-specific account number.
 
+Depending on the `allowedValues` field for `country`, the client SHOULD impose restrictions on the type of data the user can provide for the `accountNumber` field. A non-exhaustive list
+is below:
+
+* `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
+
 # 8. References
 
 ## 8.1. Normative References
