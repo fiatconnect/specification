@@ -1748,7 +1748,7 @@ account information from the `GET /accounts` endpoint.
 }
 ```
 
-The `country` field is meant to provide a way for providers to specify which country this data is meant for. For example, if a provider is expecting an `AccountNumber`
+The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The field is for providers to specify which country this data is meant for. For example, if a provider is expecting an `AccountNumber`
 schema for Nigeria, they can set the `allowedValues` field for `country` in the quote endpoint response to `['NG']`. With this information, the client will know
 to prompt the user for a Nigeria-specific account number.
 
