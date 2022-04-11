@@ -1664,7 +1664,9 @@ An enum listing the types of fiat currencies supported by FiatConnect.
 [
   `USD`,
   `EUR`,
-  `REAL`
+  `REAL`,
+  `XOF`,
+  `GNF`
 ]
 ```
 
@@ -1698,7 +1700,9 @@ represents what *kind* of account that schema represents.
 
 ```
 [
-	`BankAccount`
+	`BankAccount`,
+  `MobileMoney`,
+  `DuniaWallet`
 ]
 ```
 

@@ -427,6 +427,8 @@ definitions:
       - USD
       - EUR
       - REAL
+      - XOF
+      - GNF
   CryptoType:
     type: "string"
     enum:
@@ -450,6 +452,8 @@ definitions:
       - CreditCard
       - DebitCard
       - CheckingAccount
+      - MobileMoney
+      - DuniaWallet
   FiatAccountSchemaEnum:
     type: "string"
   QuoteRequest:
