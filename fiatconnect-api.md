@@ -1662,9 +1662,14 @@ An enum listing the types of fiat currencies supported by FiatConnect.
 
 ```
 [
+<<<<<<< HEAD
   `USD`,
   `EUR`,
   `REAL`,
+=======
+	`USD`,
+	`EUR`,
+>>>>>>> Fix rebase conflicts
   `XOF`,
   `GNF`
 ]
