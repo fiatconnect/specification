@@ -54,6 +54,7 @@
             - [3.3.1.1.3.2.5. `FiatAmountTooHigh`](#3311325--fiatamounttoohigh-)
             - [3.3.1.1.3.2.6. `CryptoNotSupported`](#3311326--cryptonotsupported-)
             - [3.3.1.1.3.2.7. `FiatNotSupported`](#3311327--fiatnotsupported-)
+            - [3.3.1.1.3.2.8. `InvalidParameters`](#3311328--invalidparameters-)
       - [3.3.1.2. `GET /quote/out`](#3312--get--quote-out-)
         * [3.3.1.2.1. Parameters](#33121-parameters)
           + [3.3.1.2.1.1. Query Parameters](#331211-query-parameters)
@@ -70,6 +71,7 @@
             - [3.3.1.2.3.2.5. `FiatAmountTooHigh`](#3312325--fiatamounttoohigh-)
             - [3.3.1.2.3.2.6. `CryptoNotSupported`](#3312326--cryptonotsupported-)
             - [3.3.1.2.3.2.7. `FiatNotSupported`](#3312327--fiatnotsupported-)
+            - [3.3.1.2.3.2.8. `InvalidParameters`](#3311328--invalidparameters-)
     + [3.3.2. KYC Endpoints](#332-kyc-endpoints)
       - [3.3.2.1. `POST /kyc/:kycSchema`](#3321--post--kyc--kycschema-)
         * [3.3.2.1.1. Parameters](#33211-parameters)
@@ -151,7 +153,8 @@
           + [3.3.4.1.3.2. Failure](#334132-failure)
             - [3.3.4.1.3.2.1. `KycExpired`](#3341321--kycexpired-)
             - [3.3.4.1.3.2.2. `TransferNotAllowed`](#3341322--transfernotallowed-)
-            - [3.3.4.1.3.2.3. `ResourceNotFound`](#3341323--resourcenotfound-)
+            - [3.3.4.1.3.2.3. `InvalidQuote`](#3341323--invalidquote-)
+            - [3.3.4.1.3.2.4. `ResourceNotFound`](#3341324--resourcenotfound-)
       - [3.3.4.2. `POST /transfer/out`](#3342--post--transfer-out-)
         * [3.3.4.2.1. Parameters](#33421-parameters)
           + [3.3.4.2.1.1. Headers](#334211-headers)
@@ -166,7 +169,8 @@
           + [3.3.4.2.3.2. Failure](#334232-failure)
             - [3.3.4.2.3.2.1. `KycExpired`](#3342321--kycexpired-)
             - [3.3.4.2.3.2.2. `TransferNotAllowed`](#3342322--transfernotallowed-)
-            - [3.3.4.2.3.2.3. `ResourceNotFound`](#3342323--resourcenotfound-)
+            - [3.3.4.2.3.2.3. `InvalidQuote`](#3342323--invalidquote-)
+            - [3.3.4.2.3.2.4. `ResourceNotFound`](#3342324--resourcenotfound-)
       - [3.3.4.3. `GET /transfer/:transferId/status`](#3343--get--transfer--transferid-status-)
         * [3.3.4.3.1. Parameters](#33431-parameters)
           + [3.3.4.3.1.1. Path Parameters](#334311-path-parameters)
@@ -203,6 +207,10 @@
     + [7.2.6. `FeeFrequencyEnum`](#726--feetypeenum-)
     + [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
   * [7.3. Initial Entity Support](#73-initial-entity-support)
+    + [7.3.1. KYC Schemas](#731-kyc-schemas)
+	  - [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
+	+ [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
+	  - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
 - [8. References](#8-references)
   * [8.1. Normative References](#81-normative-references)
     + [8.1.1. [RFC2119]](#811--rfc2119-)
@@ -639,7 +647,7 @@ used for the transfer.
 * `cryptoAmount`: {`float`}
   - The amount of the selected crypto type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
 * `country`: {`string`} [REQUIRED]
-  - An ISO 3166-1 country code representing the country where the quote should be requested for.
+  - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
 * `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 * `address`: {`string`} [REQUIRED]
@@ -659,7 +667,8 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `float`,
 		cryptoAmount: `float`,
-		guaranteedUntil?: `string`
+		quoteId: `string`,
+		guaranteedUntil: `string`
 	},
 	kyc: {
 		kycRequired: `boolean`,
@@ -715,9 +724,10 @@ receive by providing `fiatAmount` worth of the fiat currency. If `cryptoAmount` 
 of fiat currency required in order to receive the requested amount of crypto.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
-The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. A server MAY choose to provide this value. If it does not, the client should assume that
-the server makes no guarantees about the actual conversion rate when performing a transfer for the given quote. If a server provides this value in the response, it MUST honor the
-provided conversion rate when initiating transfers until the time indiciated in the `quote.guaranteedUntil` field.
+The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. The `quote.quoteId` field
+is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
+conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
+provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
 
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
 a particular `FiatAccountType` respectively. A server MAY include these in the response. If included, these MUST be strings representing time deltas in number of seconds. If included, a server
@@ -786,6 +796,11 @@ the server MUST return a `CryptoNotSupported` error.
 If the provided `fiatType` is unsupported in the user's current region, but the server supports other transfers in their region,
 the server MUST return a `FiatNotSupported` error.
 
+###### 3.3.1.1.3.2.8. `InvalidParameters`
+
+If the request is missing any required parameters, or if the parameters are poorly formed, the server MUST respond
+with an `InvalidParameters` error.
+
 #### 3.3.1.2. `GET /quote/out`
 
 The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out from crypto to fiat currencies.
@@ -803,7 +818,7 @@ The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out 
 * `cryptoAmount`: {`float`}
   - The amount of the selected crypto type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
 * `country`: {`string`} [REQUIRED]
-  - An ISO 3166-1 country code representing the country where the quote should be requested for.
+  - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
 * `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 * `address`: {`string`} [REQUIRED]
@@ -823,7 +838,8 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `float`,
 		cryptoAmount: `float`,
-		guaranteedUntil?: `string`
+		quoteId: `string`,
+		guaranteedUntil: `string`
 	},
 	kyc: {
 		kycRequired: `boolean`,
@@ -881,9 +897,10 @@ in order to recieve `fiatAmount` worth of the fiat currency. If `cryptoAmount` i
 of fiat currency the user should expect to recieve in exchange for `cryptoAmount` worth of the cryptocurrency.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
-The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. A server MAY choose to provide this value. If it does not, the client should assume that
-the server makes no guarantees about the actual conversion rate when performing a transfer for the given quote. If a server provides this value in the response, it MUST honor the
-provided conversion rate when initiating transfers until the time indiciated in the `quote.guaranteedUntil` field.
+The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. The `quote.quoteId` field
+is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
+conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
+provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
 
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
 a particular `FiatAccountType` respectively. A server MAY include these in the response. If included, these MUST be strings representing time deltas in number of seconds. If included, a server
@@ -951,6 +968,11 @@ the server MUST return a `CryptoNotSupported` error.
 
 If the provided `fiatType` is unsupported in the user's current region, but the server supports other transfers in their region,
 the server MUST return a `FiatNotSupported` error.
+
+###### 3.3.1.2.3.2.8. `InvalidParameters`
+
+If the request is missing any required parameters, or if the parameters are poorly formed, the server MUST respond
+with an `InvalidParameters` error.
 
 ### 3.3.2. KYC Endpoints
 
@@ -1177,8 +1199,8 @@ On success, the server MUST respond with an HTTP `200` status code, along with a
 ```
 {
 	fiatAccountId: `string`,
-	name: `string`,
-	institution: `string`,
+	accountName: `string`,
+	institutionName: `string`,
 	fiatAccountType: `FiatAccountTypeEnum`
 }
 ```
@@ -1251,8 +1273,8 @@ this is a mapping from fiat account types that the user has on file to metadata 
 {
 	[FiatAccountTypeEnum]: [{
 		fiatAccountId: `string`,
-		name: `string`,
-		institution: `string`,
+		accountName: `string`,
+		institutionName: `string`,
 		fiatAccountType: `FiatAccountTypeEnum`
 	}]
 }
@@ -1345,6 +1367,8 @@ The request body must contain the following fields:
   - The amount of fiat currency to transfer in.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
+* `quoteId`: {`string`} [REQUIRED]
+  - Identifier of the quote to use for the transfer.
 
 ##### 3.3.4.1.2. Responses
 
@@ -1390,7 +1414,9 @@ respect to idempotency key errors.
 
 This endpoint allows a user to initiate a new transfer in request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
-and the user has non-expired KYC on file, the server MUST respond with an HTTP `200` and initiate the transfer. When a new transfer is initiated, the server MUST
+and the user has non-expired KYC on file, and a quote with a matching `quoteId` exists for the user and has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
+For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the original quote MUST be used.
+When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks, and the server supports them, the server
 MUST call the user-specified webhook before returning an HTTP `200`. The response body MUST contain a `transferAddress`, indiciating the address that the provider will
 use to send funds to the user's address from.
@@ -1412,7 +1438,12 @@ If a user's KYC has expired for their current geo, the server MUST reject the tr
 
 If a transfer is not allowed for a generic reason (such as unacceptable transfer parameters) the server MUST reject the transfer and return a `TransferNotAllowed` error.
 
-###### 3.3.4.1.3.2.3. `ResourceNotFound`
+###### 3.3.4.1.3.2.3. `InvalidQuote`
+
+If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST
+reject the transfer and return an `InvalidQuote` error. 
+
+###### 3.3.4.1.3.2.4. `ResourceNotFound`
 
 If the selected `fiatAccountId` is not found for the current user, the server MUST reject the transfer and return a `ResourceNotFound` error.
 
@@ -1439,6 +1470,8 @@ The request body must contain the following fields:
   - The amount of cryptocurrency to transfer out.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
+* `quoteId`: {`string`} [REQUIRED]
+  - Identifier of the quote to use for the transfer.
 
 ##### 3.3.4.2.2. Responses
 
@@ -1484,7 +1517,9 @@ respect to idempotency key errors.
 
 This endpoint allows a user to initiate a new transfer out request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
-and the user has non-expired KYC on file, the server MUST respond with an HTTP `200` and initiate the transfer. When a new transfer is initiated, the server MUST
+and the user has non-expired KYC on file, and a quote with a matching `quoteId` exists for the user and has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
+For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the quote MUST be used.
+When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks the server
 MUST call the user-specified webhook before returning an HTTP `200`. The server MUST also return a `transferAddress` representing the address that the user must send
 funds to in order to initiate the transfer.
@@ -1506,7 +1541,12 @@ If a user's KYC has expired for their current geo, the server MUST reject the tr
 
 If a transfer is not allowed for a generic reason (such as unacceptable transfer parameters) the server MUST reject the transfer and return a `TransferNotAllowed` error.
 
-###### 3.3.4.2.3.2.3. `ResourceNotFound`
+###### 3.3.4.2.3.2.3. `InvalidQuote`
+
+If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST 
+reject the transfer and return an `InvalidQuote` error.
+
+###### 3.3.4.2.3.2.4. `ResourceNotFound`
 
 If the selected `fiatAccountId` is not found for the current user, the server MUST reject the transfer and return a `ResourceNotFound` error.
 
@@ -1628,7 +1668,7 @@ facilitate AML checks, if required.
 
 # 6. Sandbox Environment
 
-In order to facilitate ease of client integration and testing against FiatConnect-compliant APIs, each FiatConnect API SHOULD have a corresponding *sandbox*
+In order to facilitate ease of client integration and testing against FiatConnect-compliant APIs, each FiatConnect API MUST have a corresponding *sandbox*
 API available. This sandbox API should be identical in behavior to the production FiatConnect API in every way, except for a number of key differences.
 
 ## 6.1. Celo Network
@@ -1780,13 +1820,11 @@ An enum listing the KYC schema types recognized by the FiatConnect specification
 ### 7.2.4. `FiatAccountTypeEnum`
 
 An enum listing the *types* of Fiat Accounts recognized by the FiatConnect specification. A Fiat Account Type is a property of each Fiat Account Schema, and
-represents what *kind* of account that schema represents; e.g., Debit Card, Credit Card, Checking Account, etc.
+represents what *kind* of account that schema represents.
 
 ```
 [
-	`CheckingAccount`,
-	`DebitCard`,
-	`CreditCard`
+	`BankAccount`
 ]
 ```
 
@@ -1814,9 +1852,17 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 
 ### 7.2.7. `FiatAccountSchemaEnum`
 
-An enum listing the Fiat Account schemas recognized by the FiatConnect specification. To be determined once initial Fiat Account schemas are known.
+```
+[
+	`AccountNumber`
+]
+```
 
-### 7.2.8. `PersonalDataAndDocuments`
+## 7.3. Initial Entity Support
+
+### 7.3.1. KYC Schemas
+
+#### 7.3.1.1. `PersonalDataAndDocuments`
 
 A KYC schema containing personal data about a user, as well as documents such as an ID photo and selfie.
 
@@ -1846,10 +1892,35 @@ A KYC schema containing personal data about a user, as well as documents such as
 
 The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
 
-## 7.3. Initial Entity Support
+### 7.3.2. Fiat Account Schemas
 
-This section details the initial entity support for FiatConnect. In particular, the initial KYC and Fiat Account schemas that the FiatConnect specification
-should support for initial integrators. This section is pending further research and feedback from potential CICO providers.
+All Fiat Account Schemas supported by FiatConnect MUST contain the `accountName`, `institutionName`, and `fiatAccountType` fields. `accountName` is a friendly, user-definable name for the account.
+`institutionName` is a user-friendly name representing the financial institution/organization the account is with, and `fiatAccountType` is a `FiatAccountTypeEnum` value,
+representing the type of fiat account this schema represents. The `institutionName` and `accountName` fields are required in order for the API to return obfuscated but distinguishable
+account information from the `GET /accounts` endpoint.
+
+####  7.3.2.1. `AccountNumber`
+
+`AccountNumber` is a Fiat Account schema that represents accounts where the only identifying information required is some `accountNumber` string.
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	accountNumber: `string`,
+	country: `string`
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
+}
+```
+
+The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The field is for providers to specify which country this data is meant for. For example, if a provider is expecting an `AccountNumber`
+schema for Nigeria, they can set the `allowedValues` field for `country` in the quote endpoint response to `['NG']`. With this information, the client will know
+to prompt the user for a Nigeria-specific account number.
+
+Depending on the `allowedValues` field for `country`, the client SHOULD impose restrictions on the type of data the user can provide for the `accountNumber` field. A non-exhaustive list
+is below:
+
+* `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
 
 # 8. References
 
