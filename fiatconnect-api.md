@@ -193,6 +193,10 @@
     + [7.2.6. `FeeFrequencyEnum`](#726--feetypeenum-)
     + [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
   * [7.3. Initial Entity Support](#73-initial-entity-support)
+    + [7.3.1. KYC Schemas](#731-kyc-schemas)
+	  - [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
+	+ [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
+	  - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
 - [8. References](#8-references)
   * [8.1. Normative References](#81-normative-references)
     + [8.1.1. [RFC2119]](#811--rfc2119-)
@@ -1068,8 +1072,8 @@ On success, the server MUST respond with an HTTP `200` status code, along with a
 ```
 {
 	fiatAccountId: `string`,
-	name: `string`,
-	institution: `string`,
+	accountName: `string`,
+	institutionName: `string`,
 	fiatAccountType: `FiatAccountTypeEnum`
 }
 ```
@@ -1142,8 +1146,8 @@ this is a mapping from fiat account types that the user has on file to metadata 
 {
 	[FiatAccountTypeEnum]: [{
 		fiatAccountId: `string`,
-		name: `string`,
-		institution: `string`,
+		accountName: `string`,
+		institutionName: `string`,
 		fiatAccountType: `FiatAccountTypeEnum`
 	}]
 }
@@ -1666,13 +1670,11 @@ An enum listing the KYC schema types recognized by the FiatConnect specification
 ### 7.2.4. `FiatAccountTypeEnum`
 
 An enum listing the *types* of Fiat Accounts recognized by the FiatConnect specification. A Fiat Account Type is a property of each Fiat Account Schema, and
-represents what *kind* of account that schema represents; e.g., Debit Card, Credit Card, Checking Account, etc.
+represents what *kind* of account that schema represents.
 
 ```
 [
-	`CheckingAccount`,
-	`DebitCard`,
-	`CreditCard`,
+	`BankAccount`,
   `MobileMoney`,
   `DuniaWallet`
 ]
@@ -1702,9 +1704,17 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 
 ### 7.2.7. `FiatAccountSchemaEnum`
 
-An enum listing the Fiat Account schemas recognized by the FiatConnect specification. To be determined once initial Fiat Account schemas are known.
+```
+[
+	`AccountNumber`
+]
+```
 
-### 7.2.8. `PersonalDataAndDocuments`
+## 7.3. Initial Entity Support
+
+### 7.3.1. KYC Schemas
+
+#### 7.3.1.1. `PersonalDataAndDocuments`
 
 A KYC schema containing personal data about a user, as well as documents such as an ID photo and selfie.
 
@@ -1734,10 +1744,58 @@ A KYC schema containing personal data about a user, as well as documents such as
 
 The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
 
-## 7.3. Initial Entity Support
+### 7.3.2. Fiat Account Schemas
 
-This section details the initial entity support for FiatConnect. In particular, the initial KYC and Fiat Account schemas that the FiatConnect specification
-should support for initial integrators. This section is pending further research and feedback from potential CICO providers.
+All Fiat Account Schemas supported by FiatConnect MUST contain the `accountName`, `institutionName`, and `fiatAccountType` fields. `accountName` is a friendly, user-definable name for the account.
+`institutionName` is a user-friendly name representing the financial institution/organization the account is with, and `fiatAccountType` is a `FiatAccountTypeEnum` value,
+representing the type of fiat account this schema represents. The `institutionName` and `accountName` fields are required in order for the API to return obfuscated but distinguishable
+account information from the `GET /accounts` endpoint.
+
+####  7.3.2.1. `AccountNumber`
+
+`AccountNumber` is a Fiat Account schema that represents accounts where the only identifying information required is some `accountNumber` string.
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	accountNumber: `string`,
+	country: `string`
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
+}
+```
+
+The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The field is for providers to specify which country this data is meant for. For example, if a provider is expecting an `AccountNumber`
+schema for Nigeria, they can set the `allowedValues` field for `country` in the quote endpoint response to `['NG']`. With this information, the client will know
+to prompt the user for a Nigeria-specific account number.
+
+Depending on the `allowedValues` field for `country`, the client SHOULD impose restrictions on the type of data the user can provide for the `accountNumber` field. A non-exhaustive list
+is below:
+
+* `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
+
+#### 7.3.2.2. `MobileMoney`
+
+Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
+`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users with the country code (i.e., +225).
+
+```
+{
+  mobile: `string`,
+  operator: `string`
+}
+```
+
+#### 7.3.2.3. `DuniaWallet`
+
+The Dunia wallet is a proprietary wallet for people that created an account on [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
+platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The `mobile` phone should contains the country code (i.e., +225).
+
+```
+{
+  mobile: `string`
+}
+```
 
 # 8. References
 
