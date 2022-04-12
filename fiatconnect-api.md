@@ -1786,6 +1786,13 @@ Most of the mobile money's providers require only the phone number to process a 
 }
 ```
 
+Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. A non-exhaustive list for Côte d'Ivoire is below:
+
+* `'ORANGE'`: For Orange a mobile operator
+* `'MOOV'`: For Moov Africa a mobile operator
+
+Those are just example for Côte d'Ivoire. The idea is to list all mobile money operator supported by each CI/CO provider for each country.
+
 #### 7.3.2.3. `DuniaWallet`
 
 The Dunia wallet is a proprietary wallet for people that created an account on [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
