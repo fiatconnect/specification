@@ -1662,8 +1662,8 @@ An enum listing the types of fiat currencies supported by FiatConnect.
 
 ```
 [
-	`USD`,
-	`EUR`,
+  `USD`,
+  `EUR`,
   `REAL`
 ]
 ```
@@ -1674,10 +1674,10 @@ An enum listing the types of crypto tokens suppored by FiatConnect.
 
 ```
 [
-	`cUSD`,
-	`cEUR`,
+  `cUSD`,
+  `cEUR`,
   `cREAL`,
-	`CELO`
+  `CELO`
 ]
 ```
 
