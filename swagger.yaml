@@ -449,9 +449,7 @@ definitions:
   FiatAccountTypeEnum:
     type: "string"
     enum:
-      - CreditCard
-      - DebitCard
-      - CheckingAccount
+      - BankAccount
       - MobileMoney
       - DuniaWallet
   FiatAccountSchemaEnum:

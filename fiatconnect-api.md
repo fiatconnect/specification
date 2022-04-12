@@ -1805,6 +1805,29 @@ is below:
 
 * `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
 
+#### 7.3.2.2. `MobileMoney`
+
+Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
+`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users with the country code (i.e., +225).
+
+```
+{
+  mobile: `string`,
+  operator: `string`
+}
+```
+
+#### 7.3.2.3. `DuniaWallet`
+
+The Dunia wallet is a proprietary wallet for people that created an account on [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
+platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The `mobile` phone should contains the country code (i.e., +225).
+
+```
+{
+  mobile: `string`
+}
+```
+
 # 8. References
 
 ## 8.1. Normative References
