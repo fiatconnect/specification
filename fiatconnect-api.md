@@ -415,10 +415,10 @@ languages.
 #### 3.2.1.2. SIWE Sessions
 
 At a high level, the client will craft a SIWE-compliant message and sign it with the user's private key. This message will contain various parameters relating
-to the origin URL which they're requesting to be authorized against, desired session length, etc. Once the client has crafted and signed the message, it will send
-it to a FiatConnect API at a `POST /auth/login` endpoint. The server will validate the signature, and check that all the included fields in the signed message are valid.
+to the origin URL which they're requesting to be authorized against, desired session length, etc. Once the client has crafted and signed the message, the client will send
+ithe signed message to a FiatConnect API at a `POST /auth/login` endpoint. The server will validate the signature, and check that all the included fields in the signed message are valid.
 If everything checks out, the server will create a session for the user according to the details in the signed message. Once the server has created the session,
-it responds to the client with a `200`, and returns session cookies that the client can use in subsequent requests to priveleged endpoints on behalf of the signed-in address.
+it responds to the client with a `200`, and returns session cookies that the client can use in subsequent requests to privileged endpoints on behalf of the signed-in address.
 
 #### 3.2.1.3. SIWE Message Format
 
@@ -448,15 +448,15 @@ The `expiration-time` field MUST be an ISO 8601 datetime string that specifies w
 will expire. This field MUST NOT be more than four hours (14400 seconds) later than the `issued-at` field.
 
 Note that in cases where a client is attempting to authorize themselves as the owner of a contract-owned account (rather than an externally-owned account), the `address`
-field MUST correspond to the address of the on-chain contract account, rather than the EOA address. In all cases, however, the client should still sign the message using
-the EOA's private key.
+field MUST correspond to the address of the on-chain contract account, rather than the externally-owned account (EOA) address. In all cases, however, the client should
+still sign the message using the EOA's private key.
 
 #### 3.2.1.4. Session Cookies
 
 Once the client generates a SIWE-compliant plaintext message, it signs it with the user's externally-owned account private key, resulting in an [EIP-191](https://eips.ethereum.org/EIPS/eip-191)
 Signed Data Standard format message. After generating the signed message, the client will send it to the server at a `POST /auth/login` endpoint, described below. If the server
 accepts the signed message as valid, it will respond with a session cookie linked that identifies the user's authenticated session within the server. The name of the session
-cookie is not specified by this specification, but the server MUST use a consistent name for the session cookie, and SHOULD make a best-effort at choosing a unique name, that
+cookie is not mandated by this specification, but the server MUST use a consistent name for the session cookie, and SHOULD make a best-effort at choosing a unique name, that
 will not conflict with the session cookies served by other FiatConnect-compliant APIs. It is the client's responsibility to manage session cookies between different FiatConnect
 APIs.
 
@@ -467,8 +467,8 @@ and return it to the client.
 #### 3.2.1.5. `POST /auth/login`
 
 The `POST /auth/login` endpoint is responsible for verifying signed messages sent by clients, creating and authenticating a user's session, and returning session cookies.
-Note that both the Sign-In With Ethereum standard, and FiatConnect, support authorization for externally owned accounts (EOAs) and contract-owned accounts; this endpoint
-MUST honor login requests for both, as described below.
+Note that both the Sign-In With Ethereum standard, and FiatConnect, support authorization for externally owned accounts (EOAs) and contract-owned accounts; The `POST /auth/login`
+endpoint MUST honor login requests for both, as described below.
 
 ##### 3.2.1.5.1. Parameters
 
@@ -501,7 +501,7 @@ and returns a `200`.
 
 ###### 3.2.1.5.3.1. Success
 
-On success, the server MUST respond with a `200` status code. The server MUST only respond successfully after performing the following checks.
+On success, the server MUST respond with a `200` status code. The server MUST only respond successfully after performing the following checks:
 
 * A server MUST verify that the signature of the request body is valid and corresponds to the `address` field included in the signed message. If the signature does not
   correspond to the address field, the server MUST assume that the value given for `address` corresponds to a contract-owned account, and attempt to verify that the
@@ -513,7 +513,7 @@ On success, the server MUST respond with a `200` status code. The server MUST on
 
 * A server MUST verify that the `Version` and `Chain ID` lines in the signed message are exactly `1` and `42220`, respectively.
 
-* If the `issued-at` field in the signed message is before the server's current timestamp, or if the `issued-at` field is after the `expiration-time` field, the server
+* If the `issued-at` field in the signed message is after the server's current timestamp, or if the `issued-at` field is after the `expiration-time` field, the server
   MUST fail the request. If the server's current timestamp is past the `expiration-time` field, the server MUST fail the request. If the `expiration-time` field is
   greater than four hours (14400 seconds) ahead of the `issued-at` field, the server MUST fail the request.
 
@@ -530,7 +530,10 @@ On failure, the server MUST return an HTTP `401` error, along with an error code
 
 ###### 3.2.1.5.3.2.1 `InvalidSignature`
 
-If the signature is invalid or doesn't match the included `address` field, the server MUST return an `InvalidSignature` error.
+If the signature is invalid or doesn't match the included `address` field, the server MUST return an `InvalidSignature` error. Note that the address used
+to sign the message may not actually match the address being authenticated in the case where the client is authenticating as a contract-owned account. In
+such cases, `InvalidSignature` MUST NOT be returned when the signature is valid, and the address used to sign the message is considered valid by the contract
+referenced in the `address` field.
 
 ###### 3.2.1.5.3.2.2 `InvalidParameters`
 
@@ -540,7 +543,7 @@ If the request body is missing, malformed, or fails to pass any of the required 
 
 Once a client has established a session with a server, they can use that session (by sending the session cookie to the server) to access priveleged endpoints
 throughout the API. Certain endpoints impose different requirements on the in-use session. There are *two levels* of endpoints, with respect to their authentication
-requirements. These are explained below.
+requirements. These levels are explained below.
 
 ##### 3.2.1.6.1. Non-Privileged Endpoints
 
@@ -576,7 +579,7 @@ If a client tries to acces any of these endpoints with an expired session, the s
 ### 3.2.2. Client API Key
 
 In addition to the SIWE-based auth used to authenticate users and create sessions, the FiatConnect specification also supports a more traditional authentication standard, used
-*only* to identify specific clients with requests. Recall the webhook-based status monitoring mentioned earlier in this document. In order to support status
+to identify specific clients with requests. Recall the webhook-based status monitoring mentioned earlier in this document. In order to support status
 monitoring via webhooks, individual clients will need to be able to register a URL pointing to an API able to handle webhook updates from the server.
 Once a client has registered a webhook URL with the provider, the client needs a way to identify itself to the server. To uniquely identify clients in order
 to know where to send webhook-based status updates, a server may allow clients to register an API key. The exact mechanism by which servers allocate API keys
@@ -640,7 +643,8 @@ used for the transfer.
 * `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 * `address`: {`string`} [REQUIRED]
-  - An [EIP-55](https://eips.ethereum.org/EIPS/eip-55) formatted address, representing the Celo address of the user to get the quote for.
+  - An [EIP-55](https://eips.ethereum.org/EIPS/eip-55) formatted address, representing the Celo address of the user to get the quote for. For contract-owned accounts, this should be
+	the address of the contract itself.
 
 ##### 3.3.1.1.2. Responses
 
@@ -803,7 +807,8 @@ The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out 
 * `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 * `address`: {`string`} [REQUIRED]
-  - An EIP-55 formatted address, representing the Celo address of the user to get the quote for.
+  - An [EIP-55](https://eips.ethereum.org/EIPS/eip-55) formatted address, representing the Celo address of the user to get the quote for. For contract-owned accounts, this should be
+	the address of the contract itself.
 
 ##### 3.3.1.2.2. Responses
 
