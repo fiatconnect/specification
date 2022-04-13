@@ -428,11 +428,13 @@ definitions:
       - EUR
       - XOF
       - GNF
+      - REAL
   CryptoType:
     type: "string"
     enum:
       - cUSD
       - cEUR
+      - cREAL
       - CELO
   FeeType:
     type: "string"
