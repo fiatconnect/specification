@@ -1783,17 +1783,25 @@ Most of the mobile money's providers require only the phone number to process a 
 
 ```
 {
+  accountName: `string`,
+  institutionName: `string`,
   mobile: `string`,
-  operator: `string`
+  operator: `SupportedOperatorEnum`,
+  fiatAccountType: `FiatAccountTypeEnum.MobileMoney`
 }
 ```
 
-Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. A non-exhaustive list for Côte d'Ivoire is below:
+##### 7.3.2.2.1. `SupportedOperatorEnum`
 
-* `'ORANGE'`: For Orange a mobile operator
-* `'MOOV'`: For Moov Africa a mobile operator
+Depending on the allowed value field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided. For example for Côte d'Ivoire this enum can be :
 
-Those are just example for Côte d'Ivoire. The idea is to list all mobile money operator supported by each CI/CO provider for each country.
+```
+[
+  `ORANGE`,
+  `MOOV`,
+  `MTN`
+]
+```
 
 #### 7.3.2.3. `DuniaWallet`
 
@@ -1802,7 +1810,10 @@ platform can be used to consume Fiat Connect services by providing their `mobile
 
 ```
 {
-  mobile: `string`
+  accountName: `string`,
+  institutionName: `string`,
+  mobile: `string`,
+  fiatAccountType: `FiatAccountTypeEnum.DuniaWallet`
 }
 ```
 
