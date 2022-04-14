@@ -1667,9 +1667,9 @@ An enum listing the types of fiat currencies supported by FiatConnect.
 [
 	`USD`,
 	`EUR`,
-  `XOF`,
-  `GNF`,
-  `REAL`
+	`XOF`,
+	`GNF`,
+	`REAL`
 ]
 ```
 
@@ -1704,8 +1704,8 @@ represents what *kind* of account that schema represents.
 ```
 [
 	`BankAccount`,
-  `MobileMoney`,
-  `DuniaWallet`
+	`MobileMoney`,
+	`DuniaWallet`
 ]
 ```
 
@@ -1806,7 +1806,7 @@ is below:
 #### 7.3.2.2. `MobileMoney`
 
 Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
-`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users with the country code (i.e., +225).
+`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
 
 ```
 {
@@ -1820,20 +1820,21 @@ Most of the mobile money's providers require only the phone number to process a 
 
 ##### 7.3.2.2.1. `SupportedOperatorEnum`
 
-Depending on the allowed value field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided. For example for Côte d'Ivoire this enum can be :
+Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided for each country. Below you can find a list of mobile money provider for each country (PS: New mobile money providers can be added).
 
-```
-[
-  `ORANGE`,
-  `MOOV`,
-  `MTN`
-]
-```
+
+###### 7.3.2.2.1.1. `Côte d'Ivoire`
+
+- `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money) 
+- `MOOV` - [Moov Money](https://www.moov-africa.ci/moov-money/)
+- `MTN` - [Momo](https://www.mtn.ci/vos/depot-et-retrait-momo/)
+- `WAVE` - [Wave](https://www.wave.com/fr/)
 
 #### 7.3.2.3. `DuniaWallet`
 
-The Dunia wallet is a proprietary wallet for people that created an account on [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
-platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The `mobile` phone should contains the country code (i.e., +225).
+The Dunia wallet is a proprietary wallet for people that have an account on the [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
+platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
+
 
 ```
 {
