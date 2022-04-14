@@ -1854,7 +1854,6 @@ Depending on the `allowedValues` field for `operator` in each country, the clien
 The Dunia wallet is a proprietary wallet for people that have an account on the [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
 platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
 
-
 ```
 {
   accountName: `string`,
