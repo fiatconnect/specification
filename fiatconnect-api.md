@@ -4,37 +4,37 @@
 
 - [0. Table of Contents](#0-table-of-contents)
 - [1. Introduction](#1-introduction)
-  * [1.1. A Note on Celo & Multi-Chain Support](#11-a-note-on-celo---multi-chain-support)
-  * [1.2. Notational Conventions](#12-notational-conventions)
+  - [1.1. A Note on Celo & Multi-Chain Support](#11-a-note-on-celo---multi-chain-support)
+  - [1.2. Notational Conventions](#12-notational-conventions)
 - [2. Lifecycle of a Transfer](#2-lifecycle-of-a-transfer)
-  * [2.1. Quote](#21-quote)
-  * [2.2. KYC](#22-kyc)
-    + [2.2.1. KYC Status Monitoring](#221-kyc-status-monitoring)
-  * [2.3. Fiat Accounts](#23-fiat-accounts)
-  * [2.4. Creating the Transfer](#24-creating-the-transfer)
-    + [2.4.1. Transfer Status Monitoring](#241-transfer-status-monitoring)
+  - [2.1. Quote](#21-quote)
+  - [2.2. KYC](#22-kyc)
+    - [2.2.1. KYC Status Monitoring](#221-kyc-status-monitoring)
+  - [2.3. Fiat Accounts](#23-fiat-accounts)
+  - [2.4. Creating the Transfer](#24-creating-the-transfer)
+    - [2.4.1. Transfer Status Monitoring](#241-transfer-status-monitoring)
 - [3. API Specification](#3-api-specification)
-  * [3.1. Geolocation](#31-geolocation)
-  * [3.2. Authentication & Authorization](#32-authentication---authorization)
-    + [3.2.1. JWT Authentication](#321-jwt-authentication)
+  - [3.1. Geolocation](#31-geolocation)
+  - [3.2. Authentication & Authorization](#32-authentication---authorization)
+    - [3.2.1. JWT Authentication](#321-jwt-authentication)
       - [3.2.1.1. JWT Header](#3211-jwt-header)
       - [3.2.1.2. JWT Payload](#3212-jwt-payload)
-        * [3.2.1.2.1. `"sub"` Claim](#32121---sub---claim)
-		* [3.2.1.2.2. `"iss"` Claim](#32122---iss---claim)
-        * [3.2.1.2.3. `"exp"` Claim](#32123---exp---claim)
-        * [3.2.1.2.4. `"client"` Claim](#32123---client---claim)
-      - [3.2.1.3. Communicating JWT](#3213-communicating-jwt)
-  * [3.3. Formal Specification](#33-formal-specification)
-    + [3.3.1. Quote Endpoints](#331-quote-endpoints)
+        - [3.2.1.2.1. `"sub"` Claim](#32121---sub---claim)
+    * [3.2.1.2.2. `"iss"` Claim](#32122---iss---claim)
+      - [3.2.1.2.3. `"exp"` Claim](#32123---exp---claim)
+      - [3.2.1.2.4. `"client"` Claim](#32123---client---claim)
+      * [3.2.1.3. Communicating JWT](#3213-communicating-jwt)
+  - [3.3. Formal Specification](#33-formal-specification)
+    - [3.3.1. Quote Endpoints](#331-quote-endpoints)
       - [3.3.1.1. `GET /quote/in`](#3311--get--quote-in-)
-        * [3.3.1.1.1. Parameters](#33111-parameters)
-          + [3.3.1.1.1.1. Query Parameters](#331111-query-parameters)
-        * [3.3.1.1.2. Responses](#33112-responses)
-          + [3.3.1.1.2.1. HTTP `200`](#331121-http--200-)
-        * [3.3.1.1.2.2. HTTP `400`](#331122-http--400-)
-        * [3.3.1.1.3. Semantics](#33113-semantics)
-          + [3.3.1.1.3.1. Success](#331131-success)
-          + [3.3.1.1.3.2. Failure](#331132-failure)
+        - [3.3.1.1.1. Parameters](#33111-parameters)
+          - [3.3.1.1.1.1. Query Parameters](#331111-query-parameters)
+        - [3.3.1.1.2. Responses](#33112-responses)
+          - [3.3.1.1.2.1. HTTP `200`](#331121-http--200-)
+        - [3.3.1.1.2.2. HTTP `400`](#331122-http--400-)
+        - [3.3.1.1.3. Semantics](#33113-semantics)
+          - [3.3.1.1.3.1. Success](#331131-success)
+          - [3.3.1.1.3.2. Failure](#331132-failure)
             - [3.3.1.1.3.2.1. `GeoNotSupported`](#3311321--geonotsupported-)
             - [3.3.1.1.3.2.2. `CryptoAmountTooLow`](#3311322--cryptoamounttoolow-)
             - [3.3.1.1.3.2.3. `CryptoAmountTooHigh`](#3311323--cryptoamounttoohigh-)
@@ -44,14 +44,14 @@
             - [3.3.1.1.3.2.7. `FiatNotSupported`](#3311327--fiatnotsupported-)
             - [3.3.1.1.3.2.8. `InvalidParameters`](#3311328--invalidparameters-)
       - [3.3.1.2. `GET /quote/out`](#3312--get--quote-out-)
-        * [3.3.1.2.1. Parameters](#33121-parameters)
-          + [3.3.1.2.1.1. Query Parameters](#331211-query-parameters)
-        * [3.3.1.2.2. Responses](#33122-responses)
-          + [3.3.1.2.2.1. HTTP `200`](#331221-http--200-)
-          + [3.3.1.2.2.2. HTTP `400`](#331222-http--400-)
-        * [3.3.1.2.3. Semantics](#33123-semantics)
-          + [3.3.1.2.3.1. Success](#331231-success)
-          + [3.3.1.2.3.2. Failure](#331232-failure)
+        - [3.3.1.2.1. Parameters](#33121-parameters)
+          - [3.3.1.2.1.1. Query Parameters](#331211-query-parameters)
+        - [3.3.1.2.2. Responses](#33122-responses)
+          - [3.3.1.2.2.1. HTTP `200`](#331221-http--200-)
+          - [3.3.1.2.2.2. HTTP `400`](#331222-http--400-)
+        - [3.3.1.2.3. Semantics](#33123-semantics)
+          - [3.3.1.2.3.1. Success](#331231-success)
+          - [3.3.1.2.3.2. Failure](#331232-failure)
             - [3.3.1.2.3.2.1. `GeoNotSupported`](#3312321--geonotsupported-)
             - [3.3.1.2.3.2.2. `CryptoAmountTooLow`](#3312322--cryptoamounttoolow-)
             - [3.3.1.2.3.2.3. `CryptoAmountTooHigh`](#3312323--cryptoamounttoohigh-)
@@ -60,164 +60,161 @@
             - [3.3.1.2.3.2.6. `CryptoNotSupported`](#3312326--cryptonotsupported-)
             - [3.3.1.2.3.2.7. `FiatNotSupported`](#3312327--fiatnotsupported-)
             - [3.3.1.2.3.2.8. `InvalidParameters`](#3311328--invalidparameters-)
-    + [3.3.2. KYC Endpoints](#332-kyc-endpoints)
+    - [3.3.2. KYC Endpoints](#332-kyc-endpoints)
       - [3.3.2.1. `POST /kyc/:kycSchema`](#3321--post--kyc--kycschema-)
-        * [3.3.2.1.1. Parameters](#33211-parameters)
-          + [3.3.2.1.1.1. Path Parameters](#332111-path-parameters)
-          + [3.3.2.1.1.2. Request Body](#332112-request-body)
-        * [3.3.2.1.2. Responses](#33212-responses)
-          + [3.3.2.1.2.1. HTTP `200`](#332121-http--200-)
-          + [3.3.2.1.2.2. HTTP `400`](#332122-http--400-)
-          + [3.3.2.1.2.3. HTTP `409`](#332123-http--409-)
-        * [3.3.2.1.3. Semantics](#33213-semantics)
-          + [3.3.2.1.3.1. Success](#332131-success)
-          + [3.3.2.1.3.2. Failure](#332132-failure)
+        - [3.3.2.1.1. Parameters](#33211-parameters)
+          - [3.3.2.1.1.1. Path Parameters](#332111-path-parameters)
+          - [3.3.2.1.1.2. Request Body](#332112-request-body)
+        - [3.3.2.1.2. Responses](#33212-responses)
+          - [3.3.2.1.2.1. HTTP `200`](#332121-http--200-)
+          - [3.3.2.1.2.2. HTTP `400`](#332122-http--400-)
+          - [3.3.2.1.2.3. HTTP `409`](#332123-http--409-)
+        - [3.3.2.1.3. Semantics](#33213-semantics)
+          - [3.3.2.1.3.1. Success](#332131-success)
+          - [3.3.2.1.3.2. Failure](#332132-failure)
             - [3.3.2.1.3.2.1. `UnsupportedSchema`](#3321321--unsupportedschema-)
             - [3.3.2.1.3.2.2. `InvalidSchema`](#3321322--invalidschema-)
             - [3.3.2.1.3.2.3. `ResourceExists`](#3321323--resourceexists-)
       - [3.3.2.2. `GET /kyc/:kycSchema/status`](#3322--get--kyc--kycschema-status-)
-        * [3.3.2.2.1. Parameters](#33221-parameters)
-          + [3.3.2.2.1.1. Path Parameters](#332211-path-parameters)
-        * [3.3.2.2.2. Responses](#33222-responses)
-          + [3.3.2.2.2.1. HTTP `200`](#332221-http--200-)
-          + [3.3.2.2.2.2. HTTP `404`](#332222-http--404-)
-        * [3.3.2.2.3. Semantics](#33223-semantics)
-          + [3.3.2.2.3.1. Success](#332231-success)
-          + [3.3.2.2.3.2. Failure](#332232-failure)
+        - [3.3.2.2.1. Parameters](#33221-parameters)
+          - [3.3.2.2.1.1. Path Parameters](#332211-path-parameters)
+        - [3.3.2.2.2. Responses](#33222-responses)
+          - [3.3.2.2.2.1. HTTP `200`](#332221-http--200-)
+          - [3.3.2.2.2.2. HTTP `404`](#332222-http--404-)
+        - [3.3.2.2.3. Semantics](#33223-semantics)
+          - [3.3.2.2.3.1. Success](#332231-success)
+          - [3.3.2.2.3.2. Failure](#332232-failure)
             - [3.3.2.2.3.2.1. `ResourceNotFound`](#3322321--resourcenotfound-)
       - [3.3.2.3. `DELETE /kyc/:kycSchema`](#3323--delete--kyc--kycschema-)
-        * [3.3.2.3.1. Parameters](#33231-parameters)
-          + [3.3.2.3.1.1. Path Parameters](#332311-path-parameters)
-        * [3.3.2.3.2. Responses](#33232-responses)
-          + [3.3.2.3.2.1. HTTP `200`](#332321-http--200-)
-          + [3.3.2.3.2.2. HTTP `404`](#332322-http--404-)
-        * [3.3.2.3.3. Semantics](#33233-semantics)
-          + [3.3.2.3.3.1. Success](#332331-success)
-          + [3.3.2.3.3.2. Failure](#332332-failure)
+        - [3.3.2.3.1. Parameters](#33231-parameters)
+          - [3.3.2.3.1.1. Path Parameters](#332311-path-parameters)
+        - [3.3.2.3.2. Responses](#33232-responses)
+          - [3.3.2.3.2.1. HTTP `200`](#332321-http--200-)
+          - [3.3.2.3.2.2. HTTP `404`](#332322-http--404-)
+        - [3.3.2.3.3. Semantics](#33233-semantics)
+          - [3.3.2.3.3.1. Success](#332331-success)
+          - [3.3.2.3.3.2. Failure](#332332-failure)
             - [3.3.2.3.3.2.1. `ResourceNotFound`](#3323321--resourcenotfound-)
-    + [3.3.3. Fiat Account Endpoints](#333-fiat-account-endpoints)
+    - [3.3.3. Fiat Account Endpoints](#333-fiat-account-endpoints)
       - [3.3.3.1. `POST /accounts/:fiatAccountSchema`](#3331--post--accounts--fiataccountschema-)
-        * [3.3.3.1.1. Parameters](#33311-parameters)
-          + [3.3.3.1.1.1. Path Parameters](#333111-path-parameters)
-          + [3.3.3.1.1.2. Request Body](#333112-request-body)
-        * [3.3.3.1.2. Responses](#33312-responses)
-          + [3.3.3.1.2.1. HTTP `200`](#333121-http--200-)
-          + [3.3.3.1.2.2. HTTP `400`](#333122-http--400-)
-          + [3.3.3.1.2.3. HTTP `409`](#333123-http--409-)
-        * [3.3.3.1.3. Semantics](#33313-semantics)
-          + [3.3.3.1.3.1. Success](#333131-success)
-          + [3.3.3.1.3.1. Failure](#333131-failure)
+        - [3.3.3.1.1. Parameters](#33311-parameters)
+          - [3.3.3.1.1.1. Path Parameters](#333111-path-parameters)
+          - [3.3.3.1.1.2. Request Body](#333112-request-body)
+        - [3.3.3.1.2. Responses](#33312-responses)
+          - [3.3.3.1.2.1. HTTP `200`](#333121-http--200-)
+          - [3.3.3.1.2.2. HTTP `400`](#333122-http--400-)
+          - [3.3.3.1.2.3. HTTP `409`](#333123-http--409-)
+        - [3.3.3.1.3. Semantics](#33313-semantics)
+          - [3.3.3.1.3.1. Success](#333131-success)
+          - [3.3.3.1.3.1. Failure](#333131-failure)
             - [3.3.3.1.3.1.1. `UnsupportedSchema`](#3331311--unsupportedschema-)
             - [3.3.3.1.3.1.2. `InvalidSchema`](#3331312--invalidschema-)
             - [3.3.3.1.3.1.3. `ResourceExists`](#3331313--resourceexists-)
       - [3.3.3.2. `GET /accounts`](#3332--get--accounts-)
-        * [3.3.3.2.1. Parameters](#33321-parameters)
-        * [3.3.3.2.2. Responses](#33322-responses)
-          + [3.3.3.2.2.1. HTTP `200`](#333221-http--200-)
-        * [3.3.3.2.3. Semantics](#33323-semantics)
-          + [3.3.3.2.3.1. Success](#333231-success)
+        - [3.3.3.2.1. Parameters](#33321-parameters)
+        - [3.3.3.2.2. Responses](#33322-responses)
+          - [3.3.3.2.2.1. HTTP `200`](#333221-http--200-)
+        - [3.3.3.2.3. Semantics](#33323-semantics)
+          - [3.3.3.2.3.1. Success](#333231-success)
       - [3.3.3.3. `DELETE /account/:fiatAccountId`](#3333--delete--account--fiataccountid-)
-        * [3.3.3.3.1. Parameters](#33331-parameters)
-          + [3.3.3.3.1.1. Path Parameters](#333311-path-parameters)
-        * [3.3.3.3.2. Responses](#33332-responses)
-          + [3.3.3.3.2.1. HTTP `200`](#333321-http--200-)
-          + [3.3.3.3.2.2 HTTP. `404`](#333322-http--404-)
-        * [3.3.3.3.3. Semantics](#33333-semantics)
-          + [3.3.3.3.3.1. Success](#333331-success)
-          + [3.3.3.3.3.1. Failure](#333331-failure)
+        - [3.3.3.3.1. Parameters](#33331-parameters)
+          - [3.3.3.3.1.1. Path Parameters](#333311-path-parameters)
+        - [3.3.3.3.2. Responses](#33332-responses)
+          - [3.3.3.3.2.1. HTTP `200`](#333321-http--200-)
+          - [3.3.3.3.2.2 HTTP. `404`](#333322-http--404-)
+        - [3.3.3.3.3. Semantics](#33333-semantics)
+          - [3.3.3.3.3.1. Success](#333331-success)
+          - [3.3.3.3.3.1. Failure](#333331-failure)
             - [3.3.3.3.3.1.1. `ResourceNotFound`](#3333311--resourcenotfound-)
-    + [3.3.4. Transfer Endpoints](#334-transfer-endpoints)
+    - [3.3.4. Transfer Endpoints](#334-transfer-endpoints)
       - [3.3.4.1. `POST /transfer/in`](#3341--post--transfer-in-)
-        * [3.3.4.1.1. Parameters](#33411-parameters)
-          + [3.3.4.1.1.1. Headers](#334111-headers)
-          + [3.3.4.1.1.2. Request Body](#334112-request-body)
-        * [3.3.4.1.2. Responses](#33412-responses)
-          + [3.3.4.1.2.1. HTTP `200`](#334121-http--200-)
-          + [3.3.4.1.2.2. HTTP `400`](#334122-http--400-)
-          + [3.3.4.1.2.3. HTTP `404`](#334123-http--404-)
-          + [3.3.4.1.2.4. Idempotency Key Errors](#334124-idempotency-key-errors)
-        * [3.3.4.1.3. Semantics](#33413-semantics)
-          + [3.3.4.1.3.1. Success](#334131-success)
-          + [3.3.4.1.3.2. Failure](#334132-failure)
+        - [3.3.4.1.1. Parameters](#33411-parameters)
+          - [3.3.4.1.1.1. Headers](#334111-headers)
+          - [3.3.4.1.1.2. Request Body](#334112-request-body)
+        - [3.3.4.1.2. Responses](#33412-responses)
+          - [3.3.4.1.2.1. HTTP `200`](#334121-http--200-)
+          - [3.3.4.1.2.2. HTTP `400`](#334122-http--400-)
+          - [3.3.4.1.2.3. HTTP `404`](#334123-http--404-)
+          - [3.3.4.1.2.4. Idempotency Key Errors](#334124-idempotency-key-errors)
+        - [3.3.4.1.3. Semantics](#33413-semantics)
+          - [3.3.4.1.3.1. Success](#334131-success)
+          - [3.3.4.1.3.2. Failure](#334132-failure)
             - [3.3.4.1.3.2.1. `KycExpired`](#3341321--kycexpired-)
             - [3.3.4.1.3.2.2. `TransferNotAllowed`](#3341322--transfernotallowed-)
             - [3.3.4.1.3.2.3. `InvalidQuote`](#3341323--invalidquote-)
             - [3.3.4.1.3.2.4. `ResourceNotFound`](#3341324--resourcenotfound-)
       - [3.3.4.2. `POST /transfer/out`](#3342--post--transfer-out-)
-        * [3.3.4.2.1. Parameters](#33421-parameters)
-          + [3.3.4.2.1.1. Headers](#334211-headers)
-          + [3.3.4.2.1.2. Request Body](#334212-request-body)
-        * [3.3.4.2.2. Responses](#33422-responses)
-          + [3.3.4.2.2.1. HTTP `200`](#334221-http--200-)
-          + [3.3.4.2.2.2. HTTP `400`](#334222-http--400-)
-          + [3.3.4.2.2.3. HTTP `404`](#334223-http--404-)
-          + [3.3.4.2.2.4. Idempotency Key Errors](#334224-idempotency-key-errors)
-        * [3.3.4.2.3. Semantics](#33423-semantics)
-          + [3.3.4.2.3.1. Success](#334231-success)
-          + [3.3.4.2.3.2. Failure](#334232-failure)
+        - [3.3.4.2.1. Parameters](#33421-parameters)
+          - [3.3.4.2.1.1. Headers](#334211-headers)
+          - [3.3.4.2.1.2. Request Body](#334212-request-body)
+        - [3.3.4.2.2. Responses](#33422-responses)
+          - [3.3.4.2.2.1. HTTP `200`](#334221-http--200-)
+          - [3.3.4.2.2.2. HTTP `400`](#334222-http--400-)
+          - [3.3.4.2.2.3. HTTP `404`](#334223-http--404-)
+          - [3.3.4.2.2.4. Idempotency Key Errors](#334224-idempotency-key-errors)
+        - [3.3.4.2.3. Semantics](#33423-semantics)
+          - [3.3.4.2.3.1. Success](#334231-success)
+          - [3.3.4.2.3.2. Failure](#334232-failure)
             - [3.3.4.2.3.2.1. `KycExpired`](#3342321--kycexpired-)
             - [3.3.4.2.3.2.2. `TransferNotAllowed`](#3342322--transfernotallowed-)
             - [3.3.4.2.3.2.3. `InvalidQuote`](#3342323--invalidquote-)
             - [3.3.4.2.3.2.4. `ResourceNotFound`](#3342324--resourcenotfound-)
       - [3.3.4.3. `GET /transfer/:transferId/status`](#3343--get--transfer--transferid-status-)
-        * [3.3.4.3.1. Parameters](#33431-parameters)
-          + [3.3.4.3.1.1. Path Parameters](#334311-path-parameters)
-        * [3.3.4.3.2. Responses](#33432-responses)
-          + [3.3.4.3.2.1. HTTP `200`](#334321-http--200-)
-          + [3.3.4.3.2.2. HTTP `404`](#334322-http--404-)
-        * [3.3.4.3.3. Semantics](#33433-semantics)
-          + [3.3.4.3.3.1. Success](#334331-success)
-          + [3.3.4.3.3.2. Failure](#334332-failure)
+        - [3.3.4.3.1. Parameters](#33431-parameters)
+          - [3.3.4.3.1.1. Path Parameters](#334311-path-parameters)
+        - [3.3.4.3.2. Responses](#33432-responses)
+          - [3.3.4.3.2.1. HTTP `200`](#334321-http--200-)
+          - [3.3.4.3.2.2. HTTP `404`](#334322-http--404-)
+        - [3.3.4.3.3. Semantics](#33433-semantics)
+          - [3.3.4.3.3.1. Success](#334331-success)
+          - [3.3.4.3.3.2. Failure](#334332-failure)
             - [3.3.4.3.3.2.1. `ResourceNotFound`](#3343321--resourcenotfound-)
 - [4. Webhooks](#4-webhooks)
-  * [4.1. Webhook Requests](#41-webhook-requests)
-  * [4.2. Webhook Request Signing](#42-webhook-request-signing)
+  - [4.1. Webhook Requests](#41-webhook-requests)
+  - [4.2. Webhook Request Signing](#42-webhook-request-signing)
 - [5. AML Considerations](#5-aml-considerations)
 - [6. Sandbox Environment](#6-sandbox-environment)
-  * [6.1. Celo Network](#61-celo-network)
-  * [6.2. Authentication](#62-authentication)
-  * [6.3. KYC](#63-kyc)
-  * [6.4. Fiat Accounts](#64-fiat-accounts)
-  * [6.5. Transfers](#65-transfers)
+  - [6.1. Celo Network](#61-celo-network)
+  - [6.2. Authentication](#62-authentication)
+  - [6.3. KYC](#63-kyc)
+  - [6.4. Fiat Accounts](#64-fiat-accounts)
+  - [6.5. Transfers](#65-transfers)
 - [7. Definitions](#7-definitions)
-  * [7.1. Static Definitions](#71-static-definitions)
-    + [7.1.1. `KycStatusEnum`](#711--kycstatusenum-)
-    + [7.1.2. `ErrorEnum`](#712--errorenum-)
-    + [7.1.3. `TransferTypeEnum`](#713--transfertypeenum-)
-    + [7.1.3. `WebhookEventTypeEnum`](#713--webhookeventtypeenum-)
-    + [7.1.4. `TransferStatusEnum`](#714--transferstatusenum-)
-  * [7.2. Dynamic Definitions](#72-dynamic-definitions)
-    + [7.2.1. `FiatTypeEnum`](#721--fiattypeenum-)
-    + [7.2.2. `CryptoTypeEnum`](#722--cryptotypeenum-)
-    + [7.2.3. `KycSchemaEnum`](#723--kycschemaenum-)
-    + [7.2.4. `FiatAccountTypeEnum`](#724--fiataccounttypeenum-)
-    + [7.2.5. `FeeTypeEnum`](#725--feetypeenum-)
-    + [7.2.6. `FeeFrequencyEnum`](#726--feetypeenum-)
-    + [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
-  * [7.3. Initial Entity Support](#73-initial-entity-support)
-    + [7.3.1. KYC Schemas](#731-kyc-schemas)
-	  - [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
-	+ [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
-	  - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
-    - [7.3.2.2. `MobileMoney`](#7322-mobilemoney)
-      - [7.3.2.2.1. `SupportedOperatorEnum`](#73221-supportedoperatorenum)
-    - [7.3.2.3. `DuniaWallet`](#7323-duniawallet)
+  - [7.1. Static Definitions](#71-static-definitions)
+    - [7.1.1. `KycStatusEnum`](#711--kycstatusenum-)
+    - [7.1.2. `ErrorEnum`](#712--errorenum-)
+    - [7.1.3. `TransferTypeEnum`](#713--transfertypeenum-)
+    - [7.1.3. `WebhookEventTypeEnum`](#713--webhookeventtypeenum-)
+    - [7.1.4. `TransferStatusEnum`](#714--transferstatusenum-)
+  - [7.2. Dynamic Definitions](#72-dynamic-definitions)
+    - [7.2.1. `FiatTypeEnum`](#721--fiattypeenum-)
+    - [7.2.2. `CryptoTypeEnum`](#722--cryptotypeenum-)
+    - [7.2.3. `KycSchemaEnum`](#723--kycschemaenum-)
+    - [7.2.4. `FiatAccountTypeEnum`](#724--fiataccounttypeenum-)
+    - [7.2.5. `FeeTypeEnum`](#725--feetypeenum-)
+    - [7.2.6. `FeeFrequencyEnum`](#726--feetypeenum-)
+    - [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
+  - [7.3. Initial Entity Support](#73-initial-entity-support)
+    - [7.3.1. KYC Schemas](#731-kyc-schemas)
+    * [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
+  * [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
+    - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
 - [8. References](#8-references)
-  * [8.1. Normative References](#81-normative-references)
-    + [8.1.1. [RFC2119]](#811--rfc2119-)
-    + [8.1.2. [RFC8174]](#812--rfc8174-)
-    + [8.1.3. [RFC7519]](#813--rfc7519-)
-  * [8.2. Informative References](#82-informative-references)
-    + [8.2.1. Webhook Best Practices](#821-webhook-best-practices)
-    + [8.2.2. Idempotency Keys](#822-idempotency-keys)
-    + [8.2.3. ISO 3166-1](#823-iso-3166-1)
-    + [8.2.4. ISO 3166-2](#824-iso-3166-2)
+  - [8.1. Normative References](#81-normative-references)
+    - [8.1.1. [RFC2119]](#811--rfc2119-)
+    - [8.1.2. [RFC8174]](#812--rfc8174-)
+    - [8.1.3. [RFC7519]](#813--rfc7519-)
+  - [8.2. Informative References](#82-informative-references)
+    - [8.2.1. Webhook Best Practices](#821-webhook-best-practices)
+    - [8.2.2. Idempotency Keys](#822-idempotency-keys)
+    - [8.2.3. ISO 3166-1](#823-iso-3166-1)
+    - [8.2.4. ISO 3166-2](#824-iso-3166-2)
 
 # 1. Introduction
 
 Liquidity between fiat and cryptocurrency assets is a common point of friction for new and growing crypto networks. In particular, cashing in/out
 to/from crypto assets can be a difficult experience. Oftentimes, there is poor support for geographical regions, and fees and spreads may be excessively high.
-Additionally, liquidity providers (referred to here as *cash-in/cash-out providers*, or *CICO providers*) share no common interface for allowing clients
+Additionally, liquidity providers (referred to here as _cash-in/cash-out providers_, or _CICO providers_) share no common interface for allowing clients
 to transfer funds between crypto and fiat. In many cases, CICO providers only provide transfers through their own native (typically web-based) interface.
 In the few cases where CICO providers do offer an API for clients to integrate against, there is no uniformity in interface design across providers. Because each
 provider's API is unique, native CICO integrations within clients require completely bespoke integrations. Furthermore, since individual CICO providers may only
@@ -225,20 +222,20 @@ offer limited geographical support for transfers, a client may have to integrate
 users, which requires considerable implementation effort. In many cases, this level of implementation effort is not feasible, which can lead to clients which
 offer poor regional CICO availablity. This may lead to users seeking out a variety of different clients in order to access broad regional support. Not only is
 this a poor user experience, but it is a detriment to both client developers and the network which those clients and CICO providers service. Clients unable to
-devote *considerable* engineering effort towards CICO provider integration lose out, and network TVL is hamstrung due to poor user experience.
+devote _considerable_ engineering effort towards CICO provider integration lose out, and network TVL is hamstrung due to poor user experience.
 
-*FiatConnect* is a proposed solution to these issues. FiatConnect provides a standardized server-side API specification for CICO providers to provide
+_FiatConnect_ is a proposed solution to these issues. FiatConnect provides a standardized server-side API specification for CICO providers to provide
 cash-in/cash-out functionality to clients. In addition to providing a standardized API specification, the FiatConnect ecosystem also offers a set of
-client-side tooling through the *FiatConnect SDK* which makes it seamless for client developers to integrate against any CICO provider who operates
-a *FiatConnect API*. By integrating with the FiatConnect SDK, clients will be able to implement a *single* native flow that can be re-used to perform
-transfers with *any* provider operating a FiatConnect API; supporting new providers in the client merely requires a small amount of static configuration.
+client-side tooling through the _FiatConnect SDK_ which makes it seamless for client developers to integrate against any CICO provider who operates
+a _FiatConnect API_. By integrating with the FiatConnect SDK, clients will be able to implement a _single_ native flow that can be re-used to perform
+transfers with _any_ provider operating a FiatConnect API; supporting new providers in the client merely requires a small amount of static configuration.
 We believe that the FiatConnect specification will provide benefits to a multitude of parties:
 
 1. **Client Developers**: Client developers will not have to exert any specific implementation effort in order to integrate with any particular CICO
    provider. After implementing a single native flow with the FiatConnect SDK, supporting new providers comes for free.
-2. **CICO Providers**: CICO providers, particularly smaller ones, face a challenge in gaining initial adoption; they often must rely on the *client* to
+2. **CICO Providers**: CICO providers, particularly smaller ones, face a challenge in gaining initial adoption; they often must rely on the _client_ to
    spend engineering effort creating an integration. With FiatConnect, this dependency is removed. Once a provider implements a FiatConnect API,
-   they can immediately start providing crypto/fiat liquidity to *any*
+   they can immediately start providing crypto/fiat liquidity to _any_
    client, at no cost to the client developer. Client developers are thus much more likely to integrate with FiatConnect-compliant providers, making
    FiatConnect a compelling option for providers in order to drive adoption.
 3. **End User**: Since FiatConnect will reduce the total amount of engineering work required to integrate providers in clients, end users will
@@ -251,7 +248,7 @@ necessary, and only as it concerns the FiatConnect API design.
 ## 1.1. A Note on Celo & Multi-Chain Support
 
 This proposal has been designed without multi-chain support in mind; we assume all blockchain-related concepts (e.g., tokens, addresses) exist within
-a single predetermined chain, agreed upon by all parties. It does not matter so much *what* this chain is, just that
+a single predetermined chain, agreed upon by all parties. It does not matter so much _what_ this chain is, just that
 all parties (clients and servers) are in agreement. If a provider wants to support multiple chains, they would have to stand up multiple APIs, with identical
 interfaces. Likewise, clients would have to maintain per-chain instances of the FiatConnect SDK (discussed later) in order to support transfers from multiple chains.
 
@@ -273,7 +270,7 @@ We first provide a generalized and somewhat informal model of a "transfer" opera
 The model should be general enough to support a wide range of CICO provider's requirements. This transfer lifecycle is based on the author's
 own experience as a client developer for Valora on the Celo network; it should certainly be reviewed by CICO providers and amended if there are any shortcomings.
 
-For a single provider, we model the lifecycle of a transfer (either *in* or *out*) as a number of discrete steps:
+For a single provider, we model the lifecycle of a transfer (either _in_ or _out_) as a number of discrete steps:
 
 - 1. **Quote**: The client requests a quote for a transfer with the user's desired parameters.
 - 2. **KYC**: For regulatory and compliance reasons, the user must provide data used for KYC verification purposes to the provider.
@@ -301,17 +298,17 @@ transfer intent.
 
 For regulatory and compliance reasons, providers may require that users complete a KYC verification process before initiating a transfer.
 We expect that different providers will have varying KYC requirements depending on a client's geogrpahical region. The FiatConnect
-specification must not make any assumptions about the particular *shape* of KYC data that providers require. Rather, the specification
+specification must not make any assumptions about the particular _shape_ of KYC data that providers require. Rather, the specification
 should be extensible so as to allow providers to communicate to the client what sort of KYC data is required. The FiatConnect specification
-allows for a list of standardized *KYC schemas* from which a provider can select those that it accepts. If a provider's KYC needs are
+allows for a list of standardized _KYC schemas_ from which a provider can select those that it accepts. If a provider's KYC needs are
 unmet by the specification's recognized schemas, the provider may request that the specification be extended to support a new schema, though
 a close eye should be kept on the reusability of this schema by other potential providers.
 
-KYC validation is not expected to occur before *every* transfer. Rather, we expect that KYC validation with a provider will be an infrequent
+KYC validation is not expected to occur before _every_ transfer. Rather, we expect that KYC validation with a provider will be an infrequent
 occurence. A user may have to submit KYC details for a particular region before initiating a transfer there, but subsequent transfers in that
 region will likely reuse the previous KYC. One might expect that these details become "stale" after a time and will need to be resubmitted by the
 end user before initiating further transfers in their region. Ultimately, what a provider decides to do with KYC data once it is submitted is an implementation
-detail and not strictly enforced by the FiatConnect API specification, *except* for requirements on communicating KYC verification statuses to
+detail and not strictly enforced by the FiatConnect API specification, _except_ for requirements on communicating KYC verification statuses to
 the client.
 
 ### 2.2.1. KYC Status Monitoring
@@ -330,14 +327,14 @@ We will discuss these two options in more depth later in this document.
 ## 2.3. Fiat Accounts
 
 A user needs to be able to store details about a source or destination for fiat funds with the provider. The FiatConnect specification refers
-to these as *Fiat Accounts*, but these can commonly be thought of as, e.g., *bank accounts*, *credit cards*, etc. A fiat account refers to
+to these as _Fiat Accounts_, but these can commonly be thought of as, e.g., _bank accounts_, _credit cards_, etc. A fiat account refers to
 any user-owned accout that supports withdrawals and deposits of fiat-denominated funds. Similar to KYC details, different providers may support
-different *types* of fiat accounts, and require different schemas depending on the user's geographical region. The FiatConnect specification
-introduces two distinct concepts to account for this; that of a *Fiat Account Type*, and a *Fiat Account Schema*. A *Fiat Account Type* refers to
-the high-level *type* of fiat account, e.g., bank account, credit card, debit card, etc. A *Fiat Accout Schema* refers to the precise shape that
-account data should take when being communicated from client to server; each *schema* has an associated *type*. This is a subtle, yet important
-distinction. As mentioned in section 2.1, providers may use the *type* of a fiat account for determining whether a transfer is allowed. Different
-providers, however, may have different requirements on how account data is communicated, even for the same account *type*, depending on geographical
+different _types_ of fiat accounts, and require different schemas depending on the user's geographical region. The FiatConnect specification
+introduces two distinct concepts to account for this; that of a _Fiat Account Type_, and a _Fiat Account Schema_. A _Fiat Account Type_ refers to
+the high-level _type_ of fiat account, e.g., bank account, credit card, debit card, etc. A _Fiat Accout Schema_ refers to the precise shape that
+account data should take when being communicated from client to server; each _schema_ has an associated _type_. This is a subtle, yet important
+distinction. As mentioned in section 2.1, providers may use the _type_ of a fiat account for determining whether a transfer is allowed. Different
+providers, however, may have different requirements on how account data is communicated, even for the same account _type_, depending on geographical
 region. Like with KYC schemas, the FiatConnect standard does not make assumptions about fiat account types and schemas; these are designed to be
 extensible by the community.
 
@@ -382,16 +379,16 @@ request assuming that the client is being honest about its location. We expect t
 end-user's location will come from KYC verification.
 
 As an example, a client using a VPN should still be able to interact with FiatConnect APIs; when requesting a quote,
-this client would provide their actual country, and *not* the one implied by their request IP. If their self-reported location
+this client would provide their actual country, and _not_ the one implied by their request IP. If their self-reported location
 is allowed for transfers, and their actual location (as collected through KYC) matches this, their KYC will be accepted and they
-will be allowed to initiate a transfer. In the case where a user submits KYC details for a geolocation that is *not* supported by a
+will be allowed to initiate a transfer. In the case where a user submits KYC details for a geolocation that is _not_ supported by a
 provider, they will never be able to initiate a transfer, regardless of what location they submit to the quote endpoint, since the KYC
 verification should be denied.
 
 ## 3.2. Authentication & Authorization
 
-The FiatConnect API specifies *two* types of authentication; the first authenticates the *user*, and is required for all requests;
-the second authenticates the *client*, and is optionally required, depending on whether or not it has been configured by the client
+The FiatConnect API specifies _two_ types of authentication; the first authenticates the _user_, and is required for all requests;
+the second authenticates the _client_, and is optionally required, depending on whether or not it has been configured by the client
 with the provider.
 
 ### 3.2.1. JWT Authentication
@@ -411,8 +408,8 @@ Servers MUST support the following JWT header, using an elliptic curve digital s
 
 ```json
 {
-	"alg": "ES256",
-	"typ": "JWT"
+  "alg": "ES256",
+  "typ": "JWT"
 }
 ```
 
@@ -420,28 +417,28 @@ Servers MAY support other algorithms, but this is not required.
 
 #### 3.2.1.2. JWT Payload
 
-Servers MUST recognize the following *registered claims* within the JWT payload.
+Servers MUST recognize the following _registered claims_ within the JWT payload.
 
-* `exp`, or *expiration time*
-* `sub`, or *subject*
-* `iss`, or *issuer*
+- `exp`, or _expiration time_
+- `sub`, or _subject_
+- `iss`, or _issuer_
 
-Servers MUST also recognize the following *private claims* within the JWT payload.
+Servers MUST also recognize the following _private claims_ within the JWT payload.
 
-* `client`, or *client API key*
+- `client`, or _client API key_
 
 The semantics of these claims are below:
 
 ##### 3.2.1.2.1. `"sub"` Claim
 
-The `sub`, or *subject* claim represents the user's Celo network address. This is a required claim. If it is missing, the server MUST respond
+The `sub`, or _subject_ claim represents the user's Celo network address. This is a required claim. If it is missing, the server MUST respond
 to the client with an HTTP `400` error. This claim SHOULD be interpreted and used within server endpoints as a unique user identifier, and as the
 source of/destination for crypto funds during transfers. The address should be formatted as 42 hexadecimal characters prefixed by the string literal
 `0x`. If the `sub` claim does not match this format, the server MUST respond to the client with an HTTP `400` error.
 
 ##### 3.2.1.2.2. `"iss"` Claim
 
-The `iss`, or *subject* claim represents the user's Celo address public key, dervied from their private key. This is a required claim.
+The `iss`, or _subject_ claim represents the user's Celo address public key, dervied from their private key. This is a required claim.
 The public key MUST be in compressed form (see [here](https://docs.ethers.io/v5/api/utils/signing-key/) for more details), and exactly 33 bytes
 long.
 
@@ -451,17 +448,17 @@ server MUST validate that the signature does indeed correspond to the address pr
 
 ##### 3.2.1.2.3. `"exp"` Claim
 
-The `exp`, or *expiration time* claim represents the time until which the provided JWT should be accepted by the server. The `exp` claim should be provided
-as a numeric timestamp, defined as the number of seconds since Epoch. The `exp` claim MUST be present for all endpoints *except* the following:
+The `exp`, or _expiration time_ claim represents the time until which the provided JWT should be accepted by the server. The `exp` claim should be provided
+as a numeric timestamp, defined as the number of seconds since Epoch. The `exp` claim MUST be present for all endpoints _except_ the following:
 
-* `GET /quote/in`
-* `GET /quote/out`
-* `GET /kyc/:kycSchema/status`
-* `GET /transfer/:transferId/status`
+- `GET /quote/in`
+- `GET /quote/out`
+- `GET /kyc/:kycSchema/status`
+- `GET /transfer/:transferId/status`
 
-The rationale behind not requiring an `exp` claim for these endpoints is that these endpoints are *non-mutating*; calling them does not affect server-side
+The rationale behind not requiring an `exp` claim for these endpoints is that these endpoints are _non-mutating_; calling them does not affect server-side
 state in any way. Since these endpoints are less security-critical, an `exp` claim is not required as a convenience to clients.
-While these endpoints do not require the `exp` claim to be present, *all endpoints* MUST honor the `exp` claim *if it is* present in the
+While these endpoints do not require the `exp` claim to be present, _all endpoints_ MUST honor the `exp` claim _if it is_ present in the
 JWT payload. For endpoints where the `exp` claim is required, the server MUST return an HTTP `400` if it is not present.
 A server MUST return an HTTP `401` error if the provided `exp` field is later than the current time with respect to Epoch. If an `exp` claim is
 included in a request, it MUST NOT exceed 24 hours from the current time with respect to Epoch. If the `exp` claim is more than 24 hours into the future, the
@@ -476,12 +473,12 @@ to an API able to handle webhook updates from the server. Once a client has regi
 itself to the server. To uniquely identify clients in order to know where to send webhook-based status updates, a server may allow clients to register an API key.
 The exact mechanism by which servers allocate API keys to clients and allow them to register webhook URLs is out of scope of this document.
 
-A server MUST support API token authentication, and MAY *require* that clients include an API key in each request. If a server requires
+A server MUST support API token authentication, and MAY _require_ that clients include an API key in each request. If a server requires
 that clients include an API key in each request, it MUST respond to the client with an HTTP `400` error if the API key is missing from the request.
 Regardless of whether or not a server requires an API key on every request, it MUST return an HTTP `401` error if an API key is
 provided but does not correspond to any registered client; likewise it MUST return an HTTP `400` error if the API key is poorly formed.
 
-The `client`, or *client API key* claim is a *private claim* that is FiatConnect-specific. This is an optional claim. This claim contains a client
+The `client`, or _client API key_ claim is a _private claim_ that is FiatConnect-specific. This is an optional claim. This claim contains a client
 API key as discussed above; the details of the server's response with respect to this claim MUST follow the semantics outlined above.
 
 #### 3.2.1.3. Communicating JWT
@@ -494,10 +491,10 @@ must look like: `Authorization: Bearer <jwt>`. If the header is not present, or 
 This section details the precise syntax and semantics of all the endpoints required by the FiatConnect specification. Endpoints are logically grouped, and roughly presented
 in order of dependency. The logical groupings are as follows:
 
-* Quote Endpoints
-* KYC Endpoints
-* Fiat Account Endpoints
-* Transfer Endpoints
+- Quote Endpoints
+- KYC Endpoints
+- Fiat Account Endpoints
+- Transfer Endpoints
 
 This section references a number of definitions/enums; for an exhaustive list of these, please see later in the document.
 
@@ -526,17 +523,17 @@ used for the transfer.
 
 ###### 3.3.1.1.1.1. Query Parameters
 
-* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
+- `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The desired fiat type to use for a transfer in quote; selected from a predefined list of fiat types supported by FiatConnect.
-* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
+- `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The desired crypto type to use for a transfer in quote; selected from a predefined list of crypto types supported by FiatConnect.
-* `fiatAmount`: {`float`}
+- `fiatAmount`: {`float`}
   - The amount of the selected fiat type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of crypto specified for the quote.
-* `cryptoAmount`: {`float`}
+- `cryptoAmount`: {`float`}
   - The amount of the selected crypto type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
-* `country`: {`string`} [REQUIRED]
+- `country`: {`string`} [REQUIRED]
   - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
-* `region`: {`string`}
+- `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 
 ##### 3.3.1.1.2. Responses
@@ -598,7 +595,7 @@ On failure, the server MUST return an HTTP `400`, with a response body as follow
 
 ##### 3.3.1.1.3. Semantics
 
-All transfer in quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
+All transfer in quotes require the `fiatType`, `cryptoType`, and exactly _one of_ `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
 If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support a transfer in for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
 
 ###### 3.3.1.1.3.1. Success
@@ -640,7 +637,7 @@ The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, us
 when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
 if the provider requires a fee for the transfer. For transfers in, this fee is assumed to be denominated in the selected `fiatType`. If
 `fiatAccount[FiatAccountTypeEnum].fee` is provided, the server MAY return `fiatAccount[FiatAccountTypeEnum].feeType` and/or `fiatAccount[FiatAccountTypeEnum].feeFrequency`.
-`feeType` represents the *type* of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
+`feeType` represents the _type_ of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
 or on each transfer.
 
 ###### 3.3.1.1.3.2. Failure
@@ -694,17 +691,17 @@ The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out 
 
 ###### 3.3.1.2.1.1. Query Parameters
 
-* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
+- `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The desired fiat type to use for a transfer out quote; selected from a predefined list of fiat types supported by FiatConnect.
-* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
+- `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The desired crypto type to use for a transfer out quote; selected from a predefined list of crypto types supported by FiatConnect.
-* `fiatAmount`: {`float`}
+- `fiatAmount`: {`float`}
   - The amount of the selected fiat type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of crypto specified for the quote.
-* `cryptoAmount`: {`float`}
+- `cryptoAmount`: {`float`}
   - The amount of the selected crypto type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
-* `country`: {`string`} [REQUIRED]
+- `country`: {`string`} [REQUIRED]
   - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
-* `region`: {`string`}
+- `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 
 ##### 3.3.1.2.2. Responses
@@ -764,10 +761,9 @@ On failure, the MUST return an HTTP `400`, with a response body as follows. Refe
 }
 ```
 
-
 ##### 3.3.1.2.3. Semantics
 
-All transfer out quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
+All transfer out quotes require the `fiatType`, `cryptoType`, and exactly _one of_ `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
 If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support
 a transfer out for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
 
@@ -810,7 +806,7 @@ The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, us
 when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
 if the provider requires a fee for the transfer. For transfers out, this fee is assumed to be denominated in the selected `cryptoType`. If
 `fiatAccount[FiatAccountTypeEnum].fee` is provided, the server MAY return `fiatAccount[FiatAccountTypeEnum].feeType` and/or `fiatAccount[FiatAccountTypeEnum].feeFrequency`.
-`feeType` represents the *type* of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
+`feeType` represents the _type_ of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
 or on each transfer.
 
 ###### 3.3.1.2.3.2. Failure
@@ -866,7 +862,7 @@ a particular transfer occurs entirely within the quote endpoints.
 
 While validation is typically expected to be completed quickly and automatically, we assume that it is fundamentally an asynchronous process. As such,
 the FiatConnect specification must support monitoring the status of an ongoing validation. While we require that a CICO provider be able to maintain
-different types of KYC validations per-user, we require that they only maintain *one* record of each type for each user at a time. Otherwise, server-side
+different types of KYC validations per-user, we require that they only maintain _one_ record of each type for each user at a time. Otherwise, server-side
 implementation would become significantly more difficult, likely requiring an idempotency key to initiate new KYC verifications.
 
 #### 3.3.2.1. `POST /kyc/:kycSchema`
@@ -877,7 +873,7 @@ The `POST /kyc/:kycSchema` endpoint allows a client to provide KYC data of a par
 
 ###### 3.3.2.1.1.1. Path Parameters
 
-* `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
+- `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
   - The KYC schema being used in the request body
 
 ###### 3.3.2.1.1.2. Request Body
@@ -955,7 +951,7 @@ Note that these statuses MUST also be made available via webhook, if configured 
 
 ###### 3.3.2.2.1.1. Path Parameters
 
-* `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
+- `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
   - The KYC schema used for the verification whose status is being requested
 
 ##### 3.3.2.2.2. Responses
@@ -1004,7 +1000,7 @@ The `DELETE /kyc/:kycSchema` endpoint is used to delete a KYC record for a parti
 
 ###### 3.3.2.3.1.1. Path Parameters
 
-* `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
+- `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
   - The KYC schema to delete from the server
 
 ##### 3.3.2.3.2. Responses
@@ -1043,13 +1039,13 @@ If the server has no data on file for a KYC verification of the given schema, th
 ### 3.3.3. Fiat Account Endpoints
 
 FiatConnect's Fiat Account model consists of two primary concepts; the notion of an "account schema", and an "account type". Account schemas refer to the precise
-*representation* of an account; i.e., the exact structure and fields required when communicating Fiat Account objects from client to server. All account schemas share
-a set of base fields that are common to *all* schemas, such as "name", "institution", etc. Each account must have an "account type" associated with it, selected from
+_representation_ of an account; i.e., the exact structure and fields required when communicating Fiat Account objects from client to server. All account schemas share
+a set of base fields that are common to _all_ schemas, such as "name", "institution", etc. Each account must have an "account type" associated with it, selected from
 one of the account types supported by FiatConnect (see `FiatAccountTypeEnum` for an initial list). For example, one can imagine two different account schemas,
-`CheckingAccountSchema1` and `CheckingAccountSchema2`. These two schemas *both* would be associated with the, e.g., `FiatAccountTypeEnum.CheckingAccount` account type,
+`CheckingAccountSchema1` and `CheckingAccountSchema2`. These two schemas _both_ would be associated with the, e.g., `FiatAccountTypeEnum.CheckingAccount` account type,
 but might require different data; it might be the case that different geos have different representations for communicating checking account information.
 
-Similar to KYC schemas, providers may require different sorts of fiat (i.e., *bank*) accounts depending on both the geo of the client, *and* the particular details
+Similar to KYC schemas, providers may require different sorts of fiat (i.e., _bank_) accounts depending on both the geo of the client, _and_ the particular details
 of the transfer. CICO providers MUST be able to maintain multiple fiat accounts on record for each user. Negotiation of what types of fiat accounts are allowed for a
 transfer, and what schemas to use to communicate the account details, occurs entirely within the quote endpoints.
 
@@ -1065,12 +1061,12 @@ The `POST /accounts/:fiatAccountSchema` endpoint is used to store a new fiat acc
 
 ###### 3.3.3.1.1.1. Path Parameters
 
-* `fiatAccountSchema`: {`FiatAccountSchemaEnum`} [REQUIRED]
+- `fiatAccountSchema`: {`FiatAccountSchemaEnum`} [REQUIRED]
   - The fiat account schema to use to add the fiat account
 
 ###### 3.3.3.1.1.2. Request Body
 
-The request body schema for this endpoint must match the fiat accout schema  selected in the path parameter.
+The request body schema for this endpoint must match the fiat accout schema selected in the path parameter.
 
 ##### 3.3.3.1.2. Responses
 
@@ -1178,7 +1174,7 @@ The `DELETE /account/:fiatAccountId` endpoint is used to delete a user's fiat ac
 
 ###### 3.3.3.3.1.1. Path Parameters
 
-* `fiatAccountId`: {`string`} [REQUIRED]
+- `fiatAccountId`: {`string`} [REQUIRED]
   - The internal fiat account ID to delete
 
 ##### 3.3.3.3.2. Responses
@@ -1234,22 +1230,22 @@ The `POST /transfer/in` endpoint is used to initiate a new transfer in from fiat
 
 ###### 3.3.4.1.1.1. Headers
 
-* `Idempotency-Key: <idempotency-key>`
+- `Idempotency-Key: <idempotency-key>`
   - An idempotency key, generated by the client
 
 ###### 3.3.4.1.1.2. Request Body
 
 The request body must contain the following fields:
 
-* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
+- `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The type of fiat currency to transfer in from.
-* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
+- `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The type of cryptocurrency to transfer in to.
-* `amount`: {`float`}: [REQUIRED]
+- `amount`: {`float`}: [REQUIRED]
   - The amount of fiat currency to transfer in.
-* `fiatAccountId`: {`string`} [REQUIRED]
+- `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
-* `quoteId`: {`string`} [REQUIRED]
+- `quoteId`: {`string`} [REQUIRED]
   - Identifier of the quote to use for the transfer.
 
 ##### 3.3.4.1.2. Responses
@@ -1268,7 +1264,7 @@ On a successfully initiated transfer in request, the server MUST respond with an
 
 ###### 3.3.4.1.2.2. HTTP `400`
 
-If the transfer parameters are invalid, or if the transfer is not possible for reasons *other* than the fiat account not existing, the server MUST
+If the transfer parameters are invalid, or if the transfer is not possible for reasons _other_ than the fiat account not existing, the server MUST
 return an HTTP `400` error code, along with the following response body:
 
 ```
@@ -1323,7 +1319,7 @@ If a transfer is not allowed for a generic reason (such as unacceptable transfer
 ###### 3.3.4.1.3.2.3. `InvalidQuote`
 
 If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST
-reject the transfer and return an `InvalidQuote` error. 
+reject the transfer and return an `InvalidQuote` error.
 
 ###### 3.3.4.1.3.2.4. `ResourceNotFound`
 
@@ -1337,22 +1333,22 @@ The `POST /transfer/out` endpoint is used to initiate a new transfer out from cr
 
 ###### 3.3.4.2.1.1. Headers
 
-* `Idempotency-Key: <idempotency-key>`
+- `Idempotency-Key: <idempotency-key>`
   - An idempotency key, generated by the client
 
 ###### 3.3.4.2.1.2. Request Body
 
 The request body must contain the following fields:
 
-* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
+- `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The type of fiat currency to transfer out to.
-* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
+- `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The type of cryptocurrency to transfer out from.
-* `amount`: {`float`}: [REQUIRED]
+- `amount`: {`float`}: [REQUIRED]
   - The amount of cryptocurrency to transfer out.
-* `fiatAccountId`: {`string`} [REQUIRED]
+- `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
-* `quoteId`: {`string`} [REQUIRED]
+- `quoteId`: {`string`} [REQUIRED]
   - Identifier of the quote to use for the transfer.
 
 ##### 3.3.4.2.2. Responses
@@ -1371,7 +1367,7 @@ On a successfully initiated transfer out request, the server MUST respond with a
 
 ###### 3.3.4.2.2.2. HTTP `400`
 
-If the transfer parameters are invalid, or if the transfer is not possible for reasons *other* than the fiat account not existing, the server MUST
+If the transfer parameters are invalid, or if the transfer is not possible for reasons _other_ than the fiat account not existing, the server MUST
 return an HTTP `400` error code, along with the following response body:
 
 ```
@@ -1425,7 +1421,7 @@ If a transfer is not allowed for a generic reason (such as unacceptable transfer
 
 ###### 3.3.4.2.3.2.3. `InvalidQuote`
 
-If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST 
+If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST
 reject the transfer and return an `InvalidQuote` error.
 
 ###### 3.3.4.2.3.2.4. `ResourceNotFound`
@@ -1441,7 +1437,7 @@ the transfer.
 
 ###### 3.3.4.3.1.1. Path Parameters
 
-* `transferId`: {`string`} [REQUIRED]
+- `transferId`: {`string`} [REQUIRED]
   - The transfer ID for the transfer whose status to return.
 
 ##### 3.3.4.3.2. Responses
@@ -1550,7 +1546,7 @@ facilitate AML checks, if required.
 
 # 6. Sandbox Environment
 
-In order to facilitate ease of client integration and testing against FiatConnect-compliant APIs, each FiatConnect API MUST have a corresponding *sandbox*
+In order to facilitate ease of client integration and testing against FiatConnect-compliant APIs, each FiatConnect API MUST have a corresponding _sandbox_
 API available. This sandbox API should be identical in behavior to the production FiatConnect API in every way, except for a number of key differences.
 
 ## 6.1. Celo Network
@@ -1581,7 +1577,7 @@ MUST never debit/credit actual fiat accounts, but they SHOULD receive/send crypt
 # 7. Definitions
 
 This document references a number of definitions, all of which are enumerated in their entirety below. There are two "types" of definitions; those
-which are static, and *not* subject to change upon this proposal's acceptance, and those that are dynamic, and meant to be extended by the community.
+which are static, and _not_ subject to change upon this proposal's acceptance, and those that are dynamic, and meant to be extended by the community.
 
 ## 7.1. Static Definitions
 
@@ -1657,6 +1653,7 @@ An enum listing the types of transfer statuses recognized by FiatConnect.
 	`TransferFailed`
 ]
 ```
+
 ## 7.2. Dynamic Definitions
 
 ### 7.2.1. `FiatTypeEnum`
@@ -1665,16 +1662,11 @@ An enum listing the types of fiat currencies supported by FiatConnect.
 
 ```
 [
-<<<<<<< HEAD
-  `USD`,
-  `EUR`,
-  `REAL`,
-=======
 	`USD`,
 	`EUR`,
->>>>>>> Fix rebase conflicts
-  `XOF`,
-  `GNF`
+	`REAL`,
+	`XOF`,
+	`GNF`
 ]
 ```
 
@@ -1703,20 +1695,20 @@ An enum listing the KYC schema types recognized by the FiatConnect specification
 
 ### 7.2.4. `FiatAccountTypeEnum`
 
-An enum listing the *types* of Fiat Accounts recognized by the FiatConnect specification. A Fiat Account Type is a property of each Fiat Account Schema, and
-represents what *kind* of account that schema represents.
+An enum listing the _types_ of Fiat Accounts recognized by the FiatConnect specification. A Fiat Account Type is a property of each Fiat Account Schema, and
+represents what _kind_ of account that schema represents.
 
 ```
 [
 	`BankAccount`,
-  `MobileMoney`,
-  `DuniaWallet`
+	`MobileMoney`,
+	`DuniaWallet`
 ]
 ```
 
 ### 7.2.5. `FeeTypeEnum`
 
-An enum listing the *types* of fees that providers may require on transfers.
+An enum listing the _types_ of fees that providers may require on transfers.
 
 ```
 [
@@ -1785,7 +1777,7 @@ All Fiat Account Schemas supported by FiatConnect MUST contain the `accountName`
 representing the type of fiat account this schema represents. The `institutionName` and `accountName` fields are required in order for the API to return obfuscated but distinguishable
 account information from the `GET /accounts` endpoint.
 
-####  7.3.2.1. `AccountNumber`
+#### 7.3.2.1. `AccountNumber`
 
 `AccountNumber` is a Fiat Account schema that represents accounts where the only identifying information required is some `accountNumber` string.
 
@@ -1806,48 +1798,7 @@ to prompt the user for a Nigeria-specific account number.
 Depending on the `allowedValues` field for `country`, the client SHOULD impose restrictions on the type of data the user can provide for the `accountNumber` field. A non-exhaustive list
 is below:
 
-* `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
-
-#### 7.3.2.2. `MobileMoney`
-
-Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
-`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users with the country code (i.e., +225).
-
-```
-{
-  accountName: `string`,
-  institutionName: `string`,
-  mobile: `string`,
-  operator: `SupportedOperatorEnum`,
-  fiatAccountType: `FiatAccountTypeEnum.MobileMoney`
-}
-```
-
-##### 7.3.2.2.1. `SupportedOperatorEnum`
-
-Depending on the allowed value field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided. For example for Côte d'Ivoire this enum can be :
-
-```
-[
-  `ORANGE`,
-  `MOOV`,
-  `MTN`
-]
-```
-
-#### 7.3.2.3. `DuniaWallet`
-
-The Dunia wallet is a proprietary wallet for people that created an account on [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
-platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The `mobile` phone should contains the country code (i.e., +225).
-
-```
-{
-  accountName: `string`,
-  institutionName: `string`,
-  mobile: `string`,
-  fiatAccountType: `FiatAccountTypeEnum.DuniaWallet`
-}
-```
+- `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
 
 # 8. References
 
