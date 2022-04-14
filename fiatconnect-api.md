@@ -201,6 +201,7 @@
 	  - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
     - [7.3.2.2. `MobileMoney`](#7322-mobilemoney)
       - [7.3.2.2.1. `SupportedOperatorEnum`](#73221-supportedoperatorenum)
+        - [7.3.2.2.1.1. MobileMoney prviders for Côte d'Ivoire](#732211-côte-divoire)
     - [7.3.2.3. `DuniaWallet`](#7323-duniawallet)
 - [8. References](#8-references)
   * [8.1. Normative References](#81-normative-references)
@@ -1820,10 +1821,12 @@ Most of the mobile money's providers require only the phone number to process a 
 
 ##### 7.3.2.2.1. `SupportedOperatorEnum`
 
-Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided for each country. Below you can find a list of mobile money provider for each country (PS: New mobile money providers can be added).
+Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided for each country. Below you can find a list of mobile money provider for each country 
+
+(PS: New mobile money providers can be added).
 
 
-###### 7.3.2.2.1.1. `Côte d'Ivoire`
+###### 7.3.2.2.1.1. MobileMoney providers for Côte d'Ivoire
 
 - `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money) 
 - `MOOV` - [Moov Money](https://www.moov-africa.ci/moov-money/)
