@@ -180,25 +180,29 @@
   - [6.4. Fiat Accounts](#64-fiat-accounts)
   - [6.5. Transfers](#65-transfers)
 - [7. Definitions](#7-definitions)
-  - [7.1. Static Definitions](#71-static-definitions)
-    - [7.1.1. `KycStatusEnum`](#711--kycstatusenum-)
-    - [7.1.2. `ErrorEnum`](#712--errorenum-)
-    - [7.1.3. `TransferTypeEnum`](#713--transfertypeenum-)
-    - [7.1.3. `WebhookEventTypeEnum`](#713--webhookeventtypeenum-)
-    - [7.1.4. `TransferStatusEnum`](#714--transferstatusenum-)
-  - [7.2. Dynamic Definitions](#72-dynamic-definitions)
-    - [7.2.1. `FiatTypeEnum`](#721--fiattypeenum-)
-    - [7.2.2. `CryptoTypeEnum`](#722--cryptotypeenum-)
-    - [7.2.3. `KycSchemaEnum`](#723--kycschemaenum-)
-    - [7.2.4. `FiatAccountTypeEnum`](#724--fiataccounttypeenum-)
-    - [7.2.5. `FeeTypeEnum`](#725--feetypeenum-)
-    - [7.2.6. `FeeFrequencyEnum`](#726--feetypeenum-)
-    - [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
-  - [7.3. Initial Entity Support](#73-initial-entity-support)
-    - [7.3.1. KYC Schemas](#731-kyc-schemas)
-    * [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
-  * [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
-    - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
+  * [7.1. Static Definitions](#71-static-definitions)
+    + [7.1.1. `KycStatusEnum`](#711--kycstatusenum-)
+    + [7.1.2. `ErrorEnum`](#712--errorenum-)
+    + [7.1.3. `TransferTypeEnum`](#713--transfertypeenum-)
+    + [7.1.3. `WebhookEventTypeEnum`](#713--webhookeventtypeenum-)
+    + [7.1.4. `TransferStatusEnum`](#714--transferstatusenum-)
+  * [7.2. Dynamic Definitions](#72-dynamic-definitions)
+    + [7.2.1. `FiatTypeEnum`](#721--fiattypeenum-)
+    + [7.2.2. `CryptoTypeEnum`](#722--cryptotypeenum-)
+    + [7.2.3. `KycSchemaEnum`](#723--kycschemaenum-)
+    + [7.2.4. `FiatAccountTypeEnum`](#724--fiataccounttypeenum-)
+    + [7.2.5. `FeeTypeEnum`](#725--feetypeenum-)
+    + [7.2.6. `FeeFrequencyEnum`](#726--feetypeenum-)
+    + [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
+  * [7.3. Initial Entity Support](#73-initial-entity-support)
+    + [7.3.1. KYC Schemas](#731-kyc-schemas)
+	  - [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
+	+ [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
+	  - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
+    - [7.3.2.2. `MobileMoney`](#7322-mobilemoney)
+      - [7.3.2.2.1. `SupportedOperatorEnum`](#73221-supportedoperatorenum)
+        - [7.3.2.2.1.1. MobileMoney prviders for Côte d'Ivoire](#732211-côte-divoire)
+    - [7.3.2.3. `DuniaWallet`](#7323-duniawallet)
 - [8. References](#8-references)
   - [8.1. Normative References](#81-normative-references)
     - [8.1.1. [RFC2119]](#811--rfc2119-)
@@ -1798,7 +1802,49 @@ to prompt the user for a Nigeria-specific account number.
 Depending on the `allowedValues` field for `country`, the client SHOULD impose restrictions on the type of data the user can provide for the `accountNumber` field. A non-exhaustive list
 is below:
 
-- `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
+* `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
+
+#### 7.3.2.2. `MobileMoney`
+
+Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
+`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
+
+```
+{
+  accountName: `string`,
+  institutionName: `string`,
+  mobile: `string`,
+  operator: `SupportedOperatorEnum`,
+  fiatAccountType: `FiatAccountTypeEnum.MobileMoney`
+}
+```
+
+##### 7.3.2.2.1. `SupportedOperatorEnum`
+
+Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided for each country. Below you can find a list of mobile money provider for each country 
+(PS: New mobile money providers can be added).
+
+###### 7.3.2.2.1.1. MobileMoney providers for Côte d'Ivoire
+
+- `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money)
+- `MOOV` - [Moov Money](https://www.moov-africa.ci/moov-money/)
+- `MTN` - [Momo](https://www.mtn.ci/vos/depot-et-retrait-momo/)
+- `WAVE` - [Wave](https://www.wave.com/fr/)
+
+#### 7.3.2.3. `DuniaWallet`
+
+The Dunia wallet is a proprietary wallet for people that have an account on the [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
+platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
+
+
+```
+{
+  accountName: `string`,
+  institutionName: `string`,
+  mobile: `string`,
+  fiatAccountType: `FiatAccountTypeEnum.DuniaWallet`
+}
+```
 
 # 8. References
 
