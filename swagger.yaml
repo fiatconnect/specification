@@ -38,10 +38,7 @@ paths:
         "200":
           description: "successful operation"
           schema:
-            type: "object"
-            properties:
-              kycStatus:
-                $ref: '#/definitions/QuoteResponse'
+            $ref: '#/definitions/QuoteResponse'
         "400":
           description: "failed operation"
           schema:
@@ -70,10 +67,7 @@ paths:
         "200":
           description: "successful operation"
           schema:
-            type: "object"
-            properties:
-              kycStatus:
-                $ref: '#/definitions/QuoteResponse'
+            $ref: '#/definitions/QuoteResponse'
         "400":
           description: "failed operation"
           schema:
