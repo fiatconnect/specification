@@ -38,10 +38,7 @@ paths:
         "200":
           description: "successful operation"
           schema:
-            type: "object"
-            properties:
-              kycStatus:
-                $ref: '#/definitions/QuoteResponse'
+            $ref: '#/definitions/QuoteResponse'
         "400":
           description: "failed operation"
           schema:
@@ -70,10 +67,7 @@ paths:
         "200":
           description: "successful operation"
           schema:
-            type: "object"
-            properties:
-              kycStatus:
-                $ref: '#/definitions/QuoteResponse'
+            $ref: '#/definitions/QuoteResponse'
         "400":
           description: "failed operation"
           schema:
@@ -481,7 +475,9 @@ definitions:
             type: "number"
           cryptoAmount:
             type: "number"
-          guaranteedUntil?:
+          quoteId:
+            type: "string"
+          guaranteedUntil:
             type: "string"
       kyc:
         type: "object"
@@ -558,6 +554,8 @@ definitions:
         type: "number"
       fiatAccountId:
         type: "string"
+      quoteId:
+        type: "string"
   TransferResponse:
     type: "object"
     properties:
@@ -601,6 +599,7 @@ definitions:
     enum:
       - TransferNotAllowed
       - KycExpired
+      - InvalidQuote
   SchemaErrorEnum:
     type: "string"
     enum:
