@@ -20,10 +20,10 @@
       - [3.2.1.1. JWT Header](#3211-jwt-header)
       - [3.2.1.2. JWT Payload](#3212-jwt-payload)
         - [3.2.1.2.1. `"sub"` Claim](#32121---sub---claim)
-    * [3.2.1.2.2. `"iss"` Claim](#32122---iss---claim)
+    - [3.2.1.2.2. `"iss"` Claim](#32122---iss---claim)
       - [3.2.1.2.3. `"exp"` Claim](#32123---exp---claim)
       - [3.2.1.2.4. `"client"` Claim](#32123---client---claim)
-      * [3.2.1.3. Communicating JWT](#3213-communicating-jwt)
+      - [3.2.1.3. Communicating JWT](#3213-communicating-jwt)
   - [3.3. Formal Specification](#33-formal-specification)
     - [3.3.1. Quote Endpoints](#331-quote-endpoints)
       - [3.3.1.1. `GET /quote/in`](#3311--get--quote-in-)
@@ -180,31 +180,27 @@
   - [6.4. Fiat Accounts](#64-fiat-accounts)
   - [6.5. Transfers](#65-transfers)
 - [7. Definitions](#7-definitions)
-  * [7.1. Static Definitions](#71-static-definitions)
-    + [7.1.1. `KycStatusEnum`](#711--kycstatusenum-)
-    + [7.1.2. `ErrorEnum`](#712--errorenum-)
-    + [7.1.3. `TransferTypeEnum`](#713--transfertypeenum-)
-    + [7.1.3. `WebhookEventTypeEnum`](#713--webhookeventtypeenum-)
-    + [7.1.4. `TransferStatusEnum`](#714--transferstatusenum-)
-  * [7.2. Dynamic Definitions](#72-dynamic-definitions)
-    + [7.2.1. `FiatTypeEnum`](#721--fiattypeenum-)
-    + [7.2.2. `CryptoTypeEnum`](#722--cryptotypeenum-)
-    + [7.2.3. `KycSchemaEnum`](#723--kycschemaenum-)
-    + [7.2.4. `FiatAccountTypeEnum`](#724--fiataccounttypeenum-)
-    + [7.2.5. `FeeTypeEnum`](#725--feetypeenum-)
-    + [7.2.6. `FeeFrequencyEnum`](#726--feetypeenum-)
-    + [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
-  * [7.3. Initial Entity Support](#73-initial-entity-support)
-    + [7.3.1. KYC Schemas](#731-kyc-schemas)
+  - [7.1. Static Definitions](#71-static-definitions)
+    - [7.1.1. `KycStatusEnum`](#711--kycstatusenum-)
+    - [7.1.2. `ErrorEnum`](#712--errorenum-)
+    - [7.1.3. `TransferTypeEnum`](#713--transfertypeenum-)
+    - [7.1.3. `WebhookEventTypeEnum`](#713--webhookeventtypeenum-)
+    - [7.1.4. `TransferStatusEnum`](#714--transferstatusenum-)
+  - [7.2. Dynamic Definitions](#72-dynamic-definitions)
+    - [7.2.1. `FiatTypeEnum`](#721--fiattypeenum-)
+    - [7.2.2. `CryptoTypeEnum`](#722--cryptotypeenum-)
+    - [7.2.3. `KycSchemaEnum`](#723--kycschemaenum-)
+    - [7.2.4. `FiatAccountTypeEnum`](#724--fiataccounttypeenum-)
+    - [7.2.5. `FeeTypeEnum`](#725--feetypeenum-)
+    - [7.2.6. `FeeFrequencyEnum`](#726--feetypeenum-)
+    - [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
+  - [7.3. Initial Entity Support](#73-initial-entity-support)
+    - [7.3.1. KYC Schemas](#731-kyc-schemas)
 	  - [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
-	+ [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
+	- [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
 	  - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
     - [7.3.2.2. `MobileMoney`](#7322-mobilemoney)
       - [7.3.2.2.1. `SupportedOperatorEnum`](#73221-supportedoperatorenum)
-        - [7.3.2.2.1.1. Côte d'Ivoire](#732211-côte-divoire)
-        - [7.3.2.2.1.1. Burkina Faso](#732212-burkina-faso)
-        - [7.3.2.2.1.1. Cameroon](#732213-cameroon)
-        - [7.3.2.2.1.1. Guinea](#732214-guinea)
     - [7.3.2.3. `DuniaWallet`](#7323-duniawallet)
 - [8. References](#8-references)
   - [8.1. Normative References](#81-normative-references)
@@ -1810,13 +1806,14 @@ is below:
 #### 7.3.2.2. `MobileMoney`
 
 Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
-`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
+`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US). Finally, the `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
 
 ```
 {
   accountName: `string`,
   institutionName: `string`,
   mobile: `string`,
+  country: `string`,
   operator: `SupportedOperatorEnum`,
   fiatAccountType: `FiatAccountTypeEnum.MobileMoney`
 }
@@ -1824,30 +1821,15 @@ Most of the mobile money's providers require only the phone number to process a 
 
 ##### 7.3.2.2.1. `SupportedOperatorEnum`
 
-Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided for each country. Below you can find a list of mobile money provider for each country 
-(PS: New mobile money providers can be added).
+Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided. Depending on mobile money providers supported on a specific country, CI/CO providers will provide the list of `allowedValues`.
+Below you have a list of mobile money providers 
 
-###### 7.3.2.2.1.1. Côte d'Ivoire
+(PS: Only missing mobile money providers should be added regardless of the country).
 
 - `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money)
 - `MOOV` - [Moov Money](https://www.moov-africa.ci/moov-money/)
-- `MTN` - [Momo](https://www.mtn.ci/vos/depot-et-retrait-momo/)
+- `MTN` - [Momo or Mtn Money](https://www.mtn.ci/vos/depot-et-retrait-momo/)
 - `WAVE` - [Wave](https://www.wave.com/fr/)
-
-###### 7.3.2.2.1.2. Burkina Faso
-
-- `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money)
-- `MOOV` - [Moov Money](https://moov-africa.bf/particulier/moovmoney/Pages/moovmoney.aspx)
-
-###### 7.3.2.2.1.3. Cameroon
-
-- `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money)
-- `MTN` - [Mtn Money](https://mtn.cm/fr/momo/)
-
-###### 7.3.2.2.1.4. Guinea
-
-- `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money)
-- `MTN` - [Mtn Money](https://mtn.com.gn/mobile-money/)
 
 #### 7.3.2.3. `DuniaWallet`
 
