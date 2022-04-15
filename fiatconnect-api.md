@@ -1662,11 +1662,10 @@ An enum listing the types of fiat currencies supported by FiatConnect.
 
 ```
 [
-    `USD`,
-    `EUR`,
-    `REAL`,
-    `INR`
-
+  `USD`,
+  `EUR`,
+  `REAL`,
+  `INR`
 ]
 ```
 
