@@ -475,7 +475,9 @@ definitions:
             type: "number"
           cryptoAmount:
             type: "number"
-          guaranteedUntil?:
+          quoteId:
+            type: "string"
+          guaranteedUntil:
             type: "string"
       kyc:
         type: "object"
