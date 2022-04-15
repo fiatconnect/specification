@@ -1568,7 +1568,7 @@ by webhook throughout the process, but verifications willalways end in approval.
 ## 6.4. Fiat Accounts
 
 Sandbox APIs MUST never internally connect to a provided Fiat Account or perform any sort of validation that user-submitted Fiat Account details are "valid".
-Sandbox APIs MUST never actually interact with a user's real fiat accounts.
+Sandbox APIs MUST never actually interact with a user's personal fiat accounts.
 
 ## 6.5. Transfers
 
@@ -1662,9 +1662,11 @@ An enum listing the types of fiat currencies supported by FiatConnect.
 
 ```
 [
-	`USD`,
-	`EUR`,
-	`INR`
+    `USD`,
+    `EUR`,
+    `REAL`,
+    `INR`
+
 ]
 ```
 
@@ -1674,9 +1676,10 @@ An enum listing the types of crypto tokens suppored by FiatConnect.
 
 ```
 [
-	`cUSD`,
-	`cEUR`,
-	`CELO`
+  `cUSD`,
+  `cEUR`,
+  `cREAL`,
+  `CELO`
 ]
 ```
 

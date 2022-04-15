@@ -426,11 +426,13 @@ definitions:
     enum:
       - USD
       - EUR
+      - REAL
   CryptoType:
     type: "string"
     enum:
       - cUSD
       - cEUR
+      - cREAL
       - CELO
   FeeType:
     type: "string"
