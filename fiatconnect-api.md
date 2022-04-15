@@ -1796,70 +1796,39 @@ is below:
 
 * `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
 
-####  7.3.2.2. `CheckingAccountInr`
+####  7.3.2.2. `CheckingAccount`
 
-`CheckingAccountInr` is a Fiat Account schema that represents accounts for INR transactions.
+`CheckingAccountInr` is a Fiat Account schema that represents accounts for transactions across multiple currencies.
 
 ```
 {
-    depositNumber: `string`, 
-    destinationCurrency: `string`,
-    ifsc: `string`,
-    name: `string`,
-    address: `string`,
-    city: `string`,
-    country: `string`,
-    countryOfBirth:`string`,
-    dateOfBirth: `string`,
-    email: `string`,
-    firstName: `string`,
-    gender: `string`,
-    lastName: `string`,
-    mobilePhoneCountry: `string`,
-    mobilePhoneNumber: `string`,
-    senderType: `string`, 
-    zipcode: `string`, 
-    sourceCurrency: `string`
+    "accountName": `string`,
+    "institutionName": `string`,
+    "institutionCode": `string`,
+    "accountNumber": `string`,
+    "fiatAccountType": `FiatAccountTypeEnum.BankAccount` ,
+    "mobileNumber": `string`,
+    "address": `string`,
+    "city": `string`,
+    "country": `string`,
+    "countryOfBirth": `string`,
+    "dateOfBirth": `string`,
+    "email": `string`,
+    "firstName": `string`,
+    "gender": `string`,
+    "lastName": `string`,
+    "mobilePhoneCountry": `string`,
+    "senderType": `string`, 
+    "zipcode": `string`,
+    "providerCode": `string`
 }
 ```
 
 The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The field is for providers to specify which country this data is meant for.
+In some cases `institutionCode` and `accountNumber` field is mandatory whereas in some cases `providerCode` and `mobileNumber` will be mandatory.
+This is dependent on the currency and country in which the transfer is happening. 
 
-`destinationCurrency` is `INR` case sensitive for inr transactions. 
-
-
-####  7.3.2.3. `CheckingAccountEur`
-
-`CheckingAccountEur` is a Fiat Account schema that represents accounts for EUR transactions.
-
-```
-{
-    depositNumber: `string`, 
-    destinationCurrency: `string`, 
-    bankName:`string`, 
-    iban: `string`, 
-    name: `string`, 
-    address: `string`, 
-    city: `string`,
-    country: `string`, ,
-    countryOfBirth:`string`, ,
-    dateOfBirth: `string`, 
-    email: `string`, 
-    firstName: `string`, ,
-    gender: `string`, ,
-    lastName: `string`, ,
-    mobilePhoneCountry: `string`, 
-    mobilePhoneNumber: `string`, 
-    senderType: `string`, , 
-    zipcode: `string`, , 
-    sourceCurrency: `string`, 
-}
-```
-
-The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The field is for providers to specify which country this data is meant for.
-
-`destinationCurrency` is `EUR` case sensitive for EUR transactions. 
-
+For eg: `INR`,`EUR` and `NGN` transfer requires `instituationCode` and `accountNumber` combination where as currencies like `GNF`, `XAF` will need `providerCode` and `mobileNumber` to be provided.
 
 # 8. References
 
