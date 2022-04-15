@@ -1826,6 +1826,15 @@ Below you have a list of mobile money providers
 
 (PS: Only missing mobile money providers should be added regardless of the country).
 
+```
+[
+  `ORANGE`,
+  `MOOV`,
+  `MTN`,
+  `WAVE`
+]
+```
+
 - `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money)
 - `MOOV` - [Moov Money](https://www.moov-africa.ci/moov-money/)
 - `MTN` - [Momo or Mtn Money](https://www.mtn.ci/vos/depot-et-retrait-momo/)
