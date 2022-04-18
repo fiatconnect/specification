@@ -442,11 +442,11 @@ definitions:
   FiatAccountTypeEnum:
     type: "string"
     enum:
-      - CreditCard
-      - DebitCard
-      - CheckingAccount
+      - BankAccount
   FiatAccountSchemaEnum:
     type: "string"
+    enum:
+      - AccountNumber
   QuoteRequest:
     type: "object"
     properties:
