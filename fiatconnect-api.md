@@ -209,6 +209,7 @@
     + [8.2.2. Idempotency Keys](#822-idempotency-keys)
     + [8.2.3. ISO 3166-1](#823-iso-3166-1)
     + [8.2.4. ISO 3166-2](#824-iso-3166-2)
+    + [8.2.5. ISO 8601](#825-iso-8601)
 
 # 1. Introduction
 
@@ -384,6 +385,48 @@ is allowed for transfers, and their actual location (as collected through KYC) m
 will be allowed to initiate a transfer. In the case where a user submits KYC details for a geolocation that is *not* supported by a
 provider, they will never be able to initiate a transfer, regardless of what location they submit to the quote endpoint, since the KYC
 verification should be denied.
+
+## 3.2. Clock Synchronization
+
+Various parts of the FiatConnect specification rely on the client and server synchronizing their clocks in order to agree on a common time.
+In particular, the authentication scheme relies on clock synchronization to choose proper issuance and expiration times for session cookies,
+and the quote endpoints return timestamps representing the expiry of the requested quote, which requires client-server clock synchronization
+in order to be interpreted correctly.
+
+Rather than having bespoke clock synchronization solutions for each of these cases, the FiatConnect specification requires API implementors to
+include a single `/clock` endpoint, which simply returns the server's current timestamp. Servers MUST implement this endpoint. With this information,
+the client can determine the offset between their local time and server time, and synchronize on clocks (to an acceptable approximation).
+The exact method by which clients determine the clock offset is an implementation detail left to the client. (For example, a relatively
+easy and inexpensive method that incoroporates round-trip delay is the approach taken by the
+[Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm).)
+
+### 3.2.1. `GET /clock`
+
+This endpoint is responsible for reporting the current server time to the client.
+
+#### 3.2.1.1. Parameters
+
+This endpoint does not require any parameters.
+
+#### 3.2.1.2. Responses
+
+##### 3.2.1.2.1. HTTP `200`
+
+On success, the server MUST return an HTTP `200`, with the following response body:
+
+```
+{
+	time: `string`
+}
+```
+
+#### 3.2.1.3. Semantics
+
+The semantics of this endpoint are extremely simple; the server MUST always return a successful response containing the current server time.
+
+##### 3.2.1.3.1. Success
+
+On success, the server MUST return a 200 response. The `time` field in the response MUST be the server's current time, formatted as an ISO 8601 datetime string.
 
 ## 3.2. Authentication & Authorization
 
@@ -606,7 +649,7 @@ receive by providing `fiatAmount` worth of the fiat currency. If `cryptoAmount` 
 of fiat currency required in order to receive the requested amount of crypto.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
-The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. The `quote.quoteId` field
+The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
 is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
 conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
@@ -776,7 +819,7 @@ in order to recieve `fiatAmount` worth of the fiat currency. If `cryptoAmount` i
 of fiat currency the user should expect to recieve in exchange for `cryptoAmount` worth of the cryptocurrency.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
-The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. The `quote.quoteId` field
+The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
 is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
 conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
@@ -1829,3 +1872,7 @@ ISO 3166-1 <https://en.wikipedia.org/wiki/ISO_3166-1>
 ### 8.2.4. ISO 3166-2
 
 ISO 3166-2 <https://en.wikipedia.org/wiki/ISO_3166-2>
+
+### 8.2.5. ISO 8601
+
+ISO 8601 <https://en.wikipedia.org/wiki/ISO_8601>
