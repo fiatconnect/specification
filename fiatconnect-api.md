@@ -218,7 +218,7 @@
 
 Liquidity between fiat and cryptocurrency assets is a common point of friction for new and growing crypto networks. In particular, cashing in/out
 to/from crypto assets can be a difficult experience. Oftentimes, there is poor support for geographical regions, and fees and spreads may be excessively high.
-Additionally, liquidity providers (referred to here as _cash-in/cash-out providers_, or _CICO providers_) share no common interface for allowing clients
+Additionally, liquidity providers (referred to here as *cash-in/cash-out providers*, or *CICO providers*) share no common interface for allowing clients
 to transfer funds between crypto and fiat. In many cases, CICO providers only provide transfers through their own native (typically web-based) interface.
 In the few cases where CICO providers do offer an API for clients to integrate against, there is no uniformity in interface design across providers. Because each
 provider's API is unique, native CICO integrations within clients require completely bespoke integrations. Furthermore, since individual CICO providers may only
@@ -226,20 +226,20 @@ offer limited geographical support for transfers, a client may have to integrate
 users, which requires considerable implementation effort. In many cases, this level of implementation effort is not feasible, which can lead to clients which
 offer poor regional CICO availablity. This may lead to users seeking out a variety of different clients in order to access broad regional support. Not only is
 this a poor user experience, but it is a detriment to both client developers and the network which those clients and CICO providers service. Clients unable to
-devote _considerable_ engineering effort towards CICO provider integration lose out, and network TVL is hamstrung due to poor user experience.
+devote *considerable* engineering effort towards CICO provider integration lose out, and network TVL is hamstrung due to poor user experience.
 
-_FiatConnect_ is a proposed solution to these issues. FiatConnect provides a standardized server-side API specification for CICO providers to provide
+*FiatConnect* is a proposed solution to these issues. FiatConnect provides a standardized server-side API specification for CICO providers to provide
 cash-in/cash-out functionality to clients. In addition to providing a standardized API specification, the FiatConnect ecosystem also offers a set of
-client-side tooling through the _FiatConnect SDK_ which makes it seamless for client developers to integrate against any CICO provider who operates
-a _FiatConnect API_. By integrating with the FiatConnect SDK, clients will be able to implement a _single_ native flow that can be re-used to perform
-transfers with _any_ provider operating a FiatConnect API; supporting new providers in the client merely requires a small amount of static configuration.
+client-side tooling through the *FiatConnect SDK* which makes it seamless for client developers to integrate against any CICO provider who operates
+a *FiatConnect API*. By integrating with the FiatConnect SDK, clients will be able to implement a *single* native flow that can be re-used to perform
+transfers with *any* provider operating a FiatConnect API; supporting new providers in the client merely requires a small amount of static configuration.
 We believe that the FiatConnect specification will provide benefits to a multitude of parties:
 
 1. **Client Developers**: Client developers will not have to exert any specific implementation effort in order to integrate with any particular CICO
    provider. After implementing a single native flow with the FiatConnect SDK, supporting new providers comes for free.
-2. **CICO Providers**: CICO providers, particularly smaller ones, face a challenge in gaining initial adoption; they often must rely on the _client_ to
+2. **CICO Providers**: CICO providers, particularly smaller ones, face a challenge in gaining initial adoption; they often must rely on the *client* to
    spend engineering effort creating an integration. With FiatConnect, this dependency is removed. Once a provider implements a FiatConnect API,
-   they can immediately start providing crypto/fiat liquidity to _any_
+   they can immediately start providing crypto/fiat liquidity to *any*
    client, at no cost to the client developer. Client developers are thus much more likely to integrate with FiatConnect-compliant providers, making
    FiatConnect a compelling option for providers in order to drive adoption.
 3. **End User**: Since FiatConnect will reduce the total amount of engineering work required to integrate providers in clients, end users will
@@ -252,7 +252,7 @@ necessary, and only as it concerns the FiatConnect API design.
 ## 1.1. A Note on Celo & Multi-Chain Support
 
 This proposal has been designed without multi-chain support in mind; we assume all blockchain-related concepts (e.g., tokens, addresses) exist within
-a single predetermined chain, agreed upon by all parties. It does not matter so much _what_ this chain is, just that
+a single predetermined chain, agreed upon by all parties. It does not matter so much *what* this chain is, just that
 all parties (clients and servers) are in agreement. If a provider wants to support multiple chains, they would have to stand up multiple APIs, with identical
 interfaces. Likewise, clients would have to maintain per-chain instances of the FiatConnect SDK (discussed later) in order to support transfers from multiple chains.
 
@@ -274,7 +274,7 @@ We first provide a generalized and somewhat informal model of a "transfer" opera
 The model should be general enough to support a wide range of CICO provider's requirements. This transfer lifecycle is based on the author's
 own experience as a client developer for Valora on the Celo network; it should certainly be reviewed by CICO providers and amended if there are any shortcomings.
 
-For a single provider, we model the lifecycle of a transfer (either _in_ or _out_) as a number of discrete steps:
+For a single provider, we model the lifecycle of a transfer (either *in* or *out*) as a number of discrete steps:
 
 - 1. **Quote**: The client requests a quote for a transfer with the user's desired parameters.
 - 2. **KYC**: For regulatory and compliance reasons, the user must provide data used for KYC verification purposes to the provider.
@@ -302,17 +302,17 @@ transfer intent.
 
 For regulatory and compliance reasons, providers may require that users complete a KYC verification process before initiating a transfer.
 We expect that different providers will have varying KYC requirements depending on a client's geogrpahical region. The FiatConnect
-specification must not make any assumptions about the particular _shape_ of KYC data that providers require. Rather, the specification
+specification must not make any assumptions about the particular *shape* of KYC data that providers require. Rather, the specification
 should be extensible so as to allow providers to communicate to the client what sort of KYC data is required. The FiatConnect specification
-allows for a list of standardized _KYC schemas_ from which a provider can select those that it accepts. If a provider's KYC needs are
+allows for a list of standardized *KYC schemas* from which a provider can select those that it accepts. If a provider's KYC needs are
 unmet by the specification's recognized schemas, the provider may request that the specification be extended to support a new schema, though
 a close eye should be kept on the reusability of this schema by other potential providers.
 
-KYC validation is not expected to occur before _every_ transfer. Rather, we expect that KYC validation with a provider will be an infrequent
+KYC validation is not expected to occur before *every* transfer. Rather, we expect that KYC validation with a provider will be an infrequent
 occurence. A user may have to submit KYC details for a particular region before initiating a transfer there, but subsequent transfers in that
 region will likely reuse the previous KYC. One might expect that these details become "stale" after a time and will need to be resubmitted by the
 end user before initiating further transfers in their region. Ultimately, what a provider decides to do with KYC data once it is submitted is an implementation
-detail and not strictly enforced by the FiatConnect API specification, _except_ for requirements on communicating KYC verification statuses to
+detail and not strictly enforced by the FiatConnect API specification, *except* for requirements on communicating KYC verification statuses to
 the client.
 
 ### 2.2.1. KYC Status Monitoring
@@ -331,14 +331,14 @@ We will discuss these two options in more depth later in this document.
 ## 2.3. Fiat Accounts
 
 A user needs to be able to store details about a source or destination for fiat funds with the provider. The FiatConnect specification refers
-to these as _Fiat Accounts_, but these can commonly be thought of as, e.g., _bank accounts_, _credit cards_, etc. A fiat account refers to
+to these as *Fiat Accounts*, but these can commonly be thought of as, e.g., *bank accounts*, *credit cards*, etc. A fiat account refers to
 any user-owned accout that supports withdrawals and deposits of fiat-denominated funds. Similar to KYC details, different providers may support
-different _types_ of fiat accounts, and require different schemas depending on the user's geographical region. The FiatConnect specification
-introduces two distinct concepts to account for this; that of a _Fiat Account Type_, and a _Fiat Account Schema_. A _Fiat Account Type_ refers to
-the high-level _type_ of fiat account, e.g., bank account, credit card, debit card, etc. A _Fiat Accout Schema_ refers to the precise shape that
-account data should take when being communicated from client to server; each _schema_ has an associated _type_. This is a subtle, yet important
-distinction. As mentioned in section 2.1, providers may use the _type_ of a fiat account for determining whether a transfer is allowed. Different
-providers, however, may have different requirements on how account data is communicated, even for the same account _type_, depending on geographical
+different *types* of fiat accounts, and require different schemas depending on the user's geographical region. The FiatConnect specification
+introduces two distinct concepts to account for this; that of a *Fiat Account Type*, and a *Fiat Account Schema*. A *Fiat Account Type* refers to
+the high-level *type* of fiat account, e.g., bank account, credit card, debit card, etc. A *Fiat Accout Schema* refers to the precise shape that
+account data should take when being communicated from client to server; each *schema* has an associated *type*. This is a subtle, yet important
+distinction. As mentioned in section 2.1, providers may use the *type* of a fiat account for determining whether a transfer is allowed. Different
+providers, however, may have different requirements on how account data is communicated, even for the same account *type*, depending on geographical
 region. Like with KYC schemas, the FiatConnect standard does not make assumptions about fiat account types and schemas; these are designed to be
 extensible by the community.
 
@@ -383,16 +383,58 @@ request assuming that the client is being honest about its location. We expect t
 end-user's location will come from KYC verification.
 
 As an example, a client using a VPN should still be able to interact with FiatConnect APIs; when requesting a quote,
-this client would provide their actual country, and _not_ the one implied by their request IP. If their self-reported location
+this client would provide their actual country, and *not* the one implied by their request IP. If their self-reported location
 is allowed for transfers, and their actual location (as collected through KYC) matches this, their KYC will be accepted and they
-will be allowed to initiate a transfer. In the case where a user submits KYC details for a geolocation that is _not_ supported by a
+will be allowed to initiate a transfer. In the case where a user submits KYC details for a geolocation that is *not* supported by a
 provider, they will never be able to initiate a transfer, regardless of what location they submit to the quote endpoint, since the KYC
 verification should be denied.
 
+## 3.2. Clock Synchronization
+
+Various parts of the FiatConnect specification rely on the client and server synchronizing their clocks in order to agree on a common time.
+In particular, the authentication scheme relies on clock synchronization to choose proper issuance and expiration times for session cookies,
+and the quote endpoints return timestamps representing the expiry of the requested quote, which requires client-server clock synchronization
+in order to be interpreted correctly.
+
+Rather than having bespoke clock synchronization solutions for each of these cases, the FiatConnect specification requires API implementors to
+include a single `/clock` endpoint, which simply returns the server's current timestamp. Servers MUST implement this endpoint. With this information,
+the client can determine the offset between their local time and server time, and synchronize on clocks (to an acceptable approximation).
+The exact method by which clients determine the clock offset is an implementation detail left to the client. (For example, a relatively
+easy and inexpensive method that incoroporates round-trip delay is the approach taken by the
+[Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm).)
+
+### 3.2.1. `GET /clock`
+
+This endpoint is responsible for reporting the current server time to the client.
+
+#### 3.2.1.1. Parameters
+
+This endpoint does not require any parameters.
+
+#### 3.2.1.2. Responses
+
+##### 3.2.1.2.1. HTTP `200`
+
+On success, the server MUST return an HTTP `200`, with the following response body:
+
+```
+{
+	time: `string`
+}
+```
+
+#### 3.2.1.3. Semantics
+
+The semantics of this endpoint are extremely simple; the server MUST always return a successful response containing the current server time.
+
+##### 3.2.1.3.1. Success
+
+On success, the server MUST return a 200 response. The `time` field in the response MUST be the server's current time, formatted as an ISO 8601 datetime string.
+
 ## 3.2. Authentication & Authorization
 
-The FiatConnect API specifies _two_ types of authentication; the first authenticates the _user_, and is required for all requests;
-the second authenticates the _client_, and is optionally required, depending on whether or not it has been configured by the client
+The FiatConnect API specifies *two* types of authentication; the first authenticates the *user*, and is required for all requests;
+the second authenticates the *client*, and is optionally required, depending on whether or not it has been configured by the client
 with the provider.
 
 ### 3.2.1. JWT Authentication
@@ -412,8 +454,8 @@ Servers MUST support the following JWT header, using an elliptic curve digital s
 
 ```json
 {
-  "alg": "ES256",
-  "typ": "JWT"
+	"alg": "ES256",
+	"typ": "JWT"
 }
 ```
 
@@ -421,28 +463,28 @@ Servers MAY support other algorithms, but this is not required.
 
 #### 3.2.1.2. JWT Payload
 
-Servers MUST recognize the following _registered claims_ within the JWT payload.
+Servers MUST recognize the following *registered claims* within the JWT payload.
 
-- `exp`, or _expiration time_
-- `sub`, or _subject_
-- `iss`, or _issuer_
+* `exp`, or *expiration time*
+* `sub`, or *subject*
+* `iss`, or *issuer*
 
-Servers MUST also recognize the following _private claims_ within the JWT payload.
+Servers MUST also recognize the following *private claims* within the JWT payload.
 
-- `client`, or _client API key_
+* `client`, or *client API key*
 
 The semantics of these claims are below:
 
 ##### 3.2.1.2.1. `"sub"` Claim
 
-The `sub`, or _subject_ claim represents the user's Celo network address. This is a required claim. If it is missing, the server MUST respond
+The `sub`, or *subject* claim represents the user's Celo network address. This is a required claim. If it is missing, the server MUST respond
 to the client with an HTTP `400` error. This claim SHOULD be interpreted and used within server endpoints as a unique user identifier, and as the
 source of/destination for crypto funds during transfers. The address should be formatted as 42 hexadecimal characters prefixed by the string literal
 `0x`. If the `sub` claim does not match this format, the server MUST respond to the client with an HTTP `400` error.
 
 ##### 3.2.1.2.2. `"iss"` Claim
 
-The `iss`, or _subject_ claim represents the user's Celo address public key, dervied from their private key. This is a required claim.
+The `iss`, or *subject* claim represents the user's Celo address public key, dervied from their private key. This is a required claim.
 The public key MUST be in compressed form (see [here](https://docs.ethers.io/v5/api/utils/signing-key/) for more details), and exactly 33 bytes
 long.
 
@@ -452,17 +494,17 @@ server MUST validate that the signature does indeed correspond to the address pr
 
 ##### 3.2.1.2.3. `"exp"` Claim
 
-The `exp`, or _expiration time_ claim represents the time until which the provided JWT should be accepted by the server. The `exp` claim should be provided
-as a numeric timestamp, defined as the number of seconds since Epoch. The `exp` claim MUST be present for all endpoints _except_ the following:
+The `exp`, or *expiration time* claim represents the time until which the provided JWT should be accepted by the server. The `exp` claim should be provided
+as a numeric timestamp, defined as the number of seconds since Epoch. The `exp` claim MUST be present for all endpoints *except* the following:
 
-- `GET /quote/in`
-- `GET /quote/out`
-- `GET /kyc/:kycSchema/status`
-- `GET /transfer/:transferId/status`
+* `GET /quote/in`
+* `GET /quote/out`
+* `GET /kyc/:kycSchema/status`
+* `GET /transfer/:transferId/status`
 
-The rationale behind not requiring an `exp` claim for these endpoints is that these endpoints are _non-mutating_; calling them does not affect server-side
+The rationale behind not requiring an `exp` claim for these endpoints is that these endpoints are *non-mutating*; calling them does not affect server-side
 state in any way. Since these endpoints are less security-critical, an `exp` claim is not required as a convenience to clients.
-While these endpoints do not require the `exp` claim to be present, _all endpoints_ MUST honor the `exp` claim _if it is_ present in the
+While these endpoints do not require the `exp` claim to be present, *all endpoints* MUST honor the `exp` claim *if it is* present in the
 JWT payload. For endpoints where the `exp` claim is required, the server MUST return an HTTP `400` if it is not present.
 A server MUST return an HTTP `401` error if the provided `exp` field is later than the current time with respect to Epoch. If an `exp` claim is
 included in a request, it MUST NOT exceed 24 hours from the current time with respect to Epoch. If the `exp` claim is more than 24 hours into the future, the
@@ -477,12 +519,12 @@ to an API able to handle webhook updates from the server. Once a client has regi
 itself to the server. To uniquely identify clients in order to know where to send webhook-based status updates, a server may allow clients to register an API key.
 The exact mechanism by which servers allocate API keys to clients and allow them to register webhook URLs is out of scope of this document.
 
-A server MUST support API token authentication, and MAY _require_ that clients include an API key in each request. If a server requires
+A server MUST support API token authentication, and MAY *require* that clients include an API key in each request. If a server requires
 that clients include an API key in each request, it MUST respond to the client with an HTTP `400` error if the API key is missing from the request.
 Regardless of whether or not a server requires an API key on every request, it MUST return an HTTP `401` error if an API key is
 provided but does not correspond to any registered client; likewise it MUST return an HTTP `400` error if the API key is poorly formed.
 
-The `client`, or _client API key_ claim is a _private claim_ that is FiatConnect-specific. This is an optional claim. This claim contains a client
+The `client`, or *client API key* claim is a *private claim* that is FiatConnect-specific. This is an optional claim. This claim contains a client
 API key as discussed above; the details of the server's response with respect to this claim MUST follow the semantics outlined above.
 
 #### 3.2.1.3. Communicating JWT
@@ -495,10 +537,10 @@ must look like: `Authorization: Bearer <jwt>`. If the header is not present, or 
 This section details the precise syntax and semantics of all the endpoints required by the FiatConnect specification. Endpoints are logically grouped, and roughly presented
 in order of dependency. The logical groupings are as follows:
 
-- Quote Endpoints
-- KYC Endpoints
-- Fiat Account Endpoints
-- Transfer Endpoints
+* Quote Endpoints
+* KYC Endpoints
+* Fiat Account Endpoints
+* Transfer Endpoints
 
 This section references a number of definitions/enums; for an exhaustive list of these, please see later in the document.
 
@@ -527,17 +569,17 @@ used for the transfer.
 
 ###### 3.3.1.1.1.1. Query Parameters
 
-- `fiatType`: {`FiatTypeEnum`} [REQUIRED]
+* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The desired fiat type to use for a transfer in quote; selected from a predefined list of fiat types supported by FiatConnect.
-- `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
+* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The desired crypto type to use for a transfer in quote; selected from a predefined list of crypto types supported by FiatConnect.
-- `fiatAmount`: {`float`}
+* `fiatAmount`: {`float`}
   - The amount of the selected fiat type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of crypto specified for the quote.
-- `cryptoAmount`: {`float`}
+* `cryptoAmount`: {`float`}
   - The amount of the selected crypto type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
-- `country`: {`string`} [REQUIRED]
+* `country`: {`string`} [REQUIRED]
   - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
-- `region`: {`string`}
+* `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 
 ##### 3.3.1.1.2. Responses
@@ -599,7 +641,7 @@ On failure, the server MUST return an HTTP `400`, with a response body as follow
 
 ##### 3.3.1.1.3. Semantics
 
-All transfer in quotes require the `fiatType`, `cryptoType`, and exactly _one of_ `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
+All transfer in quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
 If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support a transfer in for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
 
 ###### 3.3.1.1.3.1. Success
@@ -610,7 +652,7 @@ receive by providing `fiatAmount` worth of the fiat currency. If `cryptoAmount` 
 of fiat currency required in order to receive the requested amount of crypto.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
-The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. The `quote.quoteId` field
+The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
 is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
 conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
@@ -641,7 +683,7 @@ The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, us
 when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
 if the provider requires a fee for the transfer. For transfers in, this fee is assumed to be denominated in the selected `fiatType`. If
 `fiatAccount[FiatAccountTypeEnum].fee` is provided, the server MAY return `fiatAccount[FiatAccountTypeEnum].feeType` and/or `fiatAccount[FiatAccountTypeEnum].feeFrequency`.
-`feeType` represents the _type_ of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
+`feeType` represents the *type* of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
 or on each transfer.
 
 ###### 3.3.1.1.3.2. Failure
@@ -695,17 +737,17 @@ The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out 
 
 ###### 3.3.1.2.1.1. Query Parameters
 
-- `fiatType`: {`FiatTypeEnum`} [REQUIRED]
+* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The desired fiat type to use for a transfer out quote; selected from a predefined list of fiat types supported by FiatConnect.
-- `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
+* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The desired crypto type to use for a transfer out quote; selected from a predefined list of crypto types supported by FiatConnect.
-- `fiatAmount`: {`float`}
+* `fiatAmount`: {`float`}
   - The amount of the selected fiat type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of crypto specified for the quote.
-- `cryptoAmount`: {`float`}
+* `cryptoAmount`: {`float`}
   - The amount of the selected crypto type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
-- `country`: {`string`} [REQUIRED]
+* `country`: {`string`} [REQUIRED]
   - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
-- `region`: {`string`}
+* `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
 
 ##### 3.3.1.2.2. Responses
@@ -765,9 +807,10 @@ On failure, the MUST return an HTTP `400`, with a response body as follows. Refe
 }
 ```
 
+
 ##### 3.3.1.2.3. Semantics
 
-All transfer out quotes require the `fiatType`, `cryptoType`, and exactly _one of_ `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
+All transfer out quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
 If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support
 a transfer out for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
 
@@ -779,7 +822,7 @@ in order to recieve `fiatAmount` worth of the fiat currency. If `cryptoAmount` i
 of fiat currency the user should expect to recieve in exchange for `cryptoAmount` worth of the cryptocurrency.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
-The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as a UNIX timestamp. The `quote.quoteId` field
+The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
 is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
 conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
@@ -810,7 +853,7 @@ The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, us
 when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
 if the provider requires a fee for the transfer. For transfers out, this fee is assumed to be denominated in the selected `cryptoType`. If
 `fiatAccount[FiatAccountTypeEnum].fee` is provided, the server MAY return `fiatAccount[FiatAccountTypeEnum].feeType` and/or `fiatAccount[FiatAccountTypeEnum].feeFrequency`.
-`feeType` represents the _type_ of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
+`feeType` represents the *type* of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
 or on each transfer.
 
 ###### 3.3.1.2.3.2. Failure
@@ -866,7 +909,7 @@ a particular transfer occurs entirely within the quote endpoints.
 
 While validation is typically expected to be completed quickly and automatically, we assume that it is fundamentally an asynchronous process. As such,
 the FiatConnect specification must support monitoring the status of an ongoing validation. While we require that a CICO provider be able to maintain
-different types of KYC validations per-user, we require that they only maintain _one_ record of each type for each user at a time. Otherwise, server-side
+different types of KYC validations per-user, we require that they only maintain *one* record of each type for each user at a time. Otherwise, server-side
 implementation would become significantly more difficult, likely requiring an idempotency key to initiate new KYC verifications.
 
 #### 3.3.2.1. `POST /kyc/:kycSchema`
@@ -877,7 +920,7 @@ The `POST /kyc/:kycSchema` endpoint allows a client to provide KYC data of a par
 
 ###### 3.3.2.1.1.1. Path Parameters
 
-- `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
+* `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
   - The KYC schema being used in the request body
 
 ###### 3.3.2.1.1.2. Request Body
@@ -955,7 +998,7 @@ Note that these statuses MUST also be made available via webhook, if configured 
 
 ###### 3.3.2.2.1.1. Path Parameters
 
-- `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
+* `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
   - The KYC schema used for the verification whose status is being requested
 
 ##### 3.3.2.2.2. Responses
@@ -1004,7 +1047,7 @@ The `DELETE /kyc/:kycSchema` endpoint is used to delete a KYC record for a parti
 
 ###### 3.3.2.3.1.1. Path Parameters
 
-- `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
+* `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
   - The KYC schema to delete from the server
 
 ##### 3.3.2.3.2. Responses
@@ -1043,13 +1086,13 @@ If the server has no data on file for a KYC verification of the given schema, th
 ### 3.3.3. Fiat Account Endpoints
 
 FiatConnect's Fiat Account model consists of two primary concepts; the notion of an "account schema", and an "account type". Account schemas refer to the precise
-_representation_ of an account; i.e., the exact structure and fields required when communicating Fiat Account objects from client to server. All account schemas share
-a set of base fields that are common to _all_ schemas, such as "name", "institution", etc. Each account must have an "account type" associated with it, selected from
+*representation* of an account; i.e., the exact structure and fields required when communicating Fiat Account objects from client to server. All account schemas share
+a set of base fields that are common to *all* schemas, such as "name", "institution", etc. Each account must have an "account type" associated with it, selected from
 one of the account types supported by FiatConnect (see `FiatAccountTypeEnum` for an initial list). For example, one can imagine two different account schemas,
-`CheckingAccountSchema1` and `CheckingAccountSchema2`. These two schemas _both_ would be associated with the, e.g., `FiatAccountTypeEnum.CheckingAccount` account type,
+`CheckingAccountSchema1` and `CheckingAccountSchema2`. These two schemas *both* would be associated with the, e.g., `FiatAccountTypeEnum.CheckingAccount` account type,
 but might require different data; it might be the case that different geos have different representations for communicating checking account information.
 
-Similar to KYC schemas, providers may require different sorts of fiat (i.e., _bank_) accounts depending on both the geo of the client, _and_ the particular details
+Similar to KYC schemas, providers may require different sorts of fiat (i.e., *bank*) accounts depending on both the geo of the client, *and* the particular details
 of the transfer. CICO providers MUST be able to maintain multiple fiat accounts on record for each user. Negotiation of what types of fiat accounts are allowed for a
 transfer, and what schemas to use to communicate the account details, occurs entirely within the quote endpoints.
 
@@ -1065,12 +1108,12 @@ The `POST /accounts/:fiatAccountSchema` endpoint is used to store a new fiat acc
 
 ###### 3.3.3.1.1.1. Path Parameters
 
-- `fiatAccountSchema`: {`FiatAccountSchemaEnum`} [REQUIRED]
+* `fiatAccountSchema`: {`FiatAccountSchemaEnum`} [REQUIRED]
   - The fiat account schema to use to add the fiat account
 
 ###### 3.3.3.1.1.2. Request Body
 
-The request body schema for this endpoint must match the fiat accout schema selected in the path parameter.
+The request body schema for this endpoint must match the fiat accout schema  selected in the path parameter.
 
 ##### 3.3.3.1.2. Responses
 
@@ -1178,7 +1221,7 @@ The `DELETE /account/:fiatAccountId` endpoint is used to delete a user's fiat ac
 
 ###### 3.3.3.3.1.1. Path Parameters
 
-- `fiatAccountId`: {`string`} [REQUIRED]
+* `fiatAccountId`: {`string`} [REQUIRED]
   - The internal fiat account ID to delete
 
 ##### 3.3.3.3.2. Responses
@@ -1234,22 +1277,22 @@ The `POST /transfer/in` endpoint is used to initiate a new transfer in from fiat
 
 ###### 3.3.4.1.1.1. Headers
 
-- `Idempotency-Key: <idempotency-key>`
+* `Idempotency-Key: <idempotency-key>`
   - An idempotency key, generated by the client
 
 ###### 3.3.4.1.1.2. Request Body
 
 The request body must contain the following fields:
 
-- `fiatType`: {`FiatTypeEnum`} [REQUIRED]
+* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The type of fiat currency to transfer in from.
-- `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
+* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The type of cryptocurrency to transfer in to.
-- `amount`: {`float`}: [REQUIRED]
+* `amount`: {`float`}: [REQUIRED]
   - The amount of fiat currency to transfer in.
-- `fiatAccountId`: {`string`} [REQUIRED]
+* `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
-- `quoteId`: {`string`} [REQUIRED]
+* `quoteId`: {`string`} [REQUIRED]
   - Identifier of the quote to use for the transfer.
 
 ##### 3.3.4.1.2. Responses
@@ -1268,7 +1311,7 @@ On a successfully initiated transfer in request, the server MUST respond with an
 
 ###### 3.3.4.1.2.2. HTTP `400`
 
-If the transfer parameters are invalid, or if the transfer is not possible for reasons _other_ than the fiat account not existing, the server MUST
+If the transfer parameters are invalid, or if the transfer is not possible for reasons *other* than the fiat account not existing, the server MUST
 return an HTTP `400` error code, along with the following response body:
 
 ```
@@ -1323,7 +1366,7 @@ If a transfer is not allowed for a generic reason (such as unacceptable transfer
 ###### 3.3.4.1.3.2.3. `InvalidQuote`
 
 If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST
-reject the transfer and return an `InvalidQuote` error.
+reject the transfer and return an `InvalidQuote` error. 
 
 ###### 3.3.4.1.3.2.4. `ResourceNotFound`
 
@@ -1337,22 +1380,22 @@ The `POST /transfer/out` endpoint is used to initiate a new transfer out from cr
 
 ###### 3.3.4.2.1.1. Headers
 
-- `Idempotency-Key: <idempotency-key>`
+* `Idempotency-Key: <idempotency-key>`
   - An idempotency key, generated by the client
 
 ###### 3.3.4.2.1.2. Request Body
 
 The request body must contain the following fields:
 
-- `fiatType`: {`FiatTypeEnum`} [REQUIRED]
+* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The type of fiat currency to transfer out to.
-- `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
+* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The type of cryptocurrency to transfer out from.
-- `amount`: {`float`}: [REQUIRED]
+* `amount`: {`float`}: [REQUIRED]
   - The amount of cryptocurrency to transfer out.
-- `fiatAccountId`: {`string`} [REQUIRED]
+* `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
-- `quoteId`: {`string`} [REQUIRED]
+* `quoteId`: {`string`} [REQUIRED]
   - Identifier of the quote to use for the transfer.
 
 ##### 3.3.4.2.2. Responses
@@ -1371,7 +1414,7 @@ On a successfully initiated transfer out request, the server MUST respond with a
 
 ###### 3.3.4.2.2.2. HTTP `400`
 
-If the transfer parameters are invalid, or if the transfer is not possible for reasons _other_ than the fiat account not existing, the server MUST
+If the transfer parameters are invalid, or if the transfer is not possible for reasons *other* than the fiat account not existing, the server MUST
 return an HTTP `400` error code, along with the following response body:
 
 ```
@@ -1425,7 +1468,7 @@ If a transfer is not allowed for a generic reason (such as unacceptable transfer
 
 ###### 3.3.4.2.3.2.3. `InvalidQuote`
 
-If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST
+If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST 
 reject the transfer and return an `InvalidQuote` error.
 
 ###### 3.3.4.2.3.2.4. `ResourceNotFound`
@@ -1441,7 +1484,7 @@ the transfer.
 
 ###### 3.3.4.3.1.1. Path Parameters
 
-- `transferId`: {`string`} [REQUIRED]
+* `transferId`: {`string`} [REQUIRED]
   - The transfer ID for the transfer whose status to return.
 
 ##### 3.3.4.3.2. Responses
@@ -1550,7 +1593,7 @@ facilitate AML checks, if required.
 
 # 6. Sandbox Environment
 
-In order to facilitate ease of client integration and testing against FiatConnect-compliant APIs, each FiatConnect API MUST have a corresponding _sandbox_
+In order to facilitate ease of client integration and testing against FiatConnect-compliant APIs, each FiatConnect API MUST have a corresponding *sandbox*
 API available. This sandbox API should be identical in behavior to the production FiatConnect API in every way, except for a number of key differences.
 
 ## 6.1. Celo Network
@@ -1581,7 +1624,7 @@ MUST never debit/credit actual fiat accounts, but they SHOULD receive/send crypt
 # 7. Definitions
 
 This document references a number of definitions, all of which are enumerated in their entirety below. There are two "types" of definitions; those
-which are static, and _not_ subject to change upon this proposal's acceptance, and those that are dynamic, and meant to be extended by the community.
+which are static, and *not* subject to change upon this proposal's acceptance, and those that are dynamic, and meant to be extended by the community.
 
 ## 7.1. Static Definitions
 
@@ -1657,7 +1700,6 @@ An enum listing the types of transfer statuses recognized by FiatConnect.
 	`TransferFailed`
 ]
 ```
-
 ## 7.2. Dynamic Definitions
 
 ### 7.2.1. `FiatTypeEnum`
@@ -1666,11 +1708,11 @@ An enum listing the types of fiat currencies supported by FiatConnect.
 
 ```
 [
-	`USD`,
-	`EUR`,
-	`REAL`,
-	`XOF`,
-	`GNF`
+  `USD`,
+  `EUR`,
+  `REAL`,
+  `XOF`,
+  `GNF`
 ]
 ```
 
@@ -1699,8 +1741,8 @@ An enum listing the KYC schema types recognized by the FiatConnect specification
 
 ### 7.2.4. `FiatAccountTypeEnum`
 
-An enum listing the _types_ of Fiat Accounts recognized by the FiatConnect specification. A Fiat Account Type is a property of each Fiat Account Schema, and
-represents what _kind_ of account that schema represents.
+An enum listing the *types* of Fiat Accounts recognized by the FiatConnect specification. A Fiat Account Type is a property of each Fiat Account Schema, and
+represents what *kind* of account that schema represents.
 
 ```
 [
@@ -1712,7 +1754,7 @@ represents what _kind_ of account that schema represents.
 
 ### 7.2.5. `FeeTypeEnum`
 
-An enum listing the _types_ of fees that providers may require on transfers.
+An enum listing the *types* of fees that providers may require on transfers.
 
 ```
 [
@@ -1781,7 +1823,7 @@ All Fiat Account Schemas supported by FiatConnect MUST contain the `accountName`
 representing the type of fiat account this schema represents. The `institutionName` and `accountName` fields are required in order for the API to return obfuscated but distinguishable
 account information from the `GET /accounts` endpoint.
 
-#### 7.3.2.1. `AccountNumber`
+####  7.3.2.1. `AccountNumber`
 
 `AccountNumber` is a Fiat Account schema that represents accounts where the only identifying information required is some `accountNumber` string.
 
