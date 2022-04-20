@@ -1930,3 +1930,7 @@ ISO 3166-1 <https://en.wikipedia.org/wiki/ISO_3166-1>
 ### 8.2.4. ISO 3166-2
 
 ISO 3166-2 <https://en.wikipedia.org/wiki/ISO_3166-2>
+
+### 8.2.5. ISO 8601
+
+ISO 8601 <https://en.wikipedia.org/wiki/ISO_8601>
