@@ -594,6 +594,10 @@ definitions:
         type: "number"
       fiatAccountId:
         type: "string"
+      transferId:
+        type: "string"
+      transferAddress:
+        type: "string"
   TransferErrorEnum:
     type: "string"
     enum:
