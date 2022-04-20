@@ -415,6 +415,7 @@ definitions:
     enum:
       - NameAndAddress
       - IdAndSelfie
+      - PersonalDataAndDocuments
   FiatType:
     type: "string"
     enum:
@@ -441,11 +442,11 @@ definitions:
   FiatAccountTypeEnum:
     type: "string"
     enum:
-      - CreditCard
-      - DebitCard
-      - CheckingAccount
+      - BankAccount
   FiatAccountSchemaEnum:
     type: "string"
+    enum:
+      - AccountNumber
   QuoteRequest:
     type: "object"
     properties:
@@ -615,6 +616,7 @@ definitions:
       - FiatAmountTooHigh
       - CryptoNotSupported
       - FiatNotSupported
+      - InvalidParameters
   ResourceExists:
     type: "string"
     enum: 
