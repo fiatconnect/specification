@@ -171,6 +171,9 @@
             - [3.3.4.3.3.2.1. `ResourceNotFound`](#3343321--resourcenotfound-)
 - [4. Webhooks](#4-webhooks)
   * [4.1. Webhook Requests](#41-webhook-requests)
+    + [4.1.1. `WebhookKycStatusEventSchema`](#411--webhookkycstatuseventschema-)
+    + [4.1.2. `WebhookTransferInStatusEventSchema`](#412--webhooktransferinstatuseventschema-)
+    + [4.1.3. `WebhookTransferOutStatusEventSchema`](#413--webhooktransferoutstatuseventschema-)
   * [4.2. Webhook Request Signing](#42-webhook-request-signing)
 - [5. AML Considerations](#5-aml-considerations)
 - [6. Sandbox Environment](#6-sandbox-environment)
@@ -1499,7 +1502,9 @@ On success, the server MUST return an HTTP `200` status code, along with a respo
 	amountProvided: `float`,
 	amountReceived: `float`,
 	fee?: `float`,
-	fiatAccountId: `string`
+	fiatAccountId: `string`,
+	transferId: `string`,
+	transferAddress: `string`
 }
 ```
 
@@ -1565,6 +1570,57 @@ as time since Epoch in seconds. The `payload` field contains the actual event da
 
 Servers SHOULD implement retries with exponential backoff when sending payloads to a client's webhook. Once a server has received an HTTP `200`
 status code from the client's webhook, it MUST stop retrying.
+
+### 4.1.1. `WebhookKycStatusEventSchema`
+
+`WebhookKycStatusEventSchema` is the schema that defines webhook payloads for KYC events:
+
+```
+{
+	kycSchema: `KycSchemaEnum`,
+	kycStatus: `KycStatusEnum`
+}
+```
+
+### 4.1.2. `WebhookTransferInStatusEventSchema`
+
+`WebhookTransferInStatusEventSchema` is the schema that defines webhook payloads for transfer in events. Note that this schema is *identical* to the
+one returned from the `GET /accounts/:transferId` endpoint
+
+```
+{
+	status: `TransferStatusEnum`,
+	transferType: `TransferTypeEnum`,
+	fiatType: `FiatTypeEnum`,
+	cryptoType: `CryptoTypeEnum`,
+	amountProvided: `float`,
+	amountReceived: `float`,
+	fee?: `float`,
+	fiatAccountId: `string`,
+	transferId: `string`,
+	transferAddress: `string`
+}
+```
+
+### 4.1.3. `WebhookTransferOutStatusEventSchema`
+
+`WebhookTransferOutStatusEventSchema` is the schema that defines webhook payloads for transfer out events. Note that this schema is *identical* to the
+one returned from the `GET /accounts/:transferId` endpoint
+
+```
+{
+	status: `TransferStatusEnum`,
+	transferType: `TransferTypeEnum`,
+	fiatType: `FiatTypeEnum`,
+	cryptoType: `CryptoTypeEnum`,
+	amountProvided: `float`,
+	amountReceived: `float`,
+	fee?: `float`,
+	fiatAccountId: `string`,
+	transferId: `string`,
+	transferAddress: `string`
+}
+```
 
 ## 4.2. Webhook Request Signing
 
