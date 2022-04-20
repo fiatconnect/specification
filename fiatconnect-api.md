@@ -200,7 +200,6 @@
 	- [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
 	  - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
     - [7.3.2.2. `MobileMoney`](#7322-mobilemoney)
-      - [7.3.2.2.1. `SupportedOperatorEnum`](#73221-supportedoperatorenum)
     - [7.3.2.3. `DuniaWallet`](#7323-duniawallet)
 - [8. References](#8-references)
   - [8.1. Normative References](#81-normative-references)
