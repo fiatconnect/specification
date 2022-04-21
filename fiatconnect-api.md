@@ -32,6 +32,7 @@
 		  + [3.2.1.5.3.2. Failure](#321531-failure)
 		    - [3.2.1.5.3.2.1. `InvalidSignature`](#3215321--invalidsignature-)
 		    - [3.2.1.5.3.2.2. `InvalidParameters`](#3215322--invalidparameters-)
+		    - [3.2.1.5.3.2.3. `ContractLoginNotSupported`](#3215323--contractloginnotsupported-)
 	  - [3.2.1.6. Using Sessions](#3216-using-sessions)
 	    * [3.2.1.6.1. Non-Privileged Endpoints](#32161-non-privileged-endpoints)
 	    * [3.2.1.6.2. Privileged Endpoints](#32162-privileged-endpoints)
@@ -410,7 +411,7 @@ with the provider.
 ### 3.2.1. Sign-In With Ethereum
 
 FiatConnect-compliant APIs are required to use the *Sign-In With Ethereum* standard, otherwise known as [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361)
-in order to identify users and confirm ownership of a Celo blockchain address (private/public keypair). At a high level, the Sign-In With Ethereum standard
+in order to identify users and confirm ownership of a Celo blockchain address. At a high level, the Sign-In With Ethereum standard
 requires the client to use a user's private key to sign a plaintext message containing a number of standardized fields, and send that signed message to the
 server to prove account ownership. FiatConnect APIs MUST use the SIWE standard to create authenticated sessions for the user, and return session cookies to
 the client. More detail on exactly how this should be structured is provided below.
@@ -424,13 +425,14 @@ languages.
 
 At a high level, the client will craft a SIWE-compliant message and sign it with the user's private key. This message will contain various parameters relating
 to the origin URL which they're requesting to be authorized against, desired session length, etc. Once the client has crafted and signed the message, the client will send
-ithe signed message to a FiatConnect API at a `POST /auth/login` endpoint. The server will validate the signature, and check that all the included fields in the signed message are valid.
+the signed message to a FiatConnect API at a `POST /auth/login` endpoint. The server will validate the signature, and check that all the included fields in the signed message are valid.
 If everything checks out, the server will create a session for the user according to the details in the signed message. Once the server has created the session,
 it responds to the client with a `200`, and returns session cookies that the client can use in subsequent requests to privileged endpoints on behalf of the signed-in address.
 
 #### 3.2.1.3. SIWE Message Format
 
-Within the FiatConnect specification, all references to SIWE-compliant messages refer to plaintext messages adhering exactly to the following template.
+Within the FiatConnect specification, all references to SIWE-compliant messages refer to plaintext messages adhering exactly to the
+[SIWE message format](https://docs.login.xyz/general-information/siwe-overview/eip-4361#abnf-message-format), and additionally to the contraints described below.
 
 ```
 ${domain} wants you to sign in with your Ethereum account:
@@ -447,26 +449,28 @@ Expiration Time: ${expiration-time}
 Each field in this template is required to be filled in by the client, and has a unique meaning. As described later, servers MUST reject authorization attempts
 if any fields are not as expected. The meaning of each of these fields is enumerated below:
 
-The `domain` field MUST correspond to the hostname of the API that the client is requesting to be authorized for, e.g. `example.com`.
-The `address` field MUST correspond to the Celo blockchain address that the user is attempting to login/authorize themself as.
+The `domain` field MUST correspond to the [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2) authority of the API that the client is requesting to be authorized for, e.g. `example.com`.
+The `address` field MUST correspond to the Celo blockchain address that the user is attempting to login/authorize themself as. For externally-owned accounts, this
+must conform to the mixed-case checksum encoding specified in [EIP-55](https://eips.ethereum.org/EIPS/eip-55).
 The `uri` field MUST correspond to the origin URL of the API to authorize for, with the `/auth/login` path appended, e.g. `https://example.com/auth/login`.
-The `nonce` field MUST be a randomly generated, unique nonce chosen by the client, included for security purposes.
+The `nonce` field MUST be a unique 8 character alpha-numeric string not previously seen in as part of any unexpired request from the given client.
 The `issued-at` field MUST be the ISO 8601 datetime string of the time at which the client generated the message.
 The `expiration-time` field MUST be an ISO 8601 datetime string that specifies when this message will no longer valid, and when a session created with this message
 will expire. This field MUST NOT be more than four hours (14400 seconds) later than the `issued-at` field.
 
 Note that in cases where a client is attempting to authorize themselves as the owner of a contract-owned account (rather than an externally-owned account), the `address`
-field MUST correspond to the address of the on-chain contract account, rather than the externally-owned account (EOA) address. In all cases, however, the client should
-still sign the message using the EOA's private key.
+field MUST correspond to the address of the on-chain contract account, rather than the externally-owned account (EOA) address. The message itself should be signed in accordance
+with the [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) standard, in such a way that the contract account can validate the signature and message hash with its
+implementation of the `isValidSignature` method as outlined in the EIP-1271 standard. If desired, CICO providers MAY support authenticating as a contract-owned account,
+but it is not required.
 
 #### 3.2.1.4. Session Cookies
 
-Once the client generates a SIWE-compliant plaintext message, it signs it with the user's externally-owned account private key, resulting in an [EIP-191](https://eips.ethereum.org/EIPS/eip-191)
-Signed Data Standard format message. After generating the signed message, the client will send it to the server at a `POST /auth/login` endpoint, described below. If the server
-accepts the signed message as valid, it will respond with a session cookie linked that identifies the user's authenticated session within the server. The name of the session
-cookie is not mandated by this specification, but the server MUST use a consistent name for the session cookie, and SHOULD make a best-effort at choosing a unique name, that
-will not conflict with the session cookies served by other FiatConnect-compliant APIs. It is the client's responsibility to manage session cookies between different FiatConnect
-APIs.
+Once the client generates a SIWE-compliant plaintext message, it signs it with the user's externally-owned account private key according to [EIP-191](https://eips.ethereum.org/EIPS/eip-191)
+`personal_sign` format. The client will then send the message and signature to the server at a `POST /auth/login` endpoint, described below. If the server
+accepts the signed message as valid, it will respond with a session cookie linked that identifies the user's authenticated session within the server. The server
+MUST set the [SameSite](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite) policy on the session cookie to prevent the client
+from sending the cookie to other hosts. Ultimately, it is the client's responsibility to manage session cookies between different FiatConnect APIs.
 
 If a client sends a session cookie when calling the `POST /auth/login` endpoint (either to refresh their current, valid session, or to generate a new session if their current one is
 expired), the server MUST ignore the provided cookie. If the authentication request is valid, the server MUST set a new value on the cookie referencing the client's new, valid session,
@@ -475,15 +479,22 @@ and return it to the client.
 #### 3.2.1.5. `POST /auth/login`
 
 The `POST /auth/login` endpoint is responsible for verifying signed messages sent by clients, creating and authenticating a user's session, and returning session cookies.
-Note that both the Sign-In With Ethereum standard, and FiatConnect, support authorization for externally owned accounts (EOAs) and contract-owned accounts; The `POST /auth/login`
-endpoint MUST honor login requests for both, as described below.
+Note that the Sign-In With Ethereum standard, and FiatConnect, support authorization for externally owned accounts (EOAs) and contract-owned accounts; The `POST /auth/login`
+endpoint MUST honor login requests for EOAs, and MAY support smart contract-owned accounts as well, as described below.
 
 ##### 3.2.1.5.1. Parameters
 
 ###### 3.2.1.5.1.1. Request Body
 
-The *plaintext* request body for this endpoint MUST correspond to a signed SIWE message (as described above) in the [EIP-191](https://eips.ethereum.org/EIPS/eip-191)
-Signed Data Standard format, as required by the SIWE specification.
+The request body must contain the following fields:
+
+* `message`: {`string`} [REQUIRED]
+  - The plaintext SIWE message
+* `signature`: {`string`} [REQUIRED]
+  - The [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signed message if logging in as EOA, or a signature according to the
+	[EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) standard, if logging in as a contract-owned account.
+
+Both fields should be encoded as base64 strings.
 
 ##### 3.2.1.5.2. Responses
 
@@ -493,7 +504,7 @@ On success, the server MUST return an HTTP `200`, update the state of the user's
 
 ###### 3.2.1.5.2.2. HTTP `401`
 
-On failure, the server MUST return an HTTP `400`, with the following response body.
+On failure, the server MUST return an HTTP `401`, with the following response body.
 
 ```
 {
@@ -511,9 +522,17 @@ and returns a `200`.
 
 On success, the server MUST respond with a `200` status code. The server MUST only respond successfully after performing the following checks:
 
-* A server MUST verify that the signature of the request body is valid and corresponds to the `address` field included in the signed message. If the signature does not
-  correspond to the address field, the server MUST assume that the value given for `address` corresponds to a contract-owned account, and attempt to verify that the
-  signature is valid according to the [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) standard. If neither of these checks pass, the server MUST reject the request.
+* A server MUST verify that the plaintext `message` adheres to the SIWE grammar/syntax (refer to the `ABNF Message Format` section within
+  [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361)). If it does not, the server MUST return a 401 (`InvalidParameters`)
+
+* A server MUST determine whether the address being signed in as corresponds to an EOA or contract account. If a server determines that the address corresponds to a
+  contract-owned account and does *not* support contract-owned account login, it must return a 401 (`ContractLoginNotSupported`).
+
+  * If the address to sign in as corresponds to an EOA, the server MUST verify that the `signature` field was signed by the address attempting to be signed is and
+	is a valid signature for the `message` included in the request.
+
+  * If the address to sign in as corresponds to a contract-owned account and the server supports contract-owned account login, the server MUST verify the validity of
+	the included `signature` according to the [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) standard.
 
 * A server MUST verify that the `nonce` field does not correspond to a nonce that has already been used to authenticate an ongoing, valid session.
 
@@ -525,12 +544,13 @@ On success, the server MUST respond with a `200` status code. The server MUST on
   MUST fail the request. If the server's current timestamp is past the `expiration-time` field, the server MUST fail the request. If the `expiration-time` field is
   greater than four hours (14400 seconds) ahead of the `issued-at` field, the server MUST fail the request.
 
-If all fields are acceptable, and the message is formatted correctly, the server MUST authenticate the user's session, and return an HTTP `200`.
-The server MUST attach the fields from the signed message to the session internally, in order to access data about the user and their session in other endpoints.
+If all fields are acceptable, and the message is formatted correctly, the server SHOULD authenticate the user's session, and return an HTTP `200`.
+The server SHOULD attach the fields from the signed message to the session internally, in order to access data about the user and their session in other endpoints.
 
-Once a server authenticates a session using a particular nonce, the server MUST NOT allow any other sessions to be created using that nonce, until `expiration-time` of the session created
-using that nonce has been reached. The implementation of this is up to the server, but will require storing some global state about nonces in order to check if a client is attempting
-to sign-in using a nonce that is temporarily forbidden. Careful consideration should be taken to make sure that nonce management works correctly when scaling server resources.
+Once a server authenticates a session using a particular nonce, the server MUST NOT allow any other sessions to be created using the same nonce and address, until
+`expiration-time` of the session created using that nonce has been reached. The implementation of this is up to the server, but will require storing some global
+state about nonces in order to check if a client is attempting to sign-in using a nonce that is temporarily forbidden. Careful consideration should be taken to make
+sure that nonce management works correctly when scaling server resources.
 
 ###### 3.2.1.5.3.2. Failure
 
@@ -546,6 +566,11 @@ referenced in the `address` field.
 ###### 3.2.1.5.3.2.2 `InvalidParameters`
 
 If the request body is missing, malformed, or fails to pass any of the required checks, the server MUST respond with an `InvalidParameters` error.
+
+###### 3.2.1.5.3.2.3 `ContractLoginNotSupported`
+
+If the server determines that a client is trying to log in as a contrract-owned account but the server does not support contract-owned account logins, the
+server MUST respond with a `ContractLoginNotSupported` error.
 
 #### 3.2.1.6. Using Sessions
 
@@ -579,7 +604,7 @@ The second, and largest set of endpoints, are the ones that require a user to be
 * `POST /transfer/in`
 * `POST /transfer/out`
 
-For these endpoints, a user needs to be logged in with an authenticated session. This session may have the maximum expiration time allowed by the FiatConnect standard (four hours).
+For these endpoints, a user needs to be logged in with an authenticated session. This session MUST have an expiration time of no greater than four hours (the maximum allowed by FiatConnect).
 
 If a client attempts to access any of these endpoints without a session, the server MUST return a `401` status code with an `Unauthorized` error.
 If a client tries to acces any of these endpoints with an expired session, the server MUST respond with an HTTP `401` status code with a `SessionExpired` error.
@@ -600,6 +625,14 @@ A server MUST support API token authentication, and MAY *require* that clients i
 that clients include an API key in each request, it MUST respond to the client with an HTTP `400` error if the API key is missing from the request.
 Regardless of whether or not a server requires an API key on every request, it MUST return an HTTP `401` error if an API key is
 provided but does not correspond to any registered client; likewise it MUST return an HTTP `400` error if the API key is poorly formed.
+
+API token authentication is *completely separate* from SIWE-based auth. The priveleged endpoints listed earlier *always* require a user to have a valid session via SIWE
+authentication. API token authentication MAY be required on all endpoints, or optional. Regardless of whether or not the client provides an API token, if the client attempts
+to access a priveleged endpoint without a valid session, the server MUST reject their request.
+
+### 3.2.3. HTTPS
+
+All servers implementing a FiatConnect-compliant API MUST use HTTPS, and MUST NOT support unsecured HTTP requests.
 
 ## 3.3. Formal Specification
 
@@ -1743,7 +1776,8 @@ An enum listing the error types used by various endpoints.
 	`Unauthorized`,
 	`SessionExpired`,
 	`SessionTooOld`,
-	`InvalidParameters`
+	`InvalidParameters`,
+	`ContractLoginNotSupported`
 ]
 ```
 
