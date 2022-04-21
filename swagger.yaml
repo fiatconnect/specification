@@ -415,6 +415,7 @@ definitions:
     enum:
       - NameAndAddress
       - IdAndSelfie
+      - PersonalDataAndDocuments
   FiatType:
     type: "string"
     enum:
@@ -448,6 +449,8 @@ definitions:
       - DuniaWallet
   FiatAccountSchemaEnum:
     type: "string"
+    enum:
+      - AccountNumber
   QuoteRequest:
     type: "object"
     properties:
@@ -617,6 +620,7 @@ definitions:
       - FiatAmountTooHigh
       - CryptoNotSupported
       - FiatNotSupported
+      - InvalidParameters
   ResourceExists:
     type: "string"
     enum: 
