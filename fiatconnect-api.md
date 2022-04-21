@@ -490,11 +490,13 @@ The request body must contain the following fields:
 
 * `message`: {`string`} [REQUIRED]
   - The plaintext SIWE message
-* `signature`: {`string`} [REQUIRED]
+* `signature`: {`object`} [REQUIRED]
   - The [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signed message if logging in as EOA, or a signature according to the
 	[EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) standard, if logging in as a contract-owned account.
 
-Both fields should be encoded as base64 strings.
+The `message` field should be the *plaintext* message, while the signature should be an object containing the typical secp256k1 signature fields: `r`, `s`, and `v`.
+`r` and `s` are hex strings (prefixed with `0x`) each 32 bytes in length, and `v` is an integer. This is the "canonical" form of the signature as referenced in
+[EIP-2098](https://eips.ethereum.org/EIPS/eip-2098), rather than the "compact" form.
 
 ##### 3.2.1.5.2. Responses
 
