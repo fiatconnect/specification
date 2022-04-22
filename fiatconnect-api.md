@@ -33,6 +33,7 @@
 		    - [3.2.1.5.3.2.1. `InvalidSignature`](#3215321--invalidsignature-)
 		    - [3.2.1.5.3.2.2. `InvalidParameters`](#3215322--invalidparameters-)
 		    - [3.2.1.5.3.2.3. `ContractLoginNotSupported`](#3215323--contractloginnotsupported-)
+		    - [3.2.1.5.3.2.4. `NonceInUse`](#3215324--nonceinuse-)
 	  - [3.2.1.6. Using Sessions](#3216-using-sessions)
 	    * [3.2.1.6.1. Non-Privileged Endpoints](#32161-non-privileged-endpoints)
 	    * [3.2.1.6.2. Privileged Endpoints](#32162-privileged-endpoints)
@@ -558,21 +559,25 @@ sure that nonce management works correctly when scaling server resources.
 
 On failure, the server MUST return an HTTP `401` error, along with an error code that details exactly why the request failed.
 
-###### 3.2.1.5.3.2.1 `InvalidSignature`
+###### 3.2.1.5.3.2.1. `InvalidSignature`
 
 If the signature is invalid or doesn't match the included `address` field, the server MUST return an `InvalidSignature` error. Note that the address used
 to sign the message may not actually match the address being authenticated in the case where the client is authenticating as a contract-owned account. In
 such cases, `InvalidSignature` MUST NOT be returned when the signature is valid, and the address used to sign the message is considered valid by the contract
 referenced in the `address` field.
 
-###### 3.2.1.5.3.2.2 `InvalidParameters`
+###### 3.2.1.5.3.2.2. `InvalidParameters`
 
 If the request body is missing, malformed, or fails to pass any of the required checks, the server MUST respond with an `InvalidParameters` error.
 
-###### 3.2.1.5.3.2.3 `ContractLoginNotSupported`
+###### 3.2.1.5.3.2.3. `ContractLoginNotSupported`
 
 If the server determines that a client is trying to log in as a contrract-owned account but the server does not support contract-owned account logins, the
 server MUST respond with a `ContractLoginNotSupported` error.
+
+###### 3.2.1.5.3.2.4. `NonceInUse`
+
+If the nonce included in the message is already attached to a valid session, the server MUST respond with a `NonceInUse` error.
 
 #### 3.2.1.6. Using Sessions
 
@@ -1779,7 +1784,8 @@ An enum listing the error types used by various endpoints.
 	`SessionExpired`,
 	`SessionTooOld`,
 	`InvalidParameters`,
-	`ContractLoginNotSupported`
+	`ContractLoginNotSupported`,
+	`NonceInUse`
 ]
 ```
 
