@@ -34,6 +34,8 @@
 		    - [3.2.1.5.3.2.2. `InvalidParameters`](#3215322--invalidparameters-)
 		    - [3.2.1.5.3.2.3. `ContractLoginNotSupported`](#3215323--contractloginnotsupported-)
 		    - [3.2.1.5.3.2.4. `NonceInUse`](#3215324--nonceinuse-)
+		    - [3.2.1.5.3.2.5. `IssuedTooEarly`](#3215325--issuedtooearly-)
+		    - [3.2.1.5.3.2.6. `ExpirationTooLong`](#3215326--expirationtoolong-)
 	  - [3.2.1.6. Using Sessions](#3216-using-sessions)
 	    * [3.2.1.6.1. Non-Privileged Endpoints](#32161-non-privileged-endpoints)
 	    * [3.2.1.6.2. Privileged Endpoints](#32162-privileged-endpoints)
@@ -568,7 +570,8 @@ referenced in the `address` field.
 
 ###### 3.2.1.5.3.2.2. `InvalidParameters`
 
-If the request body is missing, malformed, or fails to pass any of the required checks, the server MUST respond with an `InvalidParameters` error.
+If the request body is missing, malformed, or fails to pass any of the required checks, the server MUST respond with an `InvalidParameters` error. If another
+error type is more descriptive of the actual issue, that error should be used instead.
 
 ###### 3.2.1.5.3.2.3. `ContractLoginNotSupported`
 
@@ -578,6 +581,14 @@ server MUST respond with a `ContractLoginNotSupported` error.
 ###### 3.2.1.5.3.2.4. `NonceInUse`
 
 If the nonce included in the message is already attached to a valid session, the server MUST respond with a `NonceInUse` error.
+
+###### 3.2.1.5.3.2.5. `IssuedTooEarly`
+
+If the `issued-at` field is before the server's current timestamp, the server MUST respond with an `IssuedTooEarly` error.
+
+###### 3.2.1.5.3.2.6. `ExpirationTooLong`
+
+If ther `expiration-time` field is more than four hours into the future, the server MUST respond with an `ExpirationTooLong` error.
 
 #### 3.2.1.6. Using Sessions
 
@@ -1784,7 +1795,9 @@ An enum listing the error types used by various endpoints.
 	`SessionExpired`,
 	`InvalidParameters`,
 	`ContractLoginNotSupported`,
-	`NonceInUse`
+	`NonceInUse`,
+	`IssuedTooEarly`,
+	`ExpirationTooLong`
 ]
 ```
 
