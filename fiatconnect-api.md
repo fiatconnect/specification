@@ -1782,7 +1782,6 @@ An enum listing the error types used by various endpoints.
 	`KycExpired`,
 	`Unauthorized`,
 	`SessionExpired`,
-	`SessionTooOld`,
 	`InvalidParameters`,
 	`ContractLoginNotSupported`,
 	`NonceInUse`
