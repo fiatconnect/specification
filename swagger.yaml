@@ -250,7 +250,7 @@ paths:
                   $ref: '#/definitions/FiatAccountInfoResponse'
       security:
         - dek_auth: []
-  /account/{fiatAccountId}:
+  /accounts/{fiatAccountId}:
     delete:
       tags:
       - "fiat account"
