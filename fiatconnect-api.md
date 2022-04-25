@@ -16,14 +16,30 @@
 - [3. API Specification](#3-api-specification)
   * [3.1. Geolocation](#31-geolocation)
   * [3.2. Authentication & Authorization](#32-authentication---authorization)
-    + [3.2.1. JWT Authentication](#321-jwt-authentication)
-      - [3.2.1.1. JWT Header](#3211-jwt-header)
-      - [3.2.1.2. JWT Payload](#3212-jwt-payload)
-        * [3.2.1.2.1. `"sub"` Claim](#32121---sub---claim)
-		* [3.2.1.2.2. `"iss"` Claim](#32122---iss---claim)
-        * [3.2.1.2.3. `"exp"` Claim](#32123---exp---claim)
-        * [3.2.1.2.4. `"client"` Claim](#32123---client---claim)
-      - [3.2.1.3. Communicating JWT](#3213-communicating-jwt)
+    + [3.2.1. Sign-In With Ethereum](#321-sign-in-with-ethereum)
+	  - [3.2.1.1. SIWE Sessions](#3211-siwe-sessions)
+      - [3.2.1.2. SIWE Resources](#3212-siwe-resources)
+	  - [3.2.1.3. SIWE Message Format](#3213-siwe-message-format)
+	  - [3.2.1.4. Session Cookies](#3214-session-cookies)
+	  - [3.2.1.5. `POST /auth/login`](#3215--post--auth-login-)
+	    * [3.2.1.5.1. Parameters](#32151-parameters)
+		  + [3.2.1.5.1.1. Request Body](#321511-request-body)
+	    * [3.2.1.5.2. Responses](#32152-responses)
+		  + [3.2.1.5.2.1. HTTP `200`](#321521-http--200-)
+		  + [3.2.1.5.2.2. HTTP `401`](#321522-http--401-)
+	    * [3.2.1.5.3. Semantics](#32153-semantics)
+		  + [3.2.1.5.3.1. Success](#321531-success)
+		  + [3.2.1.5.3.2. Failure](#321531-failure)
+		    - [3.2.1.5.3.2.1. `InvalidSignature`](#3215321--invalidsignature-)
+		    - [3.2.1.5.3.2.2. `InvalidParameters`](#3215322--invalidparameters-)
+		    - [3.2.1.5.3.2.3. `ContractLoginNotSupported`](#3215323--contractloginnotsupported-)
+		    - [3.2.1.5.3.2.4. `NonceInUse`](#3215324--nonceinuse-)
+		    - [3.2.1.5.3.2.5. `IssuedTooEarly`](#3215325--issuedtooearly-)
+		    - [3.2.1.5.3.2.6. `ExpirationTooLong`](#3215326--expirationtoolong-)
+	  - [3.2.1.6. Using Sessions](#3216-using-sessions)
+	    * [3.2.1.6.1. Non-Privileged Endpoints](#32161-non-privileged-endpoints)
+	    * [3.2.1.6.2. Privileged Endpoints](#32162-privileged-endpoints)
+    + [3.2.2.Client API Key](#322-client-api-key)
   * [3.3. Formal Specification](#33-formal-specification)
     + [3.3.1. Quote Endpoints](#331-quote-endpoints)
       - [3.3.1.1. `GET /quote/in`](#3311--get--quote-in-)
@@ -204,6 +220,11 @@
     + [8.1.1. [RFC2119]](#811--rfc2119-)
     + [8.1.2. [RFC8174]](#812--rfc8174-)
     + [8.1.3. [RFC7519]](#813--rfc7519-)
+    + [8.1.4. [EIP-4361]](#814--eip-4361-)
+    + [8.1.5. [EIP-55]](#815--eip-55-)
+    + [8.1.6. [EIP-191]](#816--eip-191-)
+    + [8.1.7. [EIP-1271]](#817--eip-1271-)
+    + [8.1.8. [EIP-2098]](#818--eip-2098-)
   * [8.2. Informative References](#82-informative-references)
     + [8.2.1. Webhook Best Practices](#821-webhook-best-practices)
     + [8.2.2. Idempotency Keys](#822-idempotency-keys)
@@ -434,105 +455,252 @@ The FiatConnect API specifies *two* types of authentication; the first authentic
 the second authenticates the *client*, and is optionally required, depending on whether or not it has been configured by the client
 with the provider.
 
-### 3.2.1. JWT Authentication
+### 3.2.1. Sign-In With Ethereum
 
-Only users with a registered address on the Celo blockchain may make requests to a FiatConnect API. The FiatConnect API specification
-requires servers to recognize a JWT token signed with the user's private key, and verifiable with the user's public key. With this authentication
-scheme, a server can:
+FiatConnect-compliant APIs are required to use the *Sign-In With Ethereum* standard, otherwise known as [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361)
+in order to identify users and confirm ownership of a Celo blockchain address. At a high level, the Sign-In With Ethereum standard
+requires the client to use a user's private key to sign a plaintext message containing a number of standardized fields, and send that signed message to the
+server to prove account ownership. FiatConnect APIs MUST use the SIWE standard to create authenticated sessions for the user, and return session cookies to
+the client. More detail on exactly how this should be structured is provided below.
 
-1. Associate a user's Celo blockchain address with the request, and
-2. Verify the requester's ownership of the provided address.
+#### 3.2.1.1. SIWE Resources
 
-Servers MUST parse and recognize JWT tokens according to the following format. Servers MUST validate these tokens on every request.
+SIWE has rich tooling and support across multiple languages; see [here](https://docs.login.xyz/) for more details, example implementations, and libraries for many popular
+languages.
 
-#### 3.2.1.1. JWT Header
+#### 3.2.1.2. SIWE Sessions
 
-Servers MUST support the following JWT header, using an elliptic curve digital signature algorithm (ECDSA):
+At a high level, the client will craft a SIWE-compliant message and sign it with the user's private key. This message will contain various parameters relating
+to the origin URL which they're requesting to be authorized against, desired session length, etc. Once the client has crafted and signed the message, the client will send
+the signed message to a FiatConnect API at a `POST /auth/login` endpoint. The server will validate the signature, and check that all the included fields in the signed message are valid.
+If everything checks out, the server will create a session for the user according to the details in the signed message. Once the server has created the session,
+it responds to the client with a `200`, and returns session cookies that the client can use in subsequent requests to privileged endpoints on behalf of the signed-in address.
 
-```json
+#### 3.2.1.3. SIWE Message Format
+
+Within the FiatConnect specification, all references to SIWE-compliant messages refer to plaintext messages adhering exactly to the
+[SIWE message format](https://docs.login.xyz/general-information/siwe-overview/eip-4361#abnf-message-format), and additionally to the contraints described below.
+
+```
+${domain} wants you to sign in with your Ethereum account:
+${address}
+
+URI: ${uri}
+Version: 1
+Chain ID: 42220
+Nonce: ${nonce}
+Issued At: ${issued-at}
+Expiration Time: ${expiration-time}
+```
+
+Each field in this template is required to be filled in by the client, and has a unique meaning. As described later, servers MUST reject authorization attempts
+if any fields are not as expected. The meaning of each of these fields is enumerated below:
+
+The `domain` field MUST correspond to the [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2) authority of the API that the client is requesting to be authorized for, e.g. `example.com`.
+The `address` field MUST correspond to the Celo blockchain address that the user is attempting to login/authorize themself as. For externally-owned accounts, this
+must conform to the mixed-case checksum encoding specified in [EIP-55](https://eips.ethereum.org/EIPS/eip-55).
+The `uri` field MUST correspond to the origin URL of the API to authorize for, with the `/auth/login` path appended, e.g. `https://example.com/auth/login`.
+The `nonce` field MUST be a unique 8 character alpha-numeric string not previously seen in as part of any unexpired request from the given client.
+The `issued-at` field MUST be the ISO 8601 datetime string of the time at which the client generated the message.
+The `expiration-time` field MUST be an ISO 8601 datetime string that specifies when this message will no longer valid, and when a session created with this message
+will expire. This field MUST NOT be more than four hours (14400 seconds) later than the `issued-at` field.
+
+Note that in cases where a client is attempting to authorize themselves as the owner of a contract-owned account (rather than an externally-owned account), the `address`
+field MUST correspond to the address of the on-chain contract account, rather than the externally-owned account (EOA) address. The message itself should be signed in accordance
+with the [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) standard, in such a way that the contract account can validate the signature and message hash with its
+implementation of the `isValidSignature` method as outlined in the EIP-1271 standard. If desired, CICO providers MAY support authenticating as a contract-owned account,
+but it is not required.
+
+#### 3.2.1.4. Session Cookies
+
+Once the client generates a SIWE-compliant plaintext message, it signs it with the user's externally-owned account private key according to [EIP-191](https://eips.ethereum.org/EIPS/eip-191)
+`personal_sign` format. The client will then send the message and signature to the server at a `POST /auth/login` endpoint, described below. If the server
+accepts the signed message as valid, it will respond with a session cookie linked that identifies the user's authenticated session within the server. The server
+MUST set the [SameSite](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite) policy on the session cookie to prevent the client
+from sending the cookie to other hosts. Ultimately, it is the client's responsibility to manage session cookies between different FiatConnect APIs.
+
+If a client sends a session cookie when calling the `POST /auth/login` endpoint (either to refresh their current, valid session, or to generate a new session if their current one is
+expired), the server MUST ignore the provided cookie. If the authentication request is valid, the server MUST set a new value on the cookie referencing the client's new, valid session,
+and return it to the client.
+
+#### 3.2.1.5. `POST /auth/login`
+
+The `POST /auth/login` endpoint is responsible for verifying signed messages sent by clients, creating and authenticating a user's session, and returning session cookies.
+Note that the Sign-In With Ethereum standard, and FiatConnect, support authorization for externally owned accounts (EOAs) and contract-owned accounts; The `POST /auth/login`
+endpoint MUST honor login requests for EOAs, and MAY support smart contract-owned accounts as well, as described below.
+
+##### 3.2.1.5.1. Parameters
+
+###### 3.2.1.5.1.1. Request Body
+
+The request body must contain the following fields:
+
+* `message`: {`string`} [REQUIRED]
+  - The plaintext SIWE message
+* `signature`: {`string`} [REQUIRED]
+  - The [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signed message if logging in as EOA, or a signature according to the
+	[EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) standard, if logging in as a contract-owned account.
+
+The `message` field should be the *plaintext* message, while the signature should be an string containing the typical secp256k1 signature fields: `r`, `s`, and `v`.
+This `signature` string should be a hex string, prefixed with `0x`. The hex data should be 65 bytes long (130 hex characters, *excluding* the leading `0x`). The first
+32 bytes (64 hex characters) represent `r`, the next 32 bytes (64 hex characters) represent `s`, and the final byte (2 hex characters) represent `v`. This is the "canonical"
+form of the signature as referenced in [EIP-2098](https://eips.ethereum.org/EIPS/eip-2098), rather than the "compact" form.
+
+##### 3.2.1.5.2. Responses
+
+###### 3.2.1.5.2.1. HTTP `200`
+
+On success, the server MUST return an HTTP `200`, update the state of the user's session to be authenticated, and return a session cookie.
+
+###### 3.2.1.5.2.2. HTTP `401`
+
+On failure, the server MUST return an HTTP `401`, with the following response body.
+
+```
 {
-	"alg": "ES256",
-	"typ": "JWT"
+	error: `ErrorEnum`,
 }
 ```
 
-Servers MAY support other algorithms, but this is not required.
+##### 3.2.1.5.3. Semantics
 
-#### 3.2.1.2. JWT Payload
+This endpoint performs validation on a signed SIWE-compliant message. In addition to checking that the signature itself is valid and corresponds to the included
+address, it also performs various safety and security checks on the contents of the message. If all checks pass, the server updates the client's session to be authenticated,
+and returns a `200`.
 
-Servers MUST recognize the following *registered claims* within the JWT payload.
+###### 3.2.1.5.3.1. Success
 
-* `exp`, or *expiration time*
-* `sub`, or *subject*
-* `iss`, or *issuer*
+On success, the server MUST respond with a `200` status code. The server MUST only respond successfully after performing the following checks:
 
-Servers MUST also recognize the following *private claims* within the JWT payload.
+* A server MUST verify that the plaintext `message` adheres to the SIWE grammar/syntax (refer to the `ABNF Message Format` section within
+  [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361)). If it does not, the server MUST return a 401 (`InvalidParameters`)
 
-* `client`, or *client API key*
+* A server MUST determine whether the address being signed in as corresponds to an EOA or contract account. If a server determines that the address corresponds to a
+  contract-owned account and does *not* support contract-owned account login, it must return a 401 (`ContractLoginNotSupported`).
 
-The semantics of these claims are below:
+  * If the address to sign in as corresponds to an EOA, the server MUST verify that the `signature` field was signed by the address attempting to be signed is and
+	is a valid signature for the `message` included in the request.
 
-##### 3.2.1.2.1. `"sub"` Claim
+  * If the address to sign in as corresponds to a contract-owned account and the server supports contract-owned account login, the server MUST verify the validity of
+	the included `signature` according to the [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) standard.
 
-The `sub`, or *subject* claim represents the user's Celo network address. This is a required claim. If it is missing, the server MUST respond
-to the client with an HTTP `400` error. This claim SHOULD be interpreted and used within server endpoints as a unique user identifier, and as the
-source of/destination for crypto funds during transfers. The address should be formatted as 42 hexadecimal characters prefixed by the string literal
-`0x`. If the `sub` claim does not match this format, the server MUST respond to the client with an HTTP `400` error.
+* A server MUST verify that the `nonce` field does not correspond to a nonce that has already been used to authenticate an ongoing, valid session.
 
-##### 3.2.1.2.2. `"iss"` Claim
+* A server MUST verify that the `domain` and `uri` fields correspond exactly to the values expected for the server's hostname/origin.
 
-The `iss`, or *subject* claim represents the user's Celo address public key, dervied from their private key. This is a required claim.
-The public key MUST be in compressed form (see [here](https://docs.ethers.io/v5/api/utils/signing-key/) for more details), and exactly 33 bytes
-long.
+* A server MUST verify that the `Version` and `Chain ID` lines in the signed message are exactly `1` and `42220`, respectively.
 
-If it is missing, the server MUST respond to the client with an HTTP `400` error. The server MUST use this claim to verify the JWT signature.
-Since the address provided in the `"sub"` claim may not correspond to the public/private keypair used to sign and verify the JWT, the
-server MUST validate that the signature does indeed correspond to the address provided in the `"sub"` claim.
+* If the `issued-at` field in the signed message is after the server's current timestamp, or if the `issued-at` field is after the `expiration-time` field, the server
+  MUST fail the request. If the server's current timestamp is past the `expiration-time` field, the server MUST fail the request. If the `expiration-time` field is
+  greater than four hours (14400 seconds) ahead of the `issued-at` field, the server MUST fail the request.
 
-##### 3.2.1.2.3. `"exp"` Claim
+If all fields are acceptable, and the message is formatted correctly, the server SHOULD authenticate the user's session, and return an HTTP `200`.
+The server SHOULD attach the fields from the signed message to the session internally, in order to access data about the user and their session in other endpoints.
 
-The `exp`, or *expiration time* claim represents the time until which the provided JWT should be accepted by the server. The `exp` claim should be provided
-as a numeric timestamp, defined as the number of seconds since Epoch. The `exp` claim MUST be present for all endpoints *except* the following:
+Once a server authenticates a session using a particular nonce, the server MUST NOT allow any other sessions to be created using the same nonce and address, until
+`expiration-time` of the session created using that nonce has been reached. The implementation of this is up to the server, but will require storing some global
+state about nonces in order to check if a client is attempting to sign-in using a nonce that is temporarily forbidden. Careful consideration should be taken to make
+sure that nonce management works correctly when scaling server resources.
+
+###### 3.2.1.5.3.2. Failure
+
+On failure, the server MUST return an HTTP `401` error, along with an error code that details exactly why the request failed.
+
+###### 3.2.1.5.3.2.1. `InvalidSignature`
+
+If the signature is invalid or doesn't match the included `address` field, the server MUST return an `InvalidSignature` error. Note that the address used
+to sign the message may not actually match the address being authenticated in the case where the client is authenticating as a contract-owned account. In
+such cases, `InvalidSignature` MUST NOT be returned when the signature is valid, and the address used to sign the message is considered valid by the contract
+referenced in the `address` field.
+
+###### 3.2.1.5.3.2.2. `InvalidParameters`
+
+If the request body is missing, malformed, or fails to pass any of the required checks, the server MUST respond with an `InvalidParameters` error. If another
+error type is more descriptive of the actual issue, that error should be used instead.
+
+###### 3.2.1.5.3.2.3. `ContractLoginNotSupported`
+
+If the server determines that a client is trying to log in as a contract-owned account but the server does not support contract-owned account logins, the
+server MUST respond with a `ContractLoginNotSupported` error.
+
+###### 3.2.1.5.3.2.4. `NonceInUse`
+
+If the nonce included in the message is already attached to a valid session, the server MUST respond with a `NonceInUse` error.
+
+###### 3.2.1.5.3.2.5. `IssuedTooEarly`
+
+If the `issued-at` field is before the server's current timestamp, the server MUST respond with an `IssuedTooEarly` error.
+
+###### 3.2.1.5.3.2.6. `ExpirationTooLong`
+
+If ther `expiration-time` field is more than four hours into the future, the server MUST respond with an `ExpirationTooLong` error.
+
+#### 3.2.1.6. Using Sessions
+
+Once a client has established a session with a server, they can use that session (by sending the session cookie to the server) to access priveleged endpoints
+throughout the API. Certain endpoints impose different requirements on the in-use session. There are *two levels* of endpoints, with respect to their authentication
+requirements. These levels are explained below.
+
+##### 3.2.1.6.1. Non-Privileged Endpoints
+
+The first group of endpoints are those that *do not* require the user to have a logged-in session. These are:
 
 * `GET /quote/in`
 * `GET /quote/out`
+* `POST /auth/login`
+
+Since it may be a painful user experience to have a user log in to a provider just to get a quote, authentication is not required for these endpoints. Of course,
+clients may still access these endpoints when logged in, but a logged-in session (or any session at all) is not required to access these endpoints. `POST /auth/login`
+does not require a user to already be logged in, as described above.
+
+##### 3.2.1.6.2. Privileged Endpoints
+
+The second, and largest set of endpoints, are the ones that require a user to be logged in. These endpoints are the ones that deal with reading and writing user-specific data.
+
+* `POST /kyc/:kycSchema`
 * `GET /kyc/:kycSchema/status`
+* `DELETE /kyc/:kycSchema`
+* `POST /accounts/:fiatAccountSchema`
+* `GET /accounts`
+* `DELETE /account/:fiatAccountId`
 * `GET /transfer/:transferId/status`
+* `POST /transfer/in`
+* `POST /transfer/out`
 
-The rationale behind not requiring an `exp` claim for these endpoints is that these endpoints are *non-mutating*; calling them does not affect server-side
-state in any way. Since these endpoints are less security-critical, an `exp` claim is not required as a convenience to clients.
-While these endpoints do not require the `exp` claim to be present, *all endpoints* MUST honor the `exp` claim *if it is* present in the
-JWT payload. For endpoints where the `exp` claim is required, the server MUST return an HTTP `400` if it is not present.
-A server MUST return an HTTP `401` error if the provided `exp` field is later than the current time with respect to Epoch. If an `exp` claim is
-included in a request, it MUST NOT exceed 24 hours from the current time with respect to Epoch. If the `exp` claim is more than 24 hours into the future, the
-server MUST return an HTTP `400` error. This is required in order to prevent clients from generating excessivley long-lived JWTs that would pose a security
-risk if leaked.
+For these endpoints, a user needs to be logged in with an authenticated session. This session MUST have an expiration time of no greater than four hours (the maximum allowed by FiatConnect).
 
-##### 3.2.1.2.4. `"client"` Claim
+If a client attempts to access any of these endpoints without a session, the server MUST return a `401` status code with an `Unauthorized` error.
+If a client tries to acces any of these endpoints with an expired session, the server MUST respond with an HTTP `401` status code with a `SessionExpired` error.
 
-In addition to public-private key authentication, servers must also support API token based authentication. Recall the webhook-based status monitoring
-mentioned earlier in this document. In order to support status monitoring via webhooks, individual clients will need to be able to register a URL pointing
-to an API able to handle webhook updates from the server. Once a client has registered a webhook URL with the provider, the client needs a way to identify
-itself to the server. To uniquely identify clients in order to know where to send webhook-based status updates, a server may allow clients to register an API key.
-The exact mechanism by which servers allocate API keys to clients and allow them to register webhook URLs is out of scope of this document.
+### 3.2.2. Client API Key
+
+In addition to the SIWE-based auth used to authenticate users and create sessions, the FiatConnect specification also supports a more traditional authentication standard, used
+to identify specific clients with requests. Recall the webhook-based status monitoring mentioned earlier in this document. In order to support status
+monitoring via webhooks, individual clients will need to be able to register a URL pointing to an API able to handle webhook updates from the server.
+Once a client has registered a webhook URL with the provider, the client needs a way to identify itself to the server. To uniquely identify clients in order
+to know where to send webhook-based status updates, a server may allow clients to register an API key. The exact mechanism by which servers allocate API keys
+to clients and allow them to register webhook URLs is out of scope of this document.
+
+Once a client has registered an API key with a provider and associated it with a webhook URL, a client MAY provide it to a server through an `Authorization` header,
+using the `Bearer` authorization scheme. For example: `Authorization: Bearer <key>`, where `<key>` is the client's API key.
 
 A server MUST support API token authentication, and MAY *require* that clients include an API key in each request. If a server requires
 that clients include an API key in each request, it MUST respond to the client with an HTTP `400` error if the API key is missing from the request.
 Regardless of whether or not a server requires an API key on every request, it MUST return an HTTP `401` error if an API key is
 provided but does not correspond to any registered client; likewise it MUST return an HTTP `400` error if the API key is poorly formed.
 
-The `client`, or *client API key* claim is a *private claim* that is FiatConnect-specific. This is an optional claim. This claim contains a client
-API key as discussed above; the details of the server's response with respect to this claim MUST follow the semantics outlined above.
+API token authentication is *completely separate* from SIWE-based auth. The priveleged endpoints listed earlier *always* require a user to have a valid session via SIWE
+authentication. API token authentication MAY be required on all endpoints, or optional. Regardless of whether or not the client provides an API token, if the client attempts
+to access a priveleged endpoint without a valid session, the server MUST reject their request.
 
-#### 3.2.1.3. Communicating JWT
+### 3.2.3. HTTPS
 
-The JWT should be communicated to the server using the `Bearer` authentication scheme within the `Authorization` header. In particular, this header
-must look like: `Authorization: Bearer <jwt>`. If the header is not present, or is malformed, the server MUST return an HTTP `400` error.
+All servers implementing a FiatConnect-compliant API MUST use HTTPS, and MUST NOT support unsecured HTTP requests.
 
 ## 3.3. Formal Specification
 
-This section details the precise syntax and semantics of all the endpoints required by the FiatConnect specification. Endpoints are logically grouped, and roughly presented
-in order of dependency. The logical groupings are as follows:
+This section details the precise syntax and semantics of all the endpoints required by the FiatConnect specification, besides those devoted to authentication.
+Endpoints are logically grouped, and roughly presented in order of dependency. The logical groupings are as follows:
 
 * Quote Endpoints
 * KYC Endpoints
@@ -578,6 +746,9 @@ used for the transfer.
   - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
 * `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
+* `address`: {`string`} [REQUIRED]
+  - An [EIP-55](https://eips.ethereum.org/EIPS/eip-55) formatted address, representing the Celo address of the user to get the quote for. For contract-owned accounts, this should be
+	the address of the contract itself.
 
 ##### 3.3.1.1.2. Responses
 
@@ -746,6 +917,9 @@ The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out 
   - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
 * `region`: {`string`}
   - An optional ISO 3166-2 subdivision code representing a region within the provided country.
+* `address`: {`string`} [REQUIRED]
+  - An [EIP-55](https://eips.ethereum.org/EIPS/eip-55) formatted address, representing the Celo address of the user to get the quote for. For contract-owned accounts, this should be
+	the address of the contract itself.
 
 ##### 3.3.1.2.2. Responses
 
@@ -1645,6 +1819,10 @@ An enum listing the error types used by various endpoints.
 
 ```
 [
+	`InvalidAddress`,
+	`InvalidDuration`,
+	`DurationTooLong`,
+	`InvalidSignature`
 	`GeoNotSupported`,
 	`CryptoAmountTooLow`,
 	`CryptoAmountTooHigh`,
@@ -1657,8 +1835,14 @@ An enum listing the error types used by various endpoints.
 	`ResourceExists`,
 	`ResourceNotFound`,
 	`TransferNotAllowed`,
-	`KycExpired`
-	`InvalidParameters`
+	`KycExpired`,
+	`Unauthorized`,
+	`SessionExpired`,
+	`InvalidParameters`,
+	`ContractLoginNotSupported`,
+	`NonceInUse`,
+	`IssuedTooEarly`,
+	`ExpirationTooLong`
 ]
 ```
 
@@ -1866,6 +2050,26 @@ Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words", BCP 14, 
 ### 8.1.3. [RFC7519]
 
 M. Jones, "JSON Web Token", RFC7519, May 2015, <https://datatracker.ietf.org/doc/html/rfc7519>.
+
+### 8.1.4. [EIP-4361]
+
+EIP-4361: Sign-In with Ethereum, <https://eips.ethereum.org/EIPS/eip-4361>
+
+### 8.1.5. [EIP-55]
+
+EIP-55: Mixed-case checksum address encoding, <https://eips.ethereum.org/EIPS/eip-55>
+
+### 8.1.6. [EIP-191]
+
+EIP-191: Signed Data Standard, <https://eips.ethereum.org/EIPS/eip-191>
+
+### 8.1.7. [EIP-1271]
+
+EIP-1271: Standard Signature Validation Method for Contracts, <https://eips.ethereum.org/EIPS/eip-1271>
+
+### 8.1.8. [EIP-2098]
+
+EIP-2098: Compact Signature Representation, <https://eips.ethereum.org/EIPS/eip-2098>
 
 ## 8.2. Informative References
 
