@@ -1666,7 +1666,17 @@ An enum listing the types of fiat currencies supported by FiatConnect.
   `EUR`,
   `REAL`,
   `INR`,
-  `NGN`
+  `NGN`,
+  `GHS`,
+  `KES`,
+  `ZAR`,
+  `PHP`,
+  `UGX`,
+  `GBP`,
+  `XOF`,
+  `RWF`,
+  `CNY`,
+  `XAF`,
 ]
 ```
 
