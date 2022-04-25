@@ -224,6 +224,7 @@
     + [8.1.5. [EIP-55]](#815--eip-55-)
     + [8.1.6. [EIP-191]](#816--eip-191-)
     + [8.1.7. [EIP-1271]](#817--eip-1271-)
+    + [8.1.8. [EIP-2098]](#818--eip-2098-)
   * [8.2. Informative References](#82-informative-references)
     + [8.2.1. Webhook Best Practices](#821-webhook-best-practices)
     + [8.2.2. Idempotency Keys](#822-idempotency-keys)
@@ -2008,6 +2009,10 @@ EIP-191: Signed Data Standard, <https://eips.ethereum.org/EIPS/eip-191>
 ### 8.1.7. [EIP-1271]
 
 EIP-1271: Standard Signature Validation Method for Contracts, <https://eips.ethereum.org/EIPS/eip-1271>
+
+### 8.1.8. [EIP-2098]
+
+EIP-2098: Compact Signature Representation, <https://eips.ethereum.org/EIPS/eip-2098>
 
 ## 8.2. Informative References
 
