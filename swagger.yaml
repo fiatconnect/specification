@@ -422,6 +422,18 @@ definitions:
       - USD
       - EUR
       - REAL
+      - INR
+      - NGN
+      - GHS
+      - KES
+      - ZAR
+      - PHP
+      - UGX
+      - GBP
+      - XOF
+      - RWF
+      - CNY
+      - XAF
   CryptoType:
     type: "string"
     enum:
