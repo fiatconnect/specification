@@ -427,6 +427,8 @@ definitions:
       - USD
       - EUR
       - REAL
+      - INR
+      - NGN
   CryptoType:
     type: "string"
     enum:
