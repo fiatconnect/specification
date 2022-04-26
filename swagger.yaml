@@ -250,7 +250,7 @@ paths:
                   $ref: '#/definitions/FiatAccountInfoResponse'
       security:
         - dek_auth: []
-  /account/{fiatAccountId}:
+  /accounts/{fiatAccountId}:
     delete:
       tags:
       - "fiat account"
@@ -422,8 +422,19 @@ definitions:
       - USD
       - EUR
       - REAL
-      - XOF
       - GNF
+      - INR
+      - NGN
+      - GHS
+      - KES
+      - ZAR
+      - PHP
+      - UGX
+      - GBP
+      - XOF
+      - RWF
+      - CNY
+      - XAF
   CryptoType:
     type: "string"
     enum:
@@ -598,6 +609,10 @@ definitions:
       fee:
         type: "number"
       fiatAccountId:
+        type: "string"
+      transferId:
+        type: "string"
+      transferAddress:
         type: "string"
   TransferErrorEnum:
     type: "string"
