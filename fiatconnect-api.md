@@ -1463,10 +1463,6 @@ The `POST /transfer/in` endpoint is used to initiate a new transfer in from fiat
 
 The request body must contain the following fields:
 
-* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
-  - The type of fiat currency to transfer in from.
-* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
-  - The type of cryptocurrency to transfer in to.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
 * `quoteId`: {`string`} [REQUIRED]
@@ -1542,8 +1538,8 @@ If a transfer is not allowed for a generic reason (such as unacceptable transfer
 
 ###### 3.3.4.1.3.2.3. `InvalidQuote`
 
-If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST
-reject the transfer and return an `InvalidQuote` error. 
+If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, or if the provided quote is for the
+wrong type of transfer, the server MUST reject the transfer and return an `InvalidQuote` error.
 
 ###### 3.3.4.1.3.2.4. `ResourceNotFound`
 
@@ -1569,10 +1565,6 @@ The `POST /transfer/out` endpoint is used to initiate a new transfer out from cr
 
 The request body must contain the following fields:
 
-* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
-  - The type of fiat currency to transfer out to.
-* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
-  - The type of cryptocurrency to transfer out from.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
 * `quoteId`: {`string`} [REQUIRED]
@@ -1648,8 +1640,8 @@ If a transfer is not allowed for a generic reason (such as unacceptable transfer
 
 ###### 3.3.4.2.3.2.3. `InvalidQuote`
 
-If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST 
-reject the transfer and return an `InvalidQuote` error.
+If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, or if the provided quote is for the
+wrong type of transfer, the server MUST reject the transfer and return an `InvalidQuote` error.
 
 ###### 3.3.4.2.3.2.4. `ResourceNotFound`
 
