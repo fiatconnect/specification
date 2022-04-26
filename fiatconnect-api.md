@@ -159,6 +159,7 @@
             - [3.3.4.1.3.2.2. `TransferNotAllowed`](#3341322--transfernotallowed-)
             - [3.3.4.1.3.2.3. `InvalidQuote`](#3341323--invalidquote-)
             - [3.3.4.1.3.2.4. `ResourceNotFound`](#3341324--resourcenotfound-)
+            - [3.3.4.1.3.2.5. `InvalidFiatAccount`](#3341325--invalidfiataccount-)
       - [3.3.4.2. `POST /transfer/out`](#3342--post--transfer-out-)
         * [3.3.4.2.1. Parameters](#33421-parameters)
           + [3.3.4.2.1.1. Headers](#334211-headers)
@@ -175,6 +176,7 @@
             - [3.3.4.2.3.2.2. `TransferNotAllowed`](#3342322--transfernotallowed-)
             - [3.3.4.2.3.2.3. `InvalidQuote`](#3342323--invalidquote-)
             - [3.3.4.2.3.2.4. `ResourceNotFound`](#3342324--resourcenotfound-)
+            - [3.3.4.2.3.2.5. `InvalidFiatAccount`](#3342325--invalidfiataccount-)
       - [3.3.4.3. `GET /transfer/:transferId/status`](#3343--get--transfer--transferid-status-)
         * [3.3.4.3.1. Parameters](#33431-parameters)
           + [3.3.4.3.1.1. Path Parameters](#334311-path-parameters)
@@ -1543,6 +1545,11 @@ reject the transfer and return an `InvalidQuote` error.
 
 If the selected `fiatAccountId` is not found for the current user, the server MUST reject the transfer and return a `ResourceNotFound` error.
 
+###### 3.3.4.1.3.2.5. `InvalidFiatAccount`
+
+If the selected `fiatAccountId` corresponds to an existing fiat account for the user, but that fiat account is not valid for use with this transfer, the server MUST
+return an `InvalidFiatAccount` error
+
 #### 3.3.4.2. `POST /transfer/out`
 
 The `POST /transfer/out` endpoint is used to initiate a new transfer out from crypto to fiat.
@@ -1645,6 +1652,11 @@ reject the transfer and return an `InvalidQuote` error.
 ###### 3.3.4.2.3.2.4. `ResourceNotFound`
 
 If the selected `fiatAccountId` is not found for the current user, the server MUST reject the transfer and return a `ResourceNotFound` error.
+
+###### 3.3.4.2.3.2.5. `InvalidFiatAccount`
+
+If the selected `fiatAccountId` corresponds to an existing fiat account for the user, but that fiat account is not valid for use with this transfer, the server MUST
+return an `InvalidFiatAccount` error
 
 #### 3.3.4.3. `GET /transfer/:transferId/status`
 
@@ -1842,7 +1854,8 @@ An enum listing the error types used by various endpoints.
 	`ContractLoginNotSupported`,
 	`NonceInUse`,
 	`IssuedTooEarly`,
-	`ExpirationTooLong`
+	`ExpirationTooLong`,
+	`InvalidFiatAccount`
 ]
 ```
 
