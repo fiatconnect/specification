@@ -636,7 +636,7 @@ If the `issued-at` field is before the server's current timestamp, the server MU
 
 ###### 3.2.1.5.3.2.6. `ExpirationTooLong`
 
-If ther `expiration-time` field is more than four hours into the future, the server MUST respond with an `ExpirationTooLong` error.
+If the `expiration-time` field is more than four hours into the future, the server MUST respond with an `ExpirationTooLong` error.
 
 #### 3.2.1.6. Using Sessions
 
@@ -1875,9 +1875,6 @@ An enum listing the error types used by various endpoints.
 
 ```
 [
-	`InvalidAddress`,
-	`InvalidDuration`,
-	`DurationTooLong`,
 	`InvalidSignature`
 	`GeoNotSupported`,
 	`CryptoAmountTooLow`,
