@@ -4,6 +4,10 @@ info:
   version: "1.0.0"
   title: "FiatConnect Specification"
 tags:
+- name: "clock"
+  description: "Sync clocks between server and client"
+- name: "auth"
+  description: "Authentication"
 - name: "quote"
   description: "Requests quotes for transfers with the user's desired parameters"
 - name: "kyc"
@@ -16,6 +20,47 @@ schemes:
 - "https"
 - "http"
 paths:
+  /clock:
+    get:
+      summary: "Get the server's current time"
+      tags:
+        - "clock"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ClockResponse"
+  /auth/login:
+    post:
+      summary: "Log in with a SIWE message and get a session cookie"
+      tags:
+        - "auth"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "message"
+          description: "The plaintext SIWE message"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "signature"
+          description: "An EIP-191 (for EOA) or EIP-1271 (for contract-owned accounts) signature for the SIWE message"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "string"
+        "401":
+          description: "failed operation"
+          schema:
+            $ref: "#/definitions/LoginErrorResponse"
   /quote/in:
     get:
       tags:
@@ -43,8 +88,6 @@ paths:
           description: "failed operation"
           schema:
             $ref: '#/definitions/QuoteErrorResponse'
-      security:
-        - dek_auth: []
   /quote/out:
     get:
       tags:
@@ -72,8 +115,6 @@ paths:
           description: "failed operation"
           schema:
             $ref: '#/definitions/QuoteErrorResponse'
-      security:
-        - dek_auth: []
   /kyc/{kycSchema}:
     post:
       tags:
@@ -121,7 +162,7 @@ paths:
               error:
                 $ref: '#/definitions/ResourceExists'
       security:
-        - dek_auth: []
+        - siwe_auth: []
     delete:
       tags:
       - "kyc"
@@ -150,7 +191,7 @@ paths:
               error:
                 $ref: '#/definitions/ResourceNotFound'
       security:
-        - dek_auth: []
+        - siwe_auth: []
   /kyc/{kycSchema}/status:
     get:
       tags:
@@ -183,7 +224,7 @@ paths:
               error:
                 $ref: '#/definitions/ResourceNotFound'
       security:
-        - dek_auth: []
+        - siwe_auth: []
   /accounts/{fiatAccountSchema}:
     post:
       tags:
@@ -228,7 +269,7 @@ paths:
               error:
                 $ref: '#/definitions/ResourceExists'
       security:
-        - dek_auth: []
+        - siwe_auth: []
   /accounts:
     get:
       tags:
@@ -249,7 +290,7 @@ paths:
                 items:  
                   $ref: '#/definitions/FiatAccountInfoResponse'
       security:
-        - dek_auth: []
+        - siwe_auth: []
   /accounts/{fiatAccountId}:
     delete:
       tags:
@@ -278,7 +319,7 @@ paths:
               error:
                 $ref: '#/definitions/ResourceNotFound'
       security:
-        - dek_auth: []
+        - siwe_auth: []
   /transfer/in:
     post:
       tags:
@@ -322,7 +363,7 @@ paths:
               error:
                 $ref: '#/definitions/ResourceNotFound'
       security:
-        - dek_auth: []
+        - siwe_auth: []
   /transfer/out:
     post:
       tags:
@@ -366,7 +407,7 @@ paths:
               error:
                 $ref: '#/definitions/ResourceNotFound'
       security:
-        - dek_auth: []
+        - siwe_auth: []
   /transfer/{transferId}/status:
     get:
       tags:
@@ -395,9 +436,9 @@ paths:
               error:
                 $ref: '#/definitions/ResourceNotFound'
       security:
-        - dek_auth: []
+        - siwe_auth: []
 securityDefinitions:
-  dek_auth:
+  siwe_auth:
     type: "basic"
 definitions:
   KycInfo:
@@ -524,6 +565,11 @@ definitions:
                 type: "string"
               settlementTimeUpperBound?:
                 type: "string"
+  LoginErrorResponse:
+    type: "object"
+    properties:
+      error:
+        $ref: "#/definitions/LoginErrorEnum"
   QuoteErrorResponse:
     type: "object"
     properties:
@@ -537,6 +583,11 @@ definitions:
         type: "number"
       maximumCryptoAmount?:
         type: "number"
+  ClockResponse:
+    type: "object"
+    properties:
+      time:
+        type: "string"
   FiatAccountInfoBody:
     type: "object"
     properties:
@@ -625,6 +676,15 @@ definitions:
     enum:
       - UnsupportedSchema
       - InvalidSchema
+  LoginErrorEnum:
+    type: "string"
+    enum:
+      - InvalidSignature
+      - InvalidParameters
+      - ContractLoginNotSupported
+      - NonceInUse
+      - IssuedTooEarly
+      - ExpirationTooLong
   QuoteErrorEnum:
     type: "string"
     enum:
