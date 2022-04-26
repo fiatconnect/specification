@@ -55,8 +55,6 @@ paths:
       responses:
         "200":
           description: "successful operation"
-          schema:
-            type: "string"
         "401":
           description: "failed operation"
           schema:
