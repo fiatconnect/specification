@@ -422,6 +422,7 @@ definitions:
       - USD
       - EUR
       - REAL
+      - GNF
       - INR
       - NGN
       - GHS
@@ -455,6 +456,8 @@ definitions:
     type: "string"
     enum:
       - BankAccount
+      - MobileMoney
+      - DuniaWallet
   FiatAccountSchemaEnum:
     type: "string"
     enum:

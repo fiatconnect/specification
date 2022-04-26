@@ -217,9 +217,12 @@
     + [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
   * [7.3. Initial Entity Support](#73-initial-entity-support)
     + [7.3.1. KYC Schemas](#731-kyc-schemas)
-	  - [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
-	+ [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
-	  - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
+      - [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
+    + [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
+      - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
+      - [7.3.2.2. `MobileMoney`](#7322-mobilemoney)
+        * [7.3.2.2.1. `SupportedOperatorEnum`](#73221-supportedoperatorenum)
+      - [7.3.2.3. `DuniaWallet`](#7323-duniawallet)
 - [8. References](#8-references)
   * [8.1. Normative References](#81-normative-references)
     + [8.1.1. [RFC2119]](#811--rfc2119-)
@@ -1958,6 +1961,7 @@ An enum listing the types of fiat currencies supported by FiatConnect.
   `USD`,
   `EUR`,
   `REAL`,
+  `GNF`,
   `INR`,
   `NGN`,
   `GHS`,
@@ -2003,7 +2007,9 @@ represents what *kind* of account that schema represents.
 
 ```
 [
-	`BankAccount`
+	`BankAccount`,
+	`MobileMoney`,
+	`DuniaWallet`
 ]
 ```
 
@@ -2100,6 +2106,57 @@ Depending on the `allowedValues` field for `country`, the client SHOULD impose r
 is below:
 
 * `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
+
+#### 7.3.2.2. `MobileMoney`
+
+Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
+`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US). Finally, the `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
+
+```
+{
+  accountName: `string`,
+  institutionName: `string`,
+  mobile: `string`,
+  country: `string`,
+  operator: `SupportedOperatorEnum`,
+  fiatAccountType: `FiatAccountTypeEnum.MobileMoney`
+}
+```
+
+##### 7.3.2.2.1. `SupportedOperatorEnum`
+
+Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided. Depending on mobile money providers supported on a specific country, CI/CO providers will provide the list of `allowedValues`.
+Below you have a list of mobile money providers 
+
+(PS: Only missing mobile money providers should be added regardless of the country).
+
+```
+[
+  `ORANGE`,
+  `MOOV`,
+  `MTN`,
+  `WAVE`
+]
+```
+
+- `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money)
+- `MOOV` - [Moov Money](https://www.moov-africa.ci/moov-money/)
+- `MTN` - [Momo or Mtn Money](https://www.mtn.ci/vos/depot-et-retrait-momo/)
+- `WAVE` - [Wave](https://www.wave.com/fr/)
+
+#### 7.3.2.3. `DuniaWallet`
+
+The Dunia wallet is a proprietary wallet for people that have an account on the [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
+platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
+
+```
+{
+  accountName: `string`,
+  institutionName: `string`,
+  mobile: `string`,
+  fiatAccountType: `FiatAccountTypeEnum.DuniaWallet`
+}
+```
 
 # 8. References
 
