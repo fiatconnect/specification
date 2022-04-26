@@ -1467,8 +1467,6 @@ The request body must contain the following fields:
   - The type of fiat currency to transfer in from.
 * `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The type of cryptocurrency to transfer in to.
-* `amount`: {`float`}: [REQUIRED]
-  - The amount of fiat currency to transfer in.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
 * `quoteId`: {`string`} [REQUIRED]
@@ -1575,8 +1573,6 @@ The request body must contain the following fields:
   - The type of fiat currency to transfer out to.
 * `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The type of cryptocurrency to transfer out from.
-* `amount`: {`float`}: [REQUIRED]
-  - The amount of cryptocurrency to transfer out.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
 * `quoteId`: {`string`} [REQUIRED]
