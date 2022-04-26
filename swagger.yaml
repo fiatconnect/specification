@@ -25,8 +25,6 @@ paths:
       summary: "Get the server's current time"
       tags:
         - "clock"
-      produces:
-        - "application/json"
       responses:
         "200":
           description: "successful operation"
