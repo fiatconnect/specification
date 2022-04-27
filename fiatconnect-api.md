@@ -1824,42 +1824,42 @@ In case the type of payment is mobile transfer, `institutionCode` holds the mobi
   {
     "institionName": "Stanbic Mobile",
     "country": "NG",
-    "institutionCode": 304
+    "institutionCode": 000304
   },
   {
     "institionName": "PAYCOM",
     "country": "NG",
-    "institutionCode": 305
+    "institutionCode": 000305
   },
   {
     "institionName": "Ecobank Mobile",
     "country": "NG",
-    "institutionCode": 307
+    "institutionCode": 000307
   },
   {
     "institionName": "FBN Mobile",
     "country": "NG",
-    "institutionCode": 309
+    "institutionCode": 000309
   },
   {
     "institionName": "Parkway",
     "country": "NG",
-    "institutionCode": 311
+    "institutionCode": 000311
   },
   {
     "institionName": "GTBank Mobile Money",
     "country": "NG",
-    "institutionCode": 315
+    "institutionCode": 000315
   },
   {
     "institionName": "Zenith Mobile",
     "country": "NG",
-    "institutionCode": 322
+    "institutionCode": 000322
   },
   {
     "institionName": "Access Mobile",
     "country": "NG",
-    "institutionCode": 323
+    "institutionCode": 000323
   },
   {
     "institionName": "MTN Mobile Money",
