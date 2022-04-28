@@ -829,8 +829,8 @@ of fiat currency required in order to receive the requested amount of crypto.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
-is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
-conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
+is a globally unique identifier for the quote, and is used by the client to initiate a transfer with the parameters associated with the quote including
+conversion rate, fee, amount, crypto type, fiat type, etc. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
 
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
@@ -1002,8 +1002,8 @@ of fiat currency the user should expect to recieve in exchange for `cryptoAmount
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
-is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
-conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
+is a globally unique identifier for the quote, and is used by the client to initiate a transfer with the parameters associated with the quote including
+conversion rate, fee, amount, crypto type, fiat type, etc.  A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
 
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
@@ -1513,7 +1513,9 @@ respect to idempotency key errors.
 This endpoint allows a user to initiate a new transfer in request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
 and the user has non-expired KYC on file, and a quote with a matching `quoteId` exists for the user and has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
-For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the original quote MUST be used.
+For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the original quote MUST be used, as
+well as the amount, fiat type, and crypto type.
+
 When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks, and the server supports them, the server
 MUST call the user-specified webhook before returning an HTTP `200`. The response body MUST contain a `transferAddress`, indiciating the address that the provider will
@@ -1615,7 +1617,9 @@ respect to idempotency key errors.
 This endpoint allows a user to initiate a new transfer out request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
 and the user has non-expired KYC on file, and a quote with a matching `quoteId` exists for the user and has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
-For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the quote MUST be used.
+For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the quote MUST be used, as
+well as the amount, fiat type, and crypto type.
+
 When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks the server
 MUST call the user-specified webhook before returning an HTTP `200`. The server MUST also return a `transferAddress` representing the address that the user must send
