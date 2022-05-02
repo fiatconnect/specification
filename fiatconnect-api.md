@@ -1798,7 +1798,7 @@ is below:
 
 ####  7.3.2.2. `CheckingAccount`
 
-`CheckingAccountInr` is a Fiat Account schema that represents accounts for transactions across multiple currencies.
+`CheckingAccount` is a Fiat Account schema that represents accounts for transactions across multiple currencies.
 
 ```
 {
@@ -1806,7 +1806,8 @@ is below:
     "institutionName": `string`,
     "institutionCode": `string`,
     "accountNumber": `string`,
-    "fiatAccountType": `FiatAccountTypeEnum.BankAccount`
+    "fiatAccountType": `FiatAccountTypeEnum.BankAccount`,
+    "country":'string'
 }
 ```
 
