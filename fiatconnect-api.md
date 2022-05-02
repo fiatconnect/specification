@@ -637,7 +637,7 @@ If the nonce included in the message is already attached to a valid session, the
 
 ###### 3.2.1.5.3.2.5. `IssuedTooEarly`
 
-If the `issued-at` field is before the server's current timestamp, the server MUST respond with an `IssuedTooEarly` error.
+If the `issued-at` field is after the server's current timestamp, the server MUST respond with an `IssuedTooEarly` error.
 
 ###### 3.2.1.5.3.2.6. `ExpirationTooLong`
 
