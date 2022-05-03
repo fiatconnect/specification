@@ -187,58 +187,60 @@
           + [3.3.4.3.3.1. Success](#334331-success)
           + [3.3.4.3.3.2. Failure](#334332-failure)
             - [3.3.4.3.3.2.1. `ResourceNotFound`](#3343321--resourcenotfound-)
-- [4. Webhooks](#4-webhooks)
-  * [4.1. Webhook Requests](#41-webhook-requests)
-    + [4.1.1. `WebhookKycStatusEventSchema`](#411--webhookkycstatuseventschema-)
-    + [4.1.2. `WebhookTransferInStatusEventSchema`](#412--webhooktransferinstatuseventschema-)
-    + [4.1.3. `WebhookTransferOutStatusEventSchema`](#413--webhooktransferoutstatuseventschema-)
-  * [4.2. Webhook Request Signing](#42-webhook-request-signing)
-- [5. AML Considerations](#5-aml-considerations)
-- [6. Sandbox Environment](#6-sandbox-environment)
-  * [6.1. Celo Network](#61-celo-network)
-  * [6.2. Authentication](#62-authentication)
-  * [6.3. KYC](#63-kyc)
-  * [6.4. Fiat Accounts](#64-fiat-accounts)
-  * [6.5. Transfers](#65-transfers)
-- [7. Definitions](#7-definitions)
-  * [7.1. Static Definitions](#71-static-definitions)
-    + [7.1.1. `KycStatusEnum`](#711--kycstatusenum-)
-    + [7.1.2. `ErrorEnum`](#712--errorenum-)
-    + [7.1.3. `TransferTypeEnum`](#713--transfertypeenum-)
-    + [7.1.3. `WebhookEventTypeEnum`](#713--webhookeventtypeenum-)
-    + [7.1.4. `TransferStatusEnum`](#714--transferstatusenum-)
-  * [7.2. Dynamic Definitions](#72-dynamic-definitions)
-    + [7.2.1. `FiatTypeEnum`](#721--fiattypeenum-)
-    + [7.2.2. `CryptoTypeEnum`](#722--cryptotypeenum-)
-    + [7.2.3. `KycSchemaEnum`](#723--kycschemaenum-)
-    + [7.2.4. `FiatAccountTypeEnum`](#724--fiataccounttypeenum-)
-    + [7.2.5. `FeeTypeEnum`](#725--feetypeenum-)
-    + [7.2.6. `FeeFrequencyEnum`](#726--feetypeenum-)
-    + [7.2.7. `FiatAccountSchemaEnum`](#727--fiataccountschemaenum-)
-  * [7.3. Initial Entity Support](#73-initial-entity-support)
-    + [7.3.1. KYC Schemas](#731-kyc-schemas)
-      - [7.3.1.1. `PersonalDataAndDocuments`](#7311--personaldataanddocuments-)
-    + [7.3.2. Fiat Account Schemas](#732-fiat-account-schemas)
-      - [7.3.2.1. `AccountNumber`](#7311--accountnumber-)
-      - [7.3.2.2. `MobileMoney`](#7322-mobilemoney)
-        * [7.3.2.2.1. `SupportedOperatorEnum`](#73221-supportedoperatorenum)
-      - [7.3.2.3. `DuniaWallet`](#7323-duniawallet)
-- [8. References](#8-references)
-  * [8.1. Normative References](#81-normative-references)
-    + [8.1.1. [RFC2119]](#811--rfc2119-)
-    + [8.1.2. [RFC8174]](#812--rfc8174-)
-    + [8.1.3. [RFC7519]](#813--rfc7519-)
-    + [8.1.4. [EIP-4361]](#814--eip-4361-)
-    + [8.1.5. [EIP-55]](#815--eip-55-)
-    + [8.1.6. [EIP-191]](#816--eip-191-)
-    + [8.1.7. [EIP-1271]](#817--eip-1271-)
-    + [8.1.8. [EIP-2098]](#818--eip-2098-)
-  * [8.2. Informative References](#82-informative-references)
-    + [8.2.1. Webhook Best Practices](#821-webhook-best-practices)
-    + [8.2.2. Idempotency Keys](#822-idempotency-keys)
-    + [8.2.3. ISO 3166-1](#823-iso-3166-1)
-    + [8.2.4. ISO 3166-2](#824-iso-3166-2)
-    + [8.2.5. ISO 8601](#825-iso-8601)
+- [4. Transfer State Machines](#4-transfer-state-machines)
+  * [4.1. Transfers In](#41-transfers-in)
+  * [4.2. Transfers Out](#42-transfers-out)
+- [5. Webhooks](#5-webhooks)
+  * [5.1. Webhook Requests](#51-webhook-requests)
+    + [5.1.1. `WebhookKycStatusEventSchema`](#511--webhookkycstatuseventschema-)
+    + [5.1.2. `WebhookTransferInStatusEventSchema`](#512--webhooktransferinstatuseventschema-)
+    + [5.1.3. `WebhookTransferOutStatusEventSchema`](#513--webhooktransferoutstatuseventschema-)
+- [6. AML Considerations](#6-aml-considerations)
+- [7. Sandbox Environment](#7-sandbox-environment)
+  * [7.1. Celo Network](#71-celo-network)
+  * [7.2. Authentication](#72-authentication)
+  * [7.3. KYC](#73-kyc)
+  * [7.4. Fiat Accounts](#74-fiat-accounts)
+  * [7.5. Transfers](#75-transfers)
+- [8. Definitions](#8-definitions)
+  * [8.1. Static Definitions](#81-static-definitions)
+    + [8.1.1. `KycStatusEnum`](#811--kycstatusenum-)
+    + [8.1.2. `ErrorEnum`](#812--errorenum-)
+    + [8.1.3. `TransferTypeEnum`](#813--transfertypeenum-)
+    + [8.1.3. `WebhookEventTypeEnum`](#813--webhookeventtypeenum-)
+    + [8.1.4. `TransferStatusEnum`](#814--transferstatusenum-)
+  * [8.2. Dynamic Definitions](#82-dynamic-definitions)
+    + [8.2.1. `FiatTypeEnum`](#821--fiattypeenum-)
+    + [8.2.2. `CryptoTypeEnum`](#822--cryptotypeenum-)
+    + [8.2.3. `KycSchemaEnum`](#823--kycschemaenum-)
+    + [8.2.4. `FiatAccountTypeEnum`](#824--fiataccounttypeenum-)
+    + [8.2.5. `FeeTypeEnum`](#825--feetypeenum-)
+    + [8.2.6. `FeeFrequencyEnum`](#826--feetypeenum-)
+    + [8.2.7. `FiatAccountSchemaEnum`](#827--fiataccountschemaenum-)
+  * [8.3. Initial Entity Support](#83-initial-entity-support)
+    + [8.3.1. KYC Schemas](#831-kyc-schemas)
+	  - [8.3.1.1. `PersonalDataAndDocuments`](#8311--personaldataanddocuments-)
+	+ [8.3.2. Fiat Account Schemas](#832-fiat-account-schemas)
+	  - [8.3.2.1. `AccountNumber`](#8311--accountnumber-)
+      - [8.3.2.2. `MobileMoney`](#8322-mobilemoney)
+        * [8.3.2.2.1. `SupportedOperatorEnum`](#83221-supportedoperatorenum)
+      - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
+- [9. References](#9-references)
+  * [9.1. Normative References](#91-normative-references)
+    + [9.1.1. [RFC2119]](#911--rfc2119-)
+    + [9.1.2. [RFC8174]](#912--rfc8174-)
+    + [9.1.3. [RFC7519]](#913--rfc7519-)
+    + [9.1.4. [EIP-4361]](#914--eip-4361-)
+    + [9.1.5. [EIP-55]](#915--eip-55-)
+    + [9.1.6. [EIP-191]](#916--eip-191-)
+    + [9.1.7. [EIP-1271]](#917--eip-1271-)
+    + [9.1.8. [EIP-2098]](#918--eip-2098-)
+  * [9.2. Informative References](#92-informative-references)
+    + [9.2.1. Webhook Best Practices](#921-webhook-best-practices)
+    + [9.2.2. Idempotency Keys](#922-idempotency-keys)
+    + [9.2.3. ISO 3166-1](#923-iso-3166-1)
+    + [9.2.4. ISO 3166-2](#924-iso-3166-2)
+    + [9.2.5. ISO 8601](#925-iso-8601)
 
 # 1. Introduction
 
@@ -1623,7 +1625,7 @@ well as the amount, fiat type, and crypto type.
 When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks the server
 MUST call the user-specified webhook before returning an HTTP `200`. The server MUST also return a `transferAddress` representing the address that the user must send
-funds to in order to initiate the transfer.
+funds to in order to complete the transfer.
 
 ###### 3.3.4.2.3.1. Success
 
@@ -1722,14 +1724,71 @@ This endpoint MUST fail when the user has no transfer on file with the provided 
 
 If the user has no transfer on file with the provided `transferId`, the server MUST return a `ResourceNotFound` error.
 
-# 4. Webhooks
+# 4. Transfer State Machines
+
+The FiatConnect specification requires that both transfers in and out progress through a particular series of states that are made
+available to the client both by polling the `GET /transfer/:transferId/status` endpoint and via webhooks. Statuses for transfers in and
+transfers out must progress according to a specific *state machine*. This state machine is different for both transfers in and transfers out.
+
+## 4.1. Transfers In
+
+Statuses for transfers in must progress through the state machine shown below, ultimately ending at one of the two *terminal* states:
+`TransferFailed` or `TransferComplete`. A server SHOULD make a best effort to reach a terminal transfer state within the `settlementTimeUpperBound`
+specified for the quote associated with the transfer, if one exists. Note that since a transfer in may fail after the server has received fiat funds
+from the user's fiat account but before crypto funds are sent to the user, the server MUST return any fiat funds to the user's fiat account in case
+of such a failure.
+
+```mermaid
+graph LR
+   TransferStarted---->TransferFiatFundsDebited
+   TransferFiatFundsDebited---->TransferReceivedFiatFunds
+   TransferReceivedFiatFunds---->TransferSendingCryptoFunds
+   TransferSendingCryptoFunds---->TransferComplete
+
+   TransferStarted---->TransferFailed
+   TransferFiatFundsDebited---->TransferFailed
+   TransferReceivedFiatFunds---->TransferFailed
+   TransferSendingCryptoFunds---->TransferFailed
+```
+
+## 4.2. Transfers Out
+
+Statuses for transfers out must progress through the state machine shown below, ultimately ending at one of the three *terminal* states:
+`TransferFailed`, `TransferAmlFailed`, or `TransferComplete`. Note that at the beginning of a transfer out, a server may perform AML checks.
+If these AML checks fail, the server MUST progress the state machine to `TransferAmlFailed` state. A server SHOULD
+make a best effort to reach a terminal transfer state within the `settlementTimeUpperBound` specified for the quote associated with the transfer,
+if one exists.
+
+Transfers out are fundamentally different from transfer in in that they require user interaction partway through the state machine. Once a
+transfer out's state moves to `TransferReadyForUserToSendCryptoFunds`, the server should wait for the user to send the proper amount of crypto
+funds to the address specified for the transfer. The server MUST wait until the quote's expiration to receive the user's crypto funds before
+moving to the `TransferFailed` state, though it MAY wait longer. Once the user has sent the proper amount of funds, the server MUST progress the state to
+`TransferReceivedCryptoFunds`, and continue with the transfer out.
+
+Like with transfers in, a transfer out may fail after the server has received the user's crypto funds, but before the server has credited
+their fiat account with fiat funds. In case of such a failure, the server MUST return any crypto funds sent by the user back to the user's
+crypto address.
+
+```mermaid
+graph LR
+   TransferStarted---->TransferReadyForUserToSendCryptoFunds
+   TransferReadyForUserToSendCryptoFunds---->TransferReceivedCryptoFunds
+   TransferReceivedCryptoFunds---->TransferComplete
+
+   TransferStarted---->TransferFailed
+   TransferStarted---->TransferAmlFailed
+   TransferReadyForUserToSendCryptoFunds---->TransferFailed
+   TransferReceivedCryptoFunds---->TransferFailed
+```
+
+# 5. Webhooks
 
 As mentioned throughout this document, CICO providers MUST support sending status updates to webhooks, whose URL is configurable by the client.
 CICO providers may generate an API token that the client can use to authenticate against the FiatConnect API, allowing the server to know
 where to send status updates to. This section outlines the details of webhook request syntax, as well as how the server must sign them to guarantee
 the client that the requests are genuine.
 
-## 4.1. Webhook Requests
+## 5.1. Webhook Requests
 
 Webhook requests made from the server MUST be in a standard format, outlined below:
 
@@ -1752,7 +1811,7 @@ as time since Epoch in seconds. The `payload` field contains the actual event da
 Servers SHOULD implement retries with exponential backoff when sending payloads to a client's webhook. Once a server has received an HTTP `200`
 status code from the client's webhook, it MUST stop retrying.
 
-### 4.1.1. `WebhookKycStatusEventSchema`
+### 5.1.1. `WebhookKycStatusEventSchema`
 
 `WebhookKycStatusEventSchema` is the schema that defines webhook payloads for KYC events:
 
@@ -1763,7 +1822,7 @@ status code from the client's webhook, it MUST stop retrying.
 }
 ```
 
-### 4.1.2. `WebhookTransferInStatusEventSchema`
+### 5.1.2. `WebhookTransferInStatusEventSchema`
 
 `WebhookTransferInStatusEventSchema` is the schema that defines webhook payloads for transfer in events. Note that this schema is *identical* to the
 one returned from the `GET /accounts/:transferId` endpoint
@@ -1783,7 +1842,7 @@ one returned from the `GET /accounts/:transferId` endpoint
 }
 ```
 
-### 4.1.3. `WebhookTransferOutStatusEventSchema`
+### 5.1.3. `WebhookTransferOutStatusEventSchema`
 
 `WebhookTransferOutStatusEventSchema` is the schema that defines webhook payloads for transfer out events. Note that this schema is *identical* to the
 one returned from the `GET /accounts/:transferId` endpoint
@@ -1803,7 +1862,7 @@ one returned from the `GET /accounts/:transferId` endpoint
 }
 ```
 
-## 4.2. Webhook Request Signing
+## 5.2. Webhook Request Signing
 
 Requests made to a client's webhook handler MUST be signed, in order to prevent non-genuine webhook requests sent by malicious actors from being
 interpreted as genuine. To facilitate this, the CICO provider MUST generate a secret key that it shares with the client developer that can be used
@@ -1818,51 +1877,51 @@ the UNIX timestamp that the request was sent. The second will be of the form `s=
 MUST be computed from the shared webhook private key and a dot-separated string consisting of the UNIX timestamp joined with the request body.
 This signature verification design is based off of [Persona's webhook documentation](https://docs.withpersona.com/docs/best-practices).
 
-# 5. AML Considerations
+# 6. AML Considerations
 
 Anti-Money Laundering (AML) checks are an important part of regulatory compliance in the financial services industry. This proposal, however,
 does not require CICO providers to implement such checks. Providers MAY implement their own AML checks if they wish, according to local law.
 It is likely that by requiring KYC verificaiton, CICO providers will be able to collect enough relevant information on the user in order to
 facilitate AML checks, if required.
 
-# 6. Sandbox Environment
+# 7. Sandbox Environment
 
 In order to facilitate ease of client integration and testing against FiatConnect-compliant APIs, each FiatConnect API MUST have a corresponding *sandbox*
 API available. This sandbox API should be identical in behavior to the production FiatConnect API in every way, except for a number of key differences.
 
-## 6.1. Celo Network
+## 7.1. Celo Network
 
 FiatConnect sandbox API implementations MUST operate against the Celo Alfajores network, rather than Mainnet. The Alfajores network operates with tokens
 with no monetary value, which allows testing of transfers without transacting real-world value.
 
-## 6.2. Authentication
+## 7.2. Authentication
 
 Sandbox servers MUST recognize a different set of client API keys than the production API, in order to allow clients to register a different set of webhook URLs
 than those recognized by the production API.
 
-## 6.3. KYC
+## 7.3. KYC
 
 All KYC submissions in the sandbox environment MUST eventually result in the `KycStatusEnum.KycApproved` status. Sandbox environments MUST still send status updates
 by webhook throughout the process, but verifications willalways end in approval.
 
-## 6.4. Fiat Accounts
+## 7.4. Fiat Accounts
 
 Sandbox APIs MUST never internally connect to a provided Fiat Account or perform any sort of validation that user-submitted Fiat Account details are "valid".
 Sandbox APIs MUST never actually interact with a user's personal fiat accounts.
 
-## 6.5. Transfers
+## 7.5. Transfers
 
 Transfers in sandbox APIs will be much like ones in production APIs, but they will transfer tokens on the Alfajores network, which have no actual value. Sandbox APIs
 MUST never debit/credit actual fiat accounts, but they SHOULD receive/send crypto from/to the user's address depending on the type of transfer requested.
 
-# 7. Definitions
+# 8. Definitions
 
 This document references a number of definitions, all of which are enumerated in their entirety below. There are two "types" of definitions; those
 which are static, and *not* subject to change upon this proposal's acceptance, and those that are dynamic, and meant to be extended by the community.
 
-## 7.1. Static Definitions
+## 8.1. Static Definitions
 
-### 7.1.1. `KycStatusEnum`
+### 8.1.1. `KycStatusEnum`
 
 An enum listing KYC verification statuses.
 
@@ -1876,7 +1935,7 @@ An enum listing KYC verification statuses.
 ]
 ```
 
-### 7.1.2. `ErrorEnum`
+### 8.1.2. `ErrorEnum`
 
 An enum listing the error types used by various endpoints.
 
@@ -1907,7 +1966,7 @@ An enum listing the error types used by various endpoints.
 ]
 ```
 
-### 7.1.3. `TransferTypeEnum`
+### 8.1.3. `TransferTypeEnum`
 
 An enum listing transfer types.
 
@@ -1918,7 +1977,7 @@ An enum listing transfer types.
 ]
 ```
 
-### 7.1.3. `WebhookEventTypeEnum`
+### 8.1.3. `WebhookEventTypeEnum`
 
 An enum listing payload types for webhook status updates.
 
@@ -1930,21 +1989,25 @@ An enum listing payload types for webhook status updates.
 ]
 ```
 
-### 7.1.4. `TransferStatusEnum`
+### 8.1.4. `TransferStatusEnum`
 
 An enum listing the types of transfer statuses recognized by FiatConnect.
 
 ```
 [
 	`TransferStarted`,
-	`TransferPending`,
+	`TranfserFiatFundsDebited`,
+	`TransferSendingCryptoFunds`,
+	`TransferAmlFailed`,
+	`TransferReadyForUserToSendCryptoFunds`,
+	`TransferReceivedCryptoFunds`,
 	`TransferComplete`,
 	`TransferFailed`
 ]
 ```
-## 7.2. Dynamic Definitions
+## 8.2. Dynamic Definitions
 
-### 7.2.1. `FiatTypeEnum`
+### 8.2.1. `FiatTypeEnum`
 
 An enum listing the types of fiat currencies supported by FiatConnect.
 
@@ -1969,7 +2032,7 @@ An enum listing the types of fiat currencies supported by FiatConnect.
 ]
 ```
 
-### 7.2.2. `CryptoTypeEnum`
+### 8.2.2. `CryptoTypeEnum`
 
 An enum listing the types of crypto tokens suppored by FiatConnect.
 
@@ -1982,7 +2045,7 @@ An enum listing the types of crypto tokens suppored by FiatConnect.
 ]
 ```
 
-### 7.2.3. `KycSchemaEnum`
+### 8.2.3. `KycSchemaEnum`
 
 An enum listing the KYC schema types recognized by the FiatConnect specification.
 
@@ -1992,7 +2055,7 @@ An enum listing the KYC schema types recognized by the FiatConnect specification
 ]
 ```
 
-### 7.2.4. `FiatAccountTypeEnum`
+### 8.2.4. `FiatAccountTypeEnum`
 
 An enum listing the *types* of Fiat Accounts recognized by the FiatConnect specification. A Fiat Account Type is a property of each Fiat Account Schema, and
 represents what *kind* of account that schema represents.
@@ -2005,7 +2068,7 @@ represents what *kind* of account that schema represents.
 ]
 ```
 
-### 7.2.5. `FeeTypeEnum`
+### 8.2.5. `FeeTypeEnum`
 
 An enum listing the *types* of fees that providers may require on transfers.
 
@@ -2016,7 +2079,7 @@ An enum listing the *types* of fees that providers may require on transfers.
 ]
 ```
 
-### 7.2.6. `FeeFrequencyEnum`
+### 8.2.6. `FeeFrequencyEnum`
 
 An enum listing the frequency, or how often, a particular fee needs to be paid.
 
@@ -2027,7 +2090,7 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 ]
 ```
 
-### 7.2.7. `FiatAccountSchemaEnum`
+### 8.2.8. `FiatAccountSchemaEnum`
 
 ```
 [
@@ -2035,11 +2098,11 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 ]
 ```
 
-## 7.3. Initial Entity Support
+## 8.3. Initial Entity Support
 
-### 7.3.1. KYC Schemas
+### 8.3.1. KYC Schemas
 
-#### 7.3.1.1. `PersonalDataAndDocuments`
+#### 8.3.1.1. `PersonalDataAndDocuments`
 
 A KYC schema containing personal data about a user, as well as documents such as an ID photo and selfie.
 
@@ -2069,14 +2132,14 @@ A KYC schema containing personal data about a user, as well as documents such as
 
 The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
 
-### 7.3.2. Fiat Account Schemas
+### 8.3.2. Fiat Account Schemas
 
 All Fiat Account Schemas supported by FiatConnect MUST contain the `accountName`, `institutionName`, and `fiatAccountType` fields. `accountName` is a friendly, user-definable name for the account.
 `institutionName` is a user-friendly name representing the financial institution/organization the account is with, and `fiatAccountType` is a `FiatAccountTypeEnum` value,
 representing the type of fiat account this schema represents. The `institutionName` and `accountName` fields are required in order for the API to return obfuscated but distinguishable
 account information from the `GET /accounts` endpoint.
 
-####  7.3.2.1. `AccountNumber`
+####  8.3.2.1. `AccountNumber`
 
 `AccountNumber` is a Fiat Account schema that represents accounts where the only identifying information required is some `accountNumber` string.
 
@@ -2099,7 +2162,7 @@ is below:
 
 * `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
 
-#### 7.3.2.2. `MobileMoney`
+#### 8.3.2.2. `MobileMoney`
 
 Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
 `Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US). Finally, the `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
@@ -2115,10 +2178,10 @@ Most of the mobile money's providers require only the phone number to process a 
 }
 ```
 
-##### 7.3.2.2.1. `SupportedOperatorEnum`
+##### 8.3.2.2.1. `SupportedOperatorEnum`
 
 Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided. Depending on mobile money providers supported on a specific country, CI/CO providers will provide the list of `allowedValues`.
-Below you have a list of mobile money providers 
+Below you have a list of mobile money providers:
 
 (PS: Only missing mobile money providers should be added regardless of the country).
 
@@ -2136,7 +2199,7 @@ Below you have a list of mobile money providers
 - `MTN` - [Momo or Mtn Money](https://www.mtn.ci/vos/depot-et-retrait-momo/)
 - `WAVE` - [Wave](https://www.wave.com/fr/)
 
-#### 7.3.2.3. `DuniaWallet`
+#### 8.3.2.3. `DuniaWallet`
 
 The Dunia wallet is a proprietary wallet for people that have an account on the [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
 platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
@@ -2150,60 +2213,60 @@ platform can be used to consume Fiat Connect services by providing their `mobile
 }
 ```
 
-# 8. References
+# 9. References
 
-## 8.1. Normative References
+## 9.1. Normative References
 
-### 8.1.1. [RFC2119]
+### 9.1.1. [RFC2119]
 
 Bradner, S., "Key words for use in RFCs to Indicate Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997, <https://www.rfc-editor.org/info/rfc2119>.
 
-### 8.1.2. [RFC8174]
+### 9.1.2. [RFC8174]
 
 Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
-### 8.1.3. [RFC7519]
+### 9.1.3. [RFC7519]
 
 M. Jones, "JSON Web Token", RFC7519, May 2015, <https://datatracker.ietf.org/doc/html/rfc7519>.
 
-### 8.1.4. [EIP-4361]
+### 9.1.4. [EIP-4361]
 
 EIP-4361: Sign-In with Ethereum, <https://eips.ethereum.org/EIPS/eip-4361>
 
-### 8.1.5. [EIP-55]
+### 9.1.5. [EIP-55]
 
 EIP-55: Mixed-case checksum address encoding, <https://eips.ethereum.org/EIPS/eip-55>
 
-### 8.1.6. [EIP-191]
+### 9.1.6. [EIP-191]
 
 EIP-191: Signed Data Standard, <https://eips.ethereum.org/EIPS/eip-191>
 
-### 8.1.7. [EIP-1271]
+### 9.1.7. [EIP-1271]
 
 EIP-1271: Standard Signature Validation Method for Contracts, <https://eips.ethereum.org/EIPS/eip-1271>
 
-### 8.1.8. [EIP-2098]
+### 9.1.8. [EIP-2098]
 
 EIP-2098: Compact Signature Representation, <https://eips.ethereum.org/EIPS/eip-2098>
 
-## 8.2. Informative References
+## 9.2. Informative References
 
-### 8.2.1. Webhook Best Practices
+### 9.2.1. Webhook Best Practices
 
 Persona, "Best Practices", <https://docs.withpersona.com/docs/best-practices>.
 
-### 8.2.2. Idempotency Keys
+### 9.2.2. Idempotency Keys
 
 J. Jena, The Idempotency-Key HTTP Header Field, July 2021, <https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header-00>
 
-### 8.2.3. ISO 3166-1
+### 9.2.3. ISO 3166-1
 
 ISO 3166-1 <https://en.wikipedia.org/wiki/ISO_3166-1>
 
-### 8.2.4. ISO 3166-2
+### 9.2.4. ISO 3166-2
 
 ISO 3166-2 <https://en.wikipedia.org/wiki/ISO_3166-2>
 
-### 8.2.5. ISO 8601
+### 9.2.5. ISO 8601
 
 ISO 8601 <https://en.wikipedia.org/wiki/ISO_8601>
