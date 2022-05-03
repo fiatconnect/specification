@@ -1740,14 +1740,12 @@ of such a failure.
 
 ```mermaid
 graph LR
-   TransferStarted---->TransferPending
-   TransferPending---->TransferFiatFundsDebited
+   TransferStarted---->TransferFiatFundsDebited
    TransferFiatFundsDebited---->TransferReceivedFiatFunds
    TransferReceivedFiatFunds---->TransferSendingCryptoFunds
    TransferSendingCryptoFunds---->TransferComplete
 
    TransferStarted---->TransferFailed
-   TransferPending---->TransferFailed
    TransferFiatFundsDebited---->TransferFailed
    TransferReceivedFiatFunds---->TransferFailed
    TransferSendingCryptoFunds---->TransferFailed
@@ -1755,15 +1753,16 @@ graph LR
 
 ## 4.2. Transfers Out
 
-Statuses for transfers out must progress through the state machine shown below, ultimately ending at one of the two *terminal* states:
-`TransferFailed` or `TransferComplete`. Note that at the beginning of a transfer out, a server may perform AML checks. If these AML checks
-fail, the server SHOULD progress the state machine to `TransferAmlFailed` before moving to the terminal `TransferFailed` status. A server SHOULD
+Statuses for transfers out must progress through the state machine shown below, ultimately ending at one of the three *terminal* states:
+`TransferFailed`, `TransferAmlFailed`, or `TransferComplete`. Note that at the beginning of a transfer out, a server may perform AML checks.
+If these AML checks fail, the server MUST progress the state machine to `TransferAmlFailed` state. A server SHOULD
 make a best effort to reach a terminal transfer state within the `settlementTimeUpperBound` specified for the quote associated with the transfer,
 if one exists.
 
 Transfers out are fundamentally different from transfer in in that they require user interaction partway through the state machine. Once a
 transfer out's state moves to `TransferReadyForUserToSendCryptoFunds`, the server should wait for the user to send the proper amount of crypto
-funds to the address specified for the transfer. Once the user has sent the proper amount of funds, the server SHOULD progress the state to
+funds to the address specified for the transfer. The server MUST wait until the quote's expiration to receive the user's crypto funds before
+moving to the `TransferFailed` state, though it MAY wait longer. Once the user has sent the proper amount of funds, the server MUST progress the state to
 `TransferReceivedCryptoFunds`, and continue with the transfer out.
 
 Like with transfers in, a transfer out may fail after the server has received the user's crypto funds, but before the server has credited
@@ -1772,16 +1771,12 @@ crypto address.
 
 ```mermaid
 graph LR
-   TransferStarted---->TransferPending
-   TransferPending---->TransferReadyForUserToSendCryptoFunds
+   TransferStarted---->TransferReadyForUserToSendCryptoFunds
    TransferReadyForUserToSendCryptoFunds---->TransferReceivedCryptoFunds
-   TransferReceivedCryptoFunds---->TransferFiatFundsCredited
-   TransferFiatFundsCredited---->TransferComplete
+   TransferReceivedCryptoFunds---->TransferComplete
 
    TransferStarted---->TransferFailed
-   TransferPending---->TransferFailed
-   TransferPending---->TransferAmlFailed
-   TransferAmlFailed---->TransferFailed
+   TransferStarted---->TransferAmlFailed
    TransferReadyForUserToSendCryptoFunds---->TransferFailed
    TransferReceivedCryptoFunds---->TransferFailed
 ```
@@ -2001,14 +1996,11 @@ An enum listing the types of transfer statuses recognized by FiatConnect.
 ```
 [
 	`TransferStarted`,
-	`TransferPending`,
 	`TranfserFiatFundsDebited`,
-	`TransferReceivedFiatFunds`,
 	`TransferSendingCryptoFunds`,
 	`TransferAmlFailed`,
 	`TransferReadyForUserToSendCryptoFunds`,
 	`TransferReceivedCryptoFunds`,
-	`TransferFiatFundsCredited`,
 	`TransferComplete`,
 	`TransferFailed`
 ]
