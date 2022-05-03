@@ -1742,15 +1742,13 @@ of such a failure.
 graph LR
    TransferStarted---->TransferPending
    TransferPending---->TransferFiatFundsDebited
-   TransferFiatFundsDebited---->TransferWaitingForFiatFunds
-   TransferWaitingForFiatFunds---->TransferReceivedFiatFunds
+   TransferFiatFundsDebited---->TransferReceivedFiatFunds
    TransferReceivedFiatFunds---->TransferSendingCryptoFunds
    TransferSendingCryptoFunds---->TransferComplete
 
    TransferStarted---->TransferFailed
    TransferPending---->TransferFailed
    TransferFiatFundsDebited---->TransferFailed
-   TransferWaitingForFiatFunds---->TransferFailed
    TransferReceivedFiatFunds---->TransferFailed
    TransferSendingCryptoFunds---->TransferFailed
 ```
@@ -2005,7 +2003,6 @@ An enum listing the types of transfer statuses recognized by FiatConnect.
 	`TransferStarted`,
 	`TransferPending`,
 	`TranfserFiatFundsDebited`,
-	`TransferWaitingForFiatFunds`,
 	`TransferReceivedFiatFunds`,
 	`TransferSendingCryptoFunds`,
 	`TransferAmlFailed`,
