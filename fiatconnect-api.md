@@ -159,6 +159,7 @@
             - [3.3.4.1.3.2.2. `TransferNotAllowed`](#3341322--transfernotallowed-)
             - [3.3.4.1.3.2.3. `InvalidQuote`](#3341323--invalidquote-)
             - [3.3.4.1.3.2.4. `ResourceNotFound`](#3341324--resourcenotfound-)
+            - [3.3.4.1.3.2.5. `InvalidFiatAccount`](#3341325--invalidfiataccount-)
       - [3.3.4.2. `POST /transfer/out`](#3342--post--transfer-out-)
         * [3.3.4.2.1. Parameters](#33421-parameters)
           + [3.3.4.2.1.1. Headers](#334211-headers)
@@ -175,6 +176,7 @@
             - [3.3.4.2.3.2.2. `TransferNotAllowed`](#3342322--transfernotallowed-)
             - [3.3.4.2.3.2.3. `InvalidQuote`](#3342323--invalidquote-)
             - [3.3.4.2.3.2.4. `ResourceNotFound`](#3342324--resourcenotfound-)
+            - [3.3.4.2.3.2.5. `InvalidFiatAccount`](#3342325--invalidfiataccount-)
       - [3.3.4.3. `GET /transfer/:transferId/status`](#3343--get--transfer--transferid-status-)
         * [3.3.4.3.1. Parameters](#33431-parameters)
           + [3.3.4.3.1.1. Path Parameters](#334311-path-parameters)
@@ -190,8 +192,10 @@
   * [4.2. Transfers Out](#42-transfers-out)
 - [5. Webhooks](#5-webhooks)
   * [5.1. Webhook Requests](#51-webhook-requests)
-  * [5.2. Webhook Request Signing](#52-webhook-request-signing)
-- [7. AML Considerations](#7-aml-considerations)
+    + [5.1.1. `WebhookKycStatusEventSchema`](#511--webhookkycstatuseventschema-)
+    + [5.1.2. `WebhookTransferInStatusEventSchema`](#512--webhooktransferinstatuseventschema-)
+    + [5.1.3. `WebhookTransferOutStatusEventSchema`](#513--webhooktransferoutstatuseventschema-)
+- [6. AML Considerations](#6-aml-considerations)
 - [7. Sandbox Environment](#7-sandbox-environment)
   * [7.1. Celo Network](#71-celo-network)
   * [7.2. Authentication](#72-authentication)
@@ -218,6 +222,9 @@
 	  - [8.3.1.1. `PersonalDataAndDocuments`](#8311--personaldataanddocuments-)
 	+ [8.3.2. Fiat Account Schemas](#832-fiat-account-schemas)
 	  - [8.3.2.1. `AccountNumber`](#8311--accountnumber-)
+      - [8.3.2.2. `MobileMoney`](#8322-mobilemoney)
+        * [8.3.2.2.1. `SupportedOperatorEnum`](#83221-supportedoperatorenum)
+      - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
 - [9. References](#9-references)
   * [9.1. Normative References](#91-normative-references)
     + [9.1.1. [RFC2119]](#911--rfc2119-)
@@ -632,11 +639,11 @@ If the nonce included in the message is already attached to a valid session, the
 
 ###### 3.2.1.5.3.2.5. `IssuedTooEarly`
 
-If the `issued-at` field is before the server's current timestamp, the server MUST respond with an `IssuedTooEarly` error.
+If the `issued-at` field is after the server's current timestamp, the server MUST respond with an `IssuedTooEarly` error.
 
 ###### 3.2.1.5.3.2.6. `ExpirationTooLong`
 
-If ther `expiration-time` field is more than four hours into the future, the server MUST respond with an `ExpirationTooLong` error.
+If the `expiration-time` field is more than four hours into the future, the server MUST respond with an `ExpirationTooLong` error.
 
 #### 3.2.1.6. Using Sessions
 
@@ -824,8 +831,8 @@ of fiat currency required in order to receive the requested amount of crypto.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
-is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
-conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
+is a globally unique identifier for the quote, and is used by the client to initiate a transfer with the parameters associated with the quote including
+conversion rate, fee, amount, crypto type, fiat type, etc. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
 
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
@@ -997,8 +1004,8 @@ of fiat currency the user should expect to recieve in exchange for `cryptoAmount
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
-is a globally unique identifier for the quote, and is used by the client to initiate a transfer at the
-conversion rate and fee amount given by the quote. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
+is a globally unique identifier for the quote, and is used by the client to initiate a transfer with the parameters associated with the quote including
+conversion rate, fee, amount, crypto type, fiat type, etc.  A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
 
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
@@ -1458,12 +1465,6 @@ The `POST /transfer/in` endpoint is used to initiate a new transfer in from fiat
 
 The request body must contain the following fields:
 
-* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
-  - The type of fiat currency to transfer in from.
-* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
-  - The type of cryptocurrency to transfer in to.
-* `amount`: {`float`}: [REQUIRED]
-  - The amount of fiat currency to transfer in.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
 * `quoteId`: {`string`} [REQUIRED]
@@ -1514,7 +1515,9 @@ respect to idempotency key errors.
 This endpoint allows a user to initiate a new transfer in request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
 and the user has non-expired KYC on file, and a quote with a matching `quoteId` exists for the user and has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
-For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the original quote MUST be used.
+For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the original quote MUST be used, as
+well as the amount, fiat type, and crypto type.
+
 When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks, and the server supports them, the server
 MUST call the user-specified webhook before returning an HTTP `200`. The response body MUST contain a `transferAddress`, indiciating the address that the provider will
@@ -1539,12 +1542,17 @@ If a transfer is not allowed for a generic reason (such as unacceptable transfer
 
 ###### 3.3.4.1.3.2.3. `InvalidQuote`
 
-If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST
-reject the transfer and return an `InvalidQuote` error.
+If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, or if the provided quote is for the
+wrong type of transfer, the server MUST reject the transfer and return an `InvalidQuote` error.
 
 ###### 3.3.4.1.3.2.4. `ResourceNotFound`
 
 If the selected `fiatAccountId` is not found for the current user, the server MUST reject the transfer and return a `ResourceNotFound` error.
+
+###### 3.3.4.1.3.2.5. `InvalidFiatAccount`
+
+If the selected `fiatAccountId` corresponds to an existing fiat account for the user, but that fiat account is not valid for use with this transfer, the server MUST
+return an `InvalidFiatAccount` error
 
 #### 3.3.4.2. `POST /transfer/out`
 
@@ -1561,12 +1569,6 @@ The `POST /transfer/out` endpoint is used to initiate a new transfer out from cr
 
 The request body must contain the following fields:
 
-* `fiatType`: {`FiatTypeEnum`} [REQUIRED]
-  - The type of fiat currency to transfer out to.
-* `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
-  - The type of cryptocurrency to transfer out from.
-* `amount`: {`float`}: [REQUIRED]
-  - The amount of cryptocurrency to transfer out.
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The fiat account ID to use for the transfer.
 * `quoteId`: {`string`} [REQUIRED]
@@ -1617,7 +1619,9 @@ respect to idempotency key errors.
 This endpoint allows a user to initiate a new transfer out request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
 and the user has non-expired KYC on file, and a quote with a matching `quoteId` exists for the user and has not expired, the server MUST respond with an HTTP `200` and initiate the transfer.
-For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the quote MUST be used.
+For the transfer, the quote with `quoteId` MUST be honored, meaning the same exchange rate and fees that were issued with the quote MUST be used, as
+well as the amount, fiat type, and crypto type.
+
 When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks the server
 MUST call the user-specified webhook before returning an HTTP `200`. The server MUST also return a `transferAddress` representing the address that the user must send
@@ -1642,12 +1646,17 @@ If a transfer is not allowed for a generic reason (such as unacceptable transfer
 
 ###### 3.3.4.2.3.2.3. `InvalidQuote`
 
-If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, the server MUST 
-reject the transfer and return an `InvalidQuote` error.
+If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, or if the provided quote is for the
+wrong type of transfer, the server MUST reject the transfer and return an `InvalidQuote` error.
 
 ###### 3.3.4.2.3.2.4. `ResourceNotFound`
 
 If the selected `fiatAccountId` is not found for the current user, the server MUST reject the transfer and return a `ResourceNotFound` error.
+
+###### 3.3.4.2.3.2.5. `InvalidFiatAccount`
+
+If the selected `fiatAccountId` corresponds to an existing fiat account for the user, but that fiat account is not valid for use with this transfer, the server MUST
+return an `InvalidFiatAccount` error
 
 #### 3.3.4.3. `GET /transfer/:transferId/status`
 
@@ -1676,7 +1685,9 @@ On success, the server MUST return an HTTP `200` status code, along with a respo
 	amountProvided: `float`,
 	amountReceived: `float`,
 	fee?: `float`,
-	fiatAccountId: `string`
+	fiatAccountId: `string`,
+	transferId: `string`,
+	transferAddress: `string`
 }
 ```
 
@@ -1807,6 +1818,57 @@ as time since Epoch in seconds. The `payload` field contains the actual event da
 Servers SHOULD implement retries with exponential backoff when sending payloads to a client's webhook. Once a server has received an HTTP `200`
 status code from the client's webhook, it MUST stop retrying.
 
+### 5.1.1. `WebhookKycStatusEventSchema`
+
+`WebhookKycStatusEventSchema` is the schema that defines webhook payloads for KYC events:
+
+```
+{
+	kycSchema: `KycSchemaEnum`,
+	kycStatus: `KycStatusEnum`
+}
+```
+
+### 5.1.2. `WebhookTransferInStatusEventSchema`
+
+`WebhookTransferInStatusEventSchema` is the schema that defines webhook payloads for transfer in events. Note that this schema is *identical* to the
+one returned from the `GET /accounts/:transferId` endpoint
+
+```
+{
+	status: `TransferStatusEnum`,
+	transferType: `TransferTypeEnum`,
+	fiatType: `FiatTypeEnum`,
+	cryptoType: `CryptoTypeEnum`,
+	amountProvided: `float`,
+	amountReceived: `float`,
+	fee?: `float`,
+	fiatAccountId: `string`,
+	transferId: `string`,
+	transferAddress: `string`
+}
+```
+
+### 5.1.3. `WebhookTransferOutStatusEventSchema`
+
+`WebhookTransferOutStatusEventSchema` is the schema that defines webhook payloads for transfer out events. Note that this schema is *identical* to the
+one returned from the `GET /accounts/:transferId` endpoint
+
+```
+{
+	status: `TransferStatusEnum`,
+	transferType: `TransferTypeEnum`,
+	fiatType: `FiatTypeEnum`,
+	cryptoType: `CryptoTypeEnum`,
+	amountProvided: `float`,
+	amountReceived: `float`,
+	fee?: `float`,
+	fiatAccountId: `string`,
+	transferId: `string`,
+	transferAddress: `string`
+}
+```
+
 ## 5.2. Webhook Request Signing
 
 Requests made to a client's webhook handler MUST be signed, in order to prevent non-genuine webhook requests sent by malicious actors from being
@@ -1886,9 +1948,6 @@ An enum listing the error types used by various endpoints.
 
 ```
 [
-	`InvalidAddress`,
-	`InvalidDuration`,
-	`DurationTooLong`,
 	`InvalidSignature`
 	`GeoNotSupported`,
 	`CryptoAmountTooLow`,
@@ -1909,7 +1968,8 @@ An enum listing the error types used by various endpoints.
 	`ContractLoginNotSupported`,
 	`NonceInUse`,
 	`IssuedTooEarly`,
-	`ExpirationTooLong`
+	`ExpirationTooLong`,
+	`InvalidFiatAccount`
 ]
 ```
 
@@ -1967,6 +2027,7 @@ An enum listing the types of fiat currencies supported by FiatConnect.
   `USD`,
   `EUR`,
   `REAL`,
+  `GNF`,
   `INR`,
   `NGN`,
   `GHS`,
@@ -2012,7 +2073,9 @@ represents what *kind* of account that schema represents.
 
 ```
 [
-	`BankAccount`
+	`BankAccount`,
+	`MobileMoney`,
+	`DuniaWallet`
 ]
 ```
 
@@ -2109,6 +2172,57 @@ Depending on the `allowedValues` field for `country`, the client SHOULD impose r
 is below:
 
 * `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
+
+#### 8.3.2.2. `MobileMoney`
+
+Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
+`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US). Finally, the `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
+
+```
+{
+  accountName: `string`,
+  institutionName: `string`,
+  mobile: `string`,
+  country: `string`,
+  operator: `SupportedOperatorEnum`,
+  fiatAccountType: `FiatAccountTypeEnum.MobileMoney`
+}
+```
+
+##### 8.3.2.2.1. `SupportedOperatorEnum`
+
+Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided. Depending on mobile money providers supported on a specific country, CI/CO providers will provide the list of `allowedValues`.
+Below you have a list of mobile money providers:
+
+(PS: Only missing mobile money providers should be added regardless of the country).
+
+```
+[
+  `ORANGE`,
+  `MOOV`,
+  `MTN`,
+  `WAVE`
+]
+```
+
+- `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money)
+- `MOOV` - [Moov Money](https://www.moov-africa.ci/moov-money/)
+- `MTN` - [Momo or Mtn Money](https://www.mtn.ci/vos/depot-et-retrait-momo/)
+- `WAVE` - [Wave](https://www.wave.com/fr/)
+
+#### 8.3.2.3. `DuniaWallet`
+
+The Dunia wallet is a proprietary wallet for people that have an account on the [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
+platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
+
+```
+{
+  accountName: `string`,
+  institutionName: `string`,
+  mobile: `string`,
+  fiatAccountType: `FiatAccountTypeEnum.DuniaWallet`
+}
+```
 
 # 9. References
 
