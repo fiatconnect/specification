@@ -223,6 +223,7 @@
       - [7.3.2.2. `MobileMoney`](#7322-mobilemoney)
         * [7.3.2.2.1. `SupportedOperatorEnum`](#73221-supportedoperatorenum)
       - [7.3.2.3. `DuniaWallet`](#7323-duniawallet)
+      - [7.3.2.4. `BankAccount`](#7324-bankaccount)
 - [8. References](#8-references)
   * [8.1. Normative References](#81-normative-references)
     + [8.1.1. [RFC2119]](#811--rfc2119-)
