@@ -225,6 +225,7 @@
       - [8.3.2.2. `MobileMoney`](#8322-mobilemoney)
         * [8.3.2.2.1. `SupportedOperatorEnum`](#83221-supportedoperatorenum)
       - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
+      - [8.3.2.4. `BankAccount`](#8324-bankaccount)
 - [9. References](#9-references)
   * [9.1. Normative References](#91-normative-references)
     + [9.1.1. [RFC2119]](#911--rfc2119-)
@@ -2212,6 +2213,23 @@ platform can be used to consume Fiat Connect services by providing their `mobile
   fiatAccountType: `FiatAccountTypeEnum.DuniaWallet`
 }
 ```
+
+####  8.3.2.4. `BankAccount`
+
+`BankAccount` is a Fiat Account schema that tends to come up with a bank account representation we can use regardless of the country. Meanwhile, the most important field there is the `iban` that stands for International Bank Account Number. It respects a specific organization that you can find here [**IBAN on WIKIPEDIA**](https://fr.wikipedia.org/wiki/International_Bank_Account_Number) and [**IBAN**](https://www.pricebank.fr/questions-reponses/questions-frequentes/qu-est-ce-que-le-code-iban.html).
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	iban: `string`,
+  bankName?: `string`,
+	country: `string`,
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
+}
+```
+
+The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. `bankName` was added for verification purpose only(In a case where there maybe a mistake as each bank located in a specific country can only have a unique international identifier).
 
 # 9. References
 
