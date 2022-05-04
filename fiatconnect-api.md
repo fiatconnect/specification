@@ -2158,6 +2158,23 @@ platform can be used to consume Fiat Connect services by providing their `mobile
 }
 ```
 
+####  7.3.2.4. `BankAccount`
+
+`BankAccount` is a Fiat Account schema that tends to come up with a bank account representation we can use regardless of the country. Meanwhile, the most important field there is the `iban` that stands for International Bank Account Number. It respects a specific organization that you can find here [**IBAN on WIKIPEDIA**](https://fr.wikipedia.org/wiki/International_Bank_Account_Number) and [**IBAN**](https://www.pricebank.fr/questions-reponses/questions-frequentes/qu-est-ce-que-le-code-iban.html).
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	iban: `string`,
+  bankName?: `string`,
+	country: `string`,
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
+}
+```
+
+The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. `bankName` was added for verification purpose only(In a case where there maybe a mistake as each bank located in a specific country can only have a unique international identifier).
+
 # 8. References
 
 ## 8.1. Normative References
