@@ -1796,45 +1796,108 @@ is below:
 
 * `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
 
-####  7.3.2.2. `CheckingAccount`
+####  7.3.2.2. `CheckingAccountIfsc`
 
-`CheckingAccount` is a Fiat Account schema that represents accounts for transactions across multiple currencies.
+`CheckingAccountIfsc` is a Fiat Account schema that represents accounts for transactions across `INR` currency.
 
 ```
 {
     "accountName": `string`,
     "institutionName": `string`,
-    "institutionCode": `string`,
+    "ifsc": `string`,
     "accountNumber": `string`,
-    "fiatAccountType": `FiatAccountTypeEnum.BankAccount`,
+    "country": `string`,
+    "fiatAccountType": "CheckingAccountIfsc"
+}
+```
+####  7.3.2.3. `CheckingAccountIban`
+
+`CheckingAccountIban` is a Fiat Account schema that represents accounts for transactions across `EUR` currency.
+
+
+```
+{
+    "accountName": `string`,
+    "institutionName": `string`,
+    "iban": `string`,
+    "accountNumber": `string`,
+    "country": `string`,
+    "fiatAccountType": "CheckingAccountIban"
+}
+```
+
+####  7.3.2.4. `CheckingAccountBankCode`
+
+`CheckingAccountBankCode` is a Fiat Account schema that represents accounts for transactions across `NG`, `GH`, `KE`, `ZA`, `PH`, `SN`, `CN`, `GB`, `SG`, `TZ`, `HK` currencies.
+
+
+```
+{
+    "accountName": `string`,
+    "institutionName": `string`,
+    "bankCode": `string`,
+    "accountNumber": `string`,
+    "country": `string`,
+    "fiatAccountType": "CheckingAccountBankCode"
+}
+```
+
+####  7.3.2.5. `CheckingAccountMobile`
+
+`CheckingAccountMobile` is a Fiat Account schema that represents accounts for transactions across `NG`, `GH`, `KE`, `UG`, `SN`, `BJ`, `ML`, `CI`, `NE`, `TG`, `GW`, `BF`, `SL`, `RW`, `CM`,`CG` currencies.
+
+```
+{
+    "accountName": `string`,
+    "mobileProvider": `string`,
+    "mobileProviderCode": `string`,
+    "mobileNumber": `string`,
+    "fiatAccountType": `CheckingAccountMobile`,
     "country":'string'
 }
 ```
 
+
 The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The field is for providers to specify which country this data is meant for.
-
-Based on the country `institutionName` and `institutionCode` should be supplied. AllowedValues Enum is mentioned in section 7.3.2.2.1 
-
-In case the type of payment is bank transfer, `institutionCode` and `accountNumber` field will be updated.
-In case the type of payment is mobile transfer, `institutionCode` holds the mobile provider code and `accountNumber` is the mobile number on which the transfer should happen. 
-
-For `IN` ifsc code should be provided
-For countries supporting `EUR` iban should be provided.
-
 
 ####  7.3.2.2.1 `SupportedBankMobileProvidersEnum`
 
 For `NG` the list of supported mobile provider codes is as mentioned below -
+
 ```
   [
-    000304,
-    000305,
-    000307,
-    000309,
-    000311,
-    000315,
-    000322,
-    000323
+    {
+      "mobileProvideName": "Stanbic Mobile",
+      "mobileProvideCode": "000304"
+    },
+    {
+      "mobileProvideName": "PAYCOM",
+      "mobileProvideCode": "000305"
+    },
+    {
+      "mobileProvideName": "Ecobank Mobile",
+      "mobileProvideCode": "000307"
+    },
+    {
+      "mobileProvideName": "FBN Mobile",
+      "mobileProvideCode": "000309"
+    },
+    {
+      "mobileProvideName": "Parkway",
+      "mobileProvideCode": "000311"
+    },
+    {
+      "mobileProvideName": "GTBank Mobile Money",
+      "mobileProvideCode": "000315"
+    },
+    {
+      "mobileProvideName": "Zenith Mobile",
+      "mobileProvideCode": "000322"
+    },
+    {
+      "mobileProvideName": "Access Mobile",
+      "mobileProvideCode": "000323"
+    }
   ]
 ```
 
@@ -1842,9 +1905,18 @@ For `GH` the list of supported mobile provider codes is as mentioned below -
 
 ```
   [
-    00MTNG,
-    00TIGM,
-    00VDFM
+    {
+      "mobileProviderName": "MTN Mobile Money",
+      "mobileProviderCode": "00MTNG",
+    },
+    {
+      "mobileProviderName": "TIGO Mobile Money",
+      "mobileProviderCode": "00TIGM",
+    },
+    {
+      "mobileProviderName": "Vodafone Mobile Money",
+      "mobileProviderCode": "00VDFM",
+    }
   ]
 ```
 
@@ -1852,40 +1924,142 @@ For `GH` the list of supported bank codes is as mentioned below -
 
 ```
   [
-    300309,
-    300310,
-    300311,
-    300312,
-    300313,
-    300318,
-    300322,
-    300325,
-    300329,
-    300330,
-    300331,
-    300334,
-    300351,
-    300356,
-    000531,
-    000532,
-    000534,
-    000535,
-    000536,
-    000537,
-    000538,
-    000542,
-    000543,
-    000548,
-    000549,
-    000553,
-    000554,
-    000555,
-    000559,
-    000566,
-    000567,
-    000568,
-    000569,
-    000570
+    {
+      "bankName": "UNIVERSAL MERCHANT BANK",
+      "bankCode": 300309
+    },
+    {
+      "bankName": "HFC BANK",
+      "bankCode": 300310
+    },
+    {
+      "bankName": "ZENITH BANK",
+      "bankCode": 300311
+    },
+    {
+      "bankName": "ECOBANK",
+      "bankCode": 300312
+    },
+    {
+      "bankName": "CAL BANK",
+      "bankCode": 300313
+    },
+    {
+      "bankName": "STANBIC BANK",
+      "bankCode": 300318
+    },
+    {
+      "bankName": "GUARANTY TRUST BANK",
+      "bankCode": 300322
+    },
+    {
+      "bankName": "UNITED BANK FOR AFRICA",
+      "bankCode": 300325
+    },
+    {
+      "bankName": "ACCESS BANK",
+      "bankCode": 300329
+    },
+    {
+      "bankName": "ENERGY BANK",
+      "bankCode": 300330
+    },
+    {
+      "bankName": "ROYAL BANK",
+      "bankCode": 300331
+    },
+    {
+      "bankName": "FIRST NATIONAL BANK",
+      "bankCode": 300334
+    },
+    {
+      "bankName": "FIRST ALLIED SAVINGS AND LOANS",
+      "bankCode": 300351
+    },
+    {
+      "bankName": "CAPITAL BANK",
+      "bankCode": 300356
+    },
+    {
+      "bankName": "ADOM SAVINGS AND LOANS",
+      "bankCode": "000531"
+    },
+    {
+      "bankName": "AGRICULTURAL DEVELOPMENT BANK",
+      "bankCode": "000532"
+    },
+    {
+      "bankName": "BANK OF AFRICA",
+      "bankCode": "000534"
+    },
+    {
+      "bankName": "BANK OF BARODA (GH) LTD",
+      "bankCode": "000535"
+    },
+    {
+      "bankName": "BANK OF GHANA",
+      "bankCode": "000536"
+    },
+    {
+      "bankName": "ABSA Ghana",
+      "bankCode": "000537"
+    },
+    {
+      "bankName": "BSIC",
+      "bankCode": "000538"
+    },
+    {
+      "bankName": "FBN BANK",
+      "bankCode": "000542"
+    },
+    {
+      "bankName": "FIDELITY BANK",
+      "bankCode": "000543"
+    },
+    {
+      "bankName": "GN BANK",
+      "bankCode": "000548"
+    },
+    {
+      "bankName": "HERITAGE BANK",
+      "bankCode": "000549"
+    },
+    {
+      "bankName": "OPPORTUNITY INTERNATIONAL",
+      "bankCode": "000553"
+    },
+    {
+      "bankName": "PREMIUM BANK",
+      "bankCode": "000554"
+    },
+    {
+      "bankName": "PRUDENTIAL BANK",
+      "bankCode": "000555"
+    },
+    {
+      "bankName": "UNIBANK",
+      "bankCode": "000559"
+    },
+    {
+      "bankName": "Consolidated Bank Ghana Limited",
+      "bankCode": "000566"
+    },
+    {
+      "bankName": "Republic Bank (Ghana) Limited",
+      "bankCode": "000567"
+    },
+    {
+      "bankName": "Societe General (Ghana) Limited",
+      "bankCode": "000568"
+    },
+    {
+      "bankName": "GHL Bank Limited",
+      "bankCode": "000569"
+    },
+    {
+      "bankName": "ARB Apex Bank Limited",
+      "bankCode": "000570"
+    }
   ]
 ```
 
@@ -1893,141 +2067,504 @@ For `KE` the list of supported mobile provider codes is as mentioned below -
 
 ```
   [
-    000MPS
-  ]
+    {
+      "mobileProviderName": "MPesa",
+      "mobileProviderCode": "000MPS",
+    },
+  ]  
 ```
 
 For `KE` the list of supported bank codes is as mentioned below - 
 
 ```
   [
-    000010,
-    000011,
-    000012,
-    000014,
-    000016,
-    000018,
-    000019,
-    000020,
-    000023,
-    000025,
-    000026,
-    000030,
-    000031,
-    000035,
-    000039,
-    000041,
-    000049,
-    000050,
-    000051,
-    000054,
-    000055,
-    000057,
-    000061,
-    000063,
-    000066,
-    000068,
-    000070,
-    000072,
-    000074,
-    000076,
-    000001,
-    000007
+    {
+      "bankName": "Prime Bank Limited",
+      "bankCode": "000010"
+    },
+    {
+      "bankName": "Co-operative Bank of Kenya Limited",
+      "bankCode": "000011"
+    },
+    {
+      "bankName": "National Bank of Kenya Limited",
+      "bankCode": "000012"
+    },
+    {
+      "bankName": "Oriental Commercial Bank Limited",
+      "bankCode": "000014"
+    },
+    {
+      "bankName": "Citibank N.A.",
+      "bankCode": "000016"
+    },
+    {
+      "bankName": "Middle East Bank Kenya Limited",
+      "bankCode": "000018"
+    },
+    {
+      "bankName": "Bank of Africa Kenya Limited",
+      "bankCode": "000019"
+    },
+    {
+      "bankName": "Dubai Bank Kenya Limited",
+      "bankCode": "000020"
+    },
+    {
+      "bankName": "Consolidated Bank of Kenya Limited",
+      "bankCode": "000023"
+    },
+    {
+      "bankName": "Credit Bank Limited",
+      "bankCode": "000025"
+    },
+    {
+      "bankName": "Trans-National Bank Limited",
+      "bankCode": "000026"
+    },
+    {
+      "bankName": "Chase Bank Limited",
+      "bankCode": "000030"
+    },
+    {
+      "bankName": "CFC Stanbic Bank Kenya Limited",
+      "bankCode": "000031"
+    },
+    {
+      "bankName": "African Banking Corp. Bank Ltd",
+      "bankCode": "000035"
+    },
+    {
+      "bankName": "Imperial Bank Limited",
+      "bankCode": "000039"
+    },
+    {
+      "bankName": "NIC Bank Limited",
+      "bankCode": "000041"
+    },
+    {
+      "bankName": "Equatorial Commercial Bank Limited",
+      "bankCode": "000049"
+    },
+    {
+      "bankName": "Paramount Universal Bank Limited",
+      "bankCode": "000050"
+    },
+    {
+      "bankName": "Jamii Bora Bank",
+      "bankCode": "000051"
+    },
+    {
+      "bankName": "Victoria Commercial Bank Limited",
+      "bankCode": "000054"
+    },
+    {
+      "bankName": "Guardian Bank Limited",
+      "bankCode": "000055"
+    },
+    {
+      "bankName": "Investments n Mortgages Bank Limited",
+      "bankCode": "000057"
+    },
+    {
+      "bankName": "Housing Finance Bank",
+      "bankCode": "000061"
+    },
+    {
+      "bankName": "Diamond Trust Bank Limited",
+      "bankCode": "000063"
+    },
+    {
+      "bankName": "K-Rep Bank Limited",
+      "bankCode": "000066"
+    },
+    {
+      "bankName": "Equity Bank Limited",
+      "bankCode": "000068"
+    },
+    {
+      "bankName": "Family Bank Ltd",
+      "bankCode": "000070"
+    },
+    {
+      "bankName": "Gulf African Bank Ltd",
+      "bankCode": "000072"
+    },
+    {
+      "bankName": "First Community Bank",
+      "bankCode": "000074"
+    },
+    {
+      "bankName": "UBA Kenya Bank Ltd",
+      "bankCode": "000076"
+    },
+    {
+      "bankName": "Kenya Commercial Bank Limited",
+      "bankCode": "000001"
+    },
+    {
+      "bankName": "Commercial Bank of Africa Limited",
+      "bankCode": "000007"
+    }
   ]
 ```
 
 For `PH` the list of supported bank codes is as mentioned below - 
 
 ```
-  [     
-    000200,
-    000210,
-    000211,
-    000212,
-    000213,
-    000214,
-    000215,
-    000216,
-    000217,
-    000218,
-    000219,
-    000220,
-    000221,
-    000222,
-    000223,
-    000224,
-    000225,
-    000226,
-    000227,
-    000228,
-    000229,
-    000230,
-    000231,
-    000232,
-    000233,
-    000253,
-    000235,
-    000236,
-    000237,
-    000238,
-    000239,
-    000240,
-    000241,
-    000242,
-    000243,
-    000244,
-    000245,
-    000010,
-    000030,
-    000038,
-    000040,
-    000044,
-    000047,
-    000067,
-    000068,
-    000089,
-    000099,
-    000104,
-    000118,
-    000128,
-    000145,
-    000150,
-    000157,
-    000161,
-    000161,
-    000196,
-    000209,
-    000209,
-    000238,
-    000242,
-    000272,
-    000274,
-    000275,
-    000276,
-    000278,
-    000279,
-    000280,
-    000285,
-    000285,
-    000289,
-    000296,
-    000376,
-    000211,
-    000393,
-    000434,
-    000450,
-    000545,
-    005904,
-    005938,
-    005959,
-    005961,
-    000222,
-    005980,
-    005993,
-    005996,
-    006001,
-    006001,
-    007013
+  [
+    {
+      "bankName": "Philippine Savings Bank",
+      "bankCode": "000200"
+    },
+    {
+      "bankName": "Maybank",
+      "bankCode": "000210"
+    },
+    {
+      "bankName": "UCPB",
+      "bankCode": "000211"
+    },
+    {
+      "bankName": "Bank of Commerce",
+      "bankCode": "000212"
+    },
+    {
+      "bankName": "EastWest Bank",
+      "bankCode": "000213"
+    },
+    {
+      "bankName": "Chinabank Savings",
+      "bankCode": "000214"
+    },
+    {
+      "bankName": "Sterling Bank",
+      "bankCode": "000215"
+    },
+    {
+      "bankName": "Philippine Business Bank",
+      "bankCode": "000216"
+    },
+    {
+      "bankName": "Citibank",
+      "bankCode": "000217"
+    },
+    {
+      "bankName": "Standard Chartered Bank",
+      "bankCode": "000218"
+    },
+    {
+      "bankName": "Malayan Bank",
+      "bankCode": "000219"
+    },
+    {
+      "bankName": "HSBC",
+      "bankCode": "000220"
+    },
+    {
+      "bankName": "Philippine Veterans Bank",
+      "bankCode": "000221"
+    },
+    {
+      "bankName": "Tong Yang Bank",
+      "bankCode": "000222"
+    },
+    {
+      "bankName": "HSBC Savings",
+      "bankCode": "000223"
+    },
+    {
+      "bankName": "PNB-Allied Savings Bank",
+      "bankCode": "000224"
+    },
+    {
+      "bankName": "Citibank Savings",
+      "bankCode": "000225"
+    },
+    {
+      "bankName": "China Trust Bank Corporation",
+      "bankCode": "000226"
+    },
+    {
+      "bankName": "Equicom Savings Bank",
+      "bankCode": "000227"
+    },
+    {
+      "bankName": "BPI Family Savings",
+      "bankCode": "000228"
+    },
+    {
+      "bankName": "Palawan Pawnshop (Economy)",
+      "bankCode": "000229"
+    },
+    {
+      "bankName": "UCPB Savings",
+      "bankCode": "000230"
+    },
+    {
+      "bankName": "Robinsons Bank",
+      "bankCode": "000231"
+    },
+    {
+      "bankName": "BPI",
+      "bankCode": "000232"
+    },
+    {
+      "bankName": "Paymaya",
+      "bankCode": "000233"
+    },
+    {
+      "bankName": "RCBC",
+      "bankCode": "000253"
+    },
+    {
+      "bankName": "BDO",
+      "bankCode": "000235"
+    },
+    {
+      "bankName": "GCash",
+      "bankCode": "000236"
+    },
+    {
+      "bankName": "DBP",
+      "bankCode": "000237"
+    },
+    {
+      "bankName": "Metrobank",
+      "bankCode": "000238"
+    },
+    {
+      "bankName": "Philippine National Bank",
+      "bankCode": "000239"
+    },
+    {
+      "bankName": "Chinabank",
+      "bankCode": "000240"
+    },
+    {
+      "bankName": "Asia United Bank",
+      "bankCode": "000241"
+    },
+    {
+      "bankName": "M. Lhuillier",
+      "bankCode": "000242"
+    },
+    {
+      "bankName": "Unionbank",
+      "bankCode": "000243"
+    },
+    {
+      "bankName": "Cebuana Lhuillier",
+      "bankCode": "000244"
+    },
+    {
+      "bankName": "Security Bank",
+      "bankCode": "000245"
+    },
+    {
+      "bankName": "ANZ BANK",
+      "bankCode": "000010"
+    },
+    {
+      "bankName": "BANK OF MAKATI",
+      "bankCode": "000030"
+    },
+    {
+      "bankName": "BANGKOK BANK PUBLIC CO LTD",
+      "bankCode": "000038"
+    },
+    {
+      "bankName": "BANK OF AMERICA",
+      "bankCode": "000040"
+    },
+    {
+      "bankName": "BOF, INC (A Rural Bank) - (BANK OF Florida)",
+      "bankCode": "000044"
+    },
+    {
+      "bankName": "MUFG BANK LTD (BANK OF TOKYO)",
+      "bankCode": "000047"
+    },
+    {
+      "bankName": "CHINA BANK",
+      "bankCode": "000067"
+    },
+    {
+      "bankName": "CTBC BANK ( FORMER CHINA TRUST)",
+      "bankCode": "000068"
+    },
+    {
+      "bankName": "COUNTRY BUILDERS BANK INC (A Rural Bank)",
+      "bankCode": "000089"
+    },
+    {
+      "bankName": "DEUTSCHE BANK",
+      "bankCode": "000099"
+    },
+    {
+      "bankName": "EAST WEST BANK",
+      "bankCode": "000104"
+    },
+    {
+      "bankName": "FIRST CONSOLIDATED BANK",
+      "bankCode": "000118"
+    },
+    {
+      "bankName": "MIZUHO BANK LTD (FUJI BANK)",
+      "bankCode": "000128"
+    },
+    {
+      "bankName": "NG BANK N.V.",
+      "bankCode": "000145"
+    },
+    {
+      "bankName": "MEGA INTL COMML BANK CO LTD (ICBC)",
+      "bankCode": "000150"
+    },
+    {
+      "bankName": "KEB HANA",
+      "bankCode": "000157"
+    },
+    {
+      "bankName": "LBP - LAND BANK OF THE PHILIPPINES",
+      "bankCode": "000161"
+    },
+    {
+      "bankName": "LBP - LAND BANK OF THE PHILIPPINES",
+      "bankCode": "000161"
+    },
+    {
+      "bankName": "PBCOM - PHILIPPINE BANK OF COMMUNICATIONS",
+      "bankCode": "000196"
+    },
+    {
+      "bankName": "PHILTRUST CO",
+      "bankCode": "000209"
+    },
+    {
+      "bankName": "PHILTRUST CO",
+      "bankCode": "000209"
+    },
+    {
+      "bankName": "QUEZON CAPITAL RURAL BANK INC",
+      "bankCode": "000238"
+    },
+    {
+      "bankName": "RANG-AY BANK, INC. (A Rural Bank)",
+      "bankCode": "000242"
+    },
+    {
+      "bankName": "SUN SAVINGS BANK INC",
+      "bankCode": "000272"
+    },
+    {
+      "bankName": "PARTNER RURAL BANK (COTABATO) INC",
+      "bankCode": "000274"
+    },
+    {
+      "bankName": "ISLA BANK INC.",
+      "bankCode": "000275"
+    },
+    {
+      "bankName": "DUNGGANON BANK",
+      "bankCode": "000276"
+    },
+    {
+      "bankName": "BPI DIRECT BANKO",
+      "bankCode": "000278"
+    },
+    {
+      "bankName": "CIMB BANK PHILIPPINES, INC.",
+      "bankCode": "000279"
+    },
+    {
+      "bankName": "ALLBANK",
+      "bankCode": "000280"
+    },
+    {
+      "bankName": "CAMALIG BANK, INC (A Rural Bank)",
+      "bankCode": "000285"
+    },
+    {
+      "bankName": "CAMALIG BANK, INC (A Rural Bank)",
+      "bankCode": "000285"
+    },
+    {
+      "bankName": "INNOVATIVE BANK INC",
+      "bankCode": "000289"
+    },
+    {
+      "bankName": "RURAL BANK OF GUINOBATAN INC (RBGI)",
+      "bankCode": "000296"
+    },
+    {
+      "bankName": "SUMITOMO MITSUI BANKING CORP",
+      "bankCode": "000376"
+    },
+    {
+      "bankName": "UCPB - UNITED COCONUT PLANTERS BANK",
+      "bankCode": "000211"
+    },
+    {
+      "bankName": "UNION BANK OF THE PHILIPPINES",
+      "bankCode": "000393"
+    },
+    {
+      "bankName": "INDUSTRIAL BANK OF KOREA",
+      "bankCode": "000434"
+    },
+    {
+      "bankName": "SHINHAN BANK",
+      "bankCode": "000450"
+    },
+    {
+      "bankName": "UNITED OVERSEAS BANK PHILIPPINES",
+      "bankCode": "000545"
+    },
+    {
+      "bankName": "PHIL BUSINESS",
+      "bankCode": "005904"
+    },
+    {
+      "bankName": "PRODUCERS SAVINGS BANK CORP",
+      "bankCode": "005938"
+    },
+    {
+      "bankName": "WEALTH DEVELOPMENT BANK",
+      "bankCode": "005959"
+    },
+    {
+      "bankName": "BANK OF CHINA",
+      "bankCode": "005961"
+    },
+    {
+      "bankName": "YUANTA SAVINGS BANK PHILS INC (Tongyang)",
+      "bankCode": "000222"
+    },
+    {
+      "bankName": "BANGKO MABUHAY (A Rural Bank), Inc.",
+      "bankCode": "005980"
+    },
+    {
+      "bankName": "BDO NETWORK BANK",
+      "bankCode": "005993"
+    },
+    {
+      "bankName": "AL AMANAH ISLAMIC INVESTMENT BANK",
+      "bankCode": "005996"
+    },
+    {
+      "bankName": "JP MORGAN CHASE BANK",
+      "bankCode": "006001"
+    },
+    {
+      "bankName": "JP MORGAN CHASE BANK",
+      "bankCode": "006001"
+    },
+    {
+      "bankName": "CHINA BANK SAVINGS",
+      "bankCode": "007013"
+    }
   ]
 ```
 
@@ -2035,18 +2572,33 @@ For `RW` the list of supported mobile provider codes is as mentioned below -
 
 ```
   [
-    00mtn
-  ]
+    {
+      "mobileProviderName": "MTN",
+      "mobileProviderCode": "00mtn"
+    }
+  ]  
 ```
 
 For `UG` the list of supported mobile provider codes is as mentioned below -
 
 ```
   [
-    00mtn,
-    00airtel,
-    00africell,
-    00telecom
+    {
+      "mobileProviderName": "MTN",
+      "mobileProviderCode": "00mtn"
+    },
+    {
+      "mobileProviderName": "Airtel",
+      "mobileProviderCode": "00airtel"
+    },
+    {
+      "mobileProviderName": "Africell",
+      "mobileProviderCode": "00africell"
+    },
+    {
+      "mobileProviderName": "Telecom",
+      "mobileProviderCode": "00telecom"
+    }
   ]
 
 ```
@@ -2055,8 +2607,14 @@ For `CM` and `CG` the list of supported mobile provider codes is as mentioned be
 
 ```
   [
-    00mtn
-    00orange
+    {
+      "mobileProviderName": "MTN",
+      "mobileProviderCode": "00mtn"
+    },
+    {
+      "mobileProviderName": "Orange",
+      "mobileProviderCode": "00orange"
+    }
   ]
 
 ```
@@ -2065,21 +2623,66 @@ For `ZA` the list of bank codes is as mentioned below -
 
 ```
   [
-    051001
-    250655
-    632005
-    198765
-    580105
-    470010
-    410506
-    462005
-    430000
-    450905
-    460005
-    678910
-    431010
-    679000
-    888000
+    {
+      "bankName": "Standard Bank",
+      "bankCode": "051001"
+    },
+    {
+      "bankName": "First National Bank",
+      "bankCode": 250655
+    },
+    {
+      "bankName": "ABSA",
+      "bankCode": 632005
+    },
+    {
+      "bankName": "Nedbank",
+      "bankCode": 198765
+    },
+    {
+      "bankName": "Investec",
+      "bankCode": 580105
+    },
+    {
+      "bankName": "Capitec Bank",
+      "bankCode": 470010
+    },
+    {
+      "bankName": "Bank of Athens",
+      "bankCode": 410506
+    },
+    {
+      "bankName": "Bidvest Bank",
+      "bankCode": 462005
+    },
+    {
+      "bankName": "African Bank",
+      "bankCode": 430000
+    },
+    {
+      "bankName": "Mercantile Bank",
+      "bankCode": 450905
+    },
+    {
+      "bankName": "SA Post Office",
+      "bankCode": 460005
+    },
+    {
+      "bankName": "Tyme Bank",
+      "bankCode": 678910
+    },
+    {
+      "bankName": "Ubank",
+      "bankCode": 431010
+    },
+    {
+      "bankName": "Discovery Bank",
+      "bankCode": 679000
+    },
+    {
+      "bankName": "Bank Zero",
+      "bankCode": 888000
+    }
   ]
 ```
 
