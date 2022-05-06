@@ -1082,7 +1082,7 @@ with an `InvalidParameters` error.
 
 ### 3.3.2. KYC Endpoints
 
-A CICO provider may wish to require different KYC types for a single user across separate transfers for various reasons. For exmaple, if
+A CICO provider may wish to require different KYC types for a single user across separate transfers for various reasons. For example, if
 a user initiates a transfer from the US, the provider may request a particular type of KYC for the transfer. Later on, if the user initiates
 a transfer from a different geo, the same provider may require a different type of KYC. The provider should store these KYC verifications to re-use
 later in case the user returns to a geo where they have already provided an appropriate KYC type. Negotiation of what KYC types are allowed for
