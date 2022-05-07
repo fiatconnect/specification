@@ -226,7 +226,7 @@
     - [8.2.4. `FiatAccountTypeEnum`](#824-fiataccounttypeenum)
     - [8.2.5. `FeeTypeEnum`](#825-feetypeenum)
     - [8.2.6. `FeeFrequencyEnum`](#826-feefrequencyenum)
-    - [8.2.8. `FiatAccountSchemaEnum`](#828-fiataccountschemaenum)
+    - [8.2.7. `FiatAccountSchemaEnum`](#827-fiataccountschemaenum)
   - [8.3. Initial Entity Support](#83-initial-entity-support)
     - [8.3.1. KYC Schemas](#831-kyc-schemas)
       - [8.3.1.1. `PersonalDataAndDocuments`](#8311-personaldataanddocuments)
@@ -2100,7 +2100,7 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 ]
 ```
 
-### 8.2.8. `FiatAccountSchemaEnum`
+### 8.2.7. `FiatAccountSchemaEnum`
 
 ```
 [
