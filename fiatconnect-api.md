@@ -2148,7 +2148,7 @@ account information from the `GET /accounts` endpoint.
 	accountName: `string`,
 	institutionName: `string`,
 	accountNumber: `string`,
-	country: `string`
+	country: `string`,
 	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
 }
 ```
