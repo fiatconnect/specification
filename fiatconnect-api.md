@@ -1812,7 +1812,7 @@ is below:
 ```
 ####  7.3.2.3. `CheckingAccountIban`
 
-`CheckingAccountIban` is a Fiat Account schema that represents accounts for transactions across `EUR` currency.
+`CheckingAccountIban` is a Fiat Account schema that represents accounts for transactions across countries where `iban` is utilised.
 
 
 ```
