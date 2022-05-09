@@ -1828,7 +1828,7 @@ is below:
 
 ####  7.3.2.4. `CheckingAccountBankCode`
 
-`CheckingAccountBankCode` is a Fiat Account schema that represents accounts for transactions across `NG`, `GH`, `KE`, `ZA`, `PH`, `SN`, `CN`, `GB`, `SG`, `TZ`, `HK` currencies.
+`CheckingAccountBankCode` is a Fiat Account schema that represents accounts for transactions across `NG`, `GH`, `KE`, `ZA`, `PH`, `SN`, `CN`, `GB`, `SG`, `TZ`, `HK` countries.
 
 
 ```
@@ -1842,23 +1842,6 @@ is below:
 }
 ```
 
-####  7.3.2.5. `CheckingAccountMobile`
-
-`CheckingAccountMobile` is a Fiat Account schema that represents accounts for transactions across `NG`, `GH`, `KE`, `UG`, `SN`, `BJ`, `ML`, `CI`, `NE`, `TG`, `GW`, `BF`, `SL`, `RW`, `CM`,`CG` currencies.
-
-```
-{
-    "accountName": `string`,
-    "mobileProvider": `string`,
-    "mobileProviderCode": `string`,
-    "mobileNumber": `string`,
-    "fiatAccountType": `CheckingAccountMobile`,
-    "country":'string'
-}
-```
-
-
-The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The field is for providers to specify which country this data is meant for.
 
 ####  7.3.2.2.1 `SupportedBankMobileProvidersEnum`
 
