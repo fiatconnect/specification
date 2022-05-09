@@ -2216,7 +2216,7 @@ platform can be used to consume Fiat Connect services by providing their `mobile
 
 ####  8.3.2.4. `BankAccount`
 
-`BankAccount` is a Fiat Account schema that tends to come up with a bank account representation we can use regardless of the country. Meanwhile, the most important field there is the `iban` that stands for International Bank Account Number. It respects a specific organization that you can find here [**IBAN on WIKIPEDIA**](https://fr.wikipedia.org/wiki/International_Bank_Account_Number) and [**IBAN**](https://www.pricebank.fr/questions-reponses/questions-frequentes/qu-est-ce-que-le-code-iban.html).
+`BankAccount` is a representation of a bank account that is agnostic to the user's home country. The most important field is the `iban`, which stands for International Bank Account Number. More info on [Wikipedia](https://fr.wikipedia.org/wiki/International_Bank_Account_Number) and [pricebank.fr FAQs page](https://www.pricebank.fr/questions-reponses/questions-frequentes/qu-est-ce-que-le-code-iban.html).
 
 ```
 {
