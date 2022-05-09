@@ -2,245 +2,255 @@
 
 # 0. Table of Contents
 
+- [FiatConnect CICO Provider API Specification "RFC"](#fiatconnect-cico-provider-api-specification-rfc)
 - [0. Table of Contents](#0-table-of-contents)
 - [1. Introduction](#1-introduction)
-  * [1.1. A Note on Celo & Multi-Chain Support](#11-a-note-on-celo---multi-chain-support)
-  * [1.2. Notational Conventions](#12-notational-conventions)
+  - [1.1. A Note on Celo & Multi-Chain Support](#11-a-note-on-celo--multi-chain-support)
+  - [1.2. Notational Conventions](#12-notational-conventions)
 - [2. Lifecycle of a Transfer](#2-lifecycle-of-a-transfer)
-  * [2.1. Quote](#21-quote)
-  * [2.2. KYC](#22-kyc)
-    + [2.2.1. KYC Status Monitoring](#221-kyc-status-monitoring)
-  * [2.3. Fiat Accounts](#23-fiat-accounts)
-  * [2.4. Creating the Transfer](#24-creating-the-transfer)
-    + [2.4.1. Transfer Status Monitoring](#241-transfer-status-monitoring)
+  - [2.1. Quote](#21-quote)
+  - [2.2. KYC](#22-kyc)
+    - [2.2.1. KYC Status Monitoring](#221-kyc-status-monitoring)
+  - [2.3. Fiat Accounts](#23-fiat-accounts)
+  - [2.4. Creating the Transfer](#24-creating-the-transfer)
+    - [2.4.1. Transfer Status Monitoring](#241-transfer-status-monitoring)
 - [3. API Specification](#3-api-specification)
-  * [3.1. Geolocation](#31-geolocation)
-  * [3.2. Authentication & Authorization](#32-authentication---authorization)
-    + [3.2.1. Sign-In With Ethereum](#321-sign-in-with-ethereum)
-	  - [3.2.1.1. SIWE Sessions](#3211-siwe-sessions)
-      - [3.2.1.2. SIWE Resources](#3212-siwe-resources)
-	  - [3.2.1.3. SIWE Message Format](#3213-siwe-message-format)
-	  - [3.2.1.4. Session Cookies](#3214-session-cookies)
-	  - [3.2.1.5. `POST /auth/login`](#3215--post--auth-login-)
-	    * [3.2.1.5.1. Parameters](#32151-parameters)
-		  + [3.2.1.5.1.1. Request Body](#321511-request-body)
-	    * [3.2.1.5.2. Responses](#32152-responses)
-		  + [3.2.1.5.2.1. HTTP `200`](#321521-http--200-)
-		  + [3.2.1.5.2.2. HTTP `401`](#321522-http--401-)
-	    * [3.2.1.5.3. Semantics](#32153-semantics)
-		  + [3.2.1.5.3.1. Success](#321531-success)
-		  + [3.2.1.5.3.2. Failure](#321531-failure)
-		    - [3.2.1.5.3.2.1. `InvalidSignature`](#3215321--invalidsignature-)
-		    - [3.2.1.5.3.2.2. `InvalidParameters`](#3215322--invalidparameters-)
-		    - [3.2.1.5.3.2.3. `ContractLoginNotSupported`](#3215323--contractloginnotsupported-)
-		    - [3.2.1.5.3.2.4. `NonceInUse`](#3215324--nonceinuse-)
-		    - [3.2.1.5.3.2.5. `IssuedTooEarly`](#3215325--issuedtooearly-)
-		    - [3.2.1.5.3.2.6. `ExpirationTooLong`](#3215326--expirationtoolong-)
-	  - [3.2.1.6. Using Sessions](#3216-using-sessions)
-	    * [3.2.1.6.1. Non-Privileged Endpoints](#32161-non-privileged-endpoints)
-	    * [3.2.1.6.2. Privileged Endpoints](#32162-privileged-endpoints)
-    + [3.2.2.Client API Key](#322-client-api-key)
-  * [3.3. Formal Specification](#33-formal-specification)
-    + [3.3.1. Quote Endpoints](#331-quote-endpoints)
-      - [3.3.1.1. `GET /quote/in`](#3311--get--quote-in-)
-        * [3.3.1.1.1. Parameters](#33111-parameters)
-          + [3.3.1.1.1.1. Query Parameters](#331111-query-parameters)
-        * [3.3.1.1.2. Responses](#33112-responses)
-          + [3.3.1.1.2.1. HTTP `200`](#331121-http--200-)
-        * [3.3.1.1.2.2. HTTP `400`](#331122-http--400-)
-        * [3.3.1.1.3. Semantics](#33113-semantics)
-          + [3.3.1.1.3.1. Success](#331131-success)
-          + [3.3.1.1.3.2. Failure](#331132-failure)
-            - [3.3.1.1.3.2.1. `GeoNotSupported`](#3311321--geonotsupported-)
-            - [3.3.1.1.3.2.2. `CryptoAmountTooLow`](#3311322--cryptoamounttoolow-)
-            - [3.3.1.1.3.2.3. `CryptoAmountTooHigh`](#3311323--cryptoamounttoohigh-)
-            - [3.3.1.1.3.2.4. `FiatAmountTooLow`](#3311324--fiatamounttoolow-)
-            - [3.3.1.1.3.2.5. `FiatAmountTooHigh`](#3311325--fiatamounttoohigh-)
-            - [3.3.1.1.3.2.6. `CryptoNotSupported`](#3311326--cryptonotsupported-)
-            - [3.3.1.1.3.2.7. `FiatNotSupported`](#3311327--fiatnotsupported-)
-            - [3.3.1.1.3.2.8. `InvalidParameters`](#3311328--invalidparameters-)
-      - [3.3.1.2. `GET /quote/out`](#3312--get--quote-out-)
-        * [3.3.1.2.1. Parameters](#33121-parameters)
-          + [3.3.1.2.1.1. Query Parameters](#331211-query-parameters)
-        * [3.3.1.2.2. Responses](#33122-responses)
-          + [3.3.1.2.2.1. HTTP `200`](#331221-http--200-)
-          + [3.3.1.2.2.2. HTTP `400`](#331222-http--400-)
-        * [3.3.1.2.3. Semantics](#33123-semantics)
-          + [3.3.1.2.3.1. Success](#331231-success)
-          + [3.3.1.2.3.2. Failure](#331232-failure)
-            - [3.3.1.2.3.2.1. `GeoNotSupported`](#3312321--geonotsupported-)
-            - [3.3.1.2.3.2.2. `CryptoAmountTooLow`](#3312322--cryptoamounttoolow-)
-            - [3.3.1.2.3.2.3. `CryptoAmountTooHigh`](#3312323--cryptoamounttoohigh-)
-            - [3.3.1.2.3.2.4. `FiatAmountTooLow`](#3312324--fiatamounttoolow-)
-            - [3.3.1.2.3.2.5. `FiatAmountTooHigh`](#3312325--fiatamounttoohigh-)
-            - [3.3.1.2.3.2.6. `CryptoNotSupported`](#3312326--cryptonotsupported-)
-            - [3.3.1.2.3.2.7. `FiatNotSupported`](#3312327--fiatnotsupported-)
-            - [3.3.1.2.3.2.8. `InvalidParameters`](#3311328--invalidparameters-)
-    + [3.3.2. KYC Endpoints](#332-kyc-endpoints)
-      - [3.3.2.1. `POST /kyc/:kycSchema`](#3321--post--kyc--kycschema-)
-        * [3.3.2.1.1. Parameters](#33211-parameters)
-          + [3.3.2.1.1.1. Path Parameters](#332111-path-parameters)
-          + [3.3.2.1.1.2. Request Body](#332112-request-body)
-        * [3.3.2.1.2. Responses](#33212-responses)
-          + [3.3.2.1.2.1. HTTP `200`](#332121-http--200-)
-          + [3.3.2.1.2.2. HTTP `400`](#332122-http--400-)
-          + [3.3.2.1.2.3. HTTP `409`](#332123-http--409-)
-        * [3.3.2.1.3. Semantics](#33213-semantics)
-          + [3.3.2.1.3.1. Success](#332131-success)
-          + [3.3.2.1.3.2. Failure](#332132-failure)
-            - [3.3.2.1.3.2.1. `UnsupportedSchema`](#3321321--unsupportedschema-)
-            - [3.3.2.1.3.2.2. `InvalidSchema`](#3321322--invalidschema-)
-            - [3.3.2.1.3.2.3. `ResourceExists`](#3321323--resourceexists-)
-      - [3.3.2.2. `GET /kyc/:kycSchema/status`](#3322--get--kyc--kycschema-status-)
-        * [3.3.2.2.1. Parameters](#33221-parameters)
-          + [3.3.2.2.1.1. Path Parameters](#332211-path-parameters)
-        * [3.3.2.2.2. Responses](#33222-responses)
-          + [3.3.2.2.2.1. HTTP `200`](#332221-http--200-)
-          + [3.3.2.2.2.2. HTTP `404`](#332222-http--404-)
-        * [3.3.2.2.3. Semantics](#33223-semantics)
-          + [3.3.2.2.3.1. Success](#332231-success)
-          + [3.3.2.2.3.2. Failure](#332232-failure)
-            - [3.3.2.2.3.2.1. `ResourceNotFound`](#3322321--resourcenotfound-)
-      - [3.3.2.3. `DELETE /kyc/:kycSchema`](#3323--delete--kyc--kycschema-)
-        * [3.3.2.3.1. Parameters](#33231-parameters)
-          + [3.3.2.3.1.1. Path Parameters](#332311-path-parameters)
-        * [3.3.2.3.2. Responses](#33232-responses)
-          + [3.3.2.3.2.1. HTTP `200`](#332321-http--200-)
-          + [3.3.2.3.2.2. HTTP `404`](#332322-http--404-)
-        * [3.3.2.3.3. Semantics](#33233-semantics)
-          + [3.3.2.3.3.1. Success](#332331-success)
-          + [3.3.2.3.3.2. Failure](#332332-failure)
-            - [3.3.2.3.3.2.1. `ResourceNotFound`](#3323321--resourcenotfound-)
-    + [3.3.3. Fiat Account Endpoints](#333-fiat-account-endpoints)
-      - [3.3.3.1. `POST /accounts/:fiatAccountSchema`](#3331--post--accounts--fiataccountschema-)
-        * [3.3.3.1.1. Parameters](#33311-parameters)
-          + [3.3.3.1.1.1. Path Parameters](#333111-path-parameters)
-          + [3.3.3.1.1.2. Request Body](#333112-request-body)
-        * [3.3.3.1.2. Responses](#33312-responses)
-          + [3.3.3.1.2.1. HTTP `200`](#333121-http--200-)
-          + [3.3.3.1.2.2. HTTP `400`](#333122-http--400-)
-          + [3.3.3.1.2.3. HTTP `409`](#333123-http--409-)
-        * [3.3.3.1.3. Semantics](#33313-semantics)
-          + [3.3.3.1.3.1. Success](#333131-success)
-          + [3.3.3.1.3.1. Failure](#333131-failure)
-            - [3.3.3.1.3.1.1. `UnsupportedSchema`](#3331311--unsupportedschema-)
-            - [3.3.3.1.3.1.2. `InvalidSchema`](#3331312--invalidschema-)
-            - [3.3.3.1.3.1.3. `ResourceExists`](#3331313--resourceexists-)
-      - [3.3.3.2. `GET /accounts`](#3332--get--accounts-)
-        * [3.3.3.2.1. Parameters](#33321-parameters)
-        * [3.3.3.2.2. Responses](#33322-responses)
-          + [3.3.3.2.2.1. HTTP `200`](#333221-http--200-)
-        * [3.3.3.2.3. Semantics](#33323-semantics)
-          + [3.3.3.2.3.1. Success](#333231-success)
-      - [3.3.3.3. `DELETE /accounts/:fiatAccountId`](#3333--delete--account--fiataccountid-)
-        * [3.3.3.3.1. Parameters](#33331-parameters)
-          + [3.3.3.3.1.1. Path Parameters](#333311-path-parameters)
-        * [3.3.3.3.2. Responses](#33332-responses)
-          + [3.3.3.3.2.1. HTTP `200`](#333321-http--200-)
-          + [3.3.3.3.2.2 HTTP. `404`](#333322-http--404-)
-        * [3.3.3.3.3. Semantics](#33333-semantics)
-          + [3.3.3.3.3.1. Success](#333331-success)
-          + [3.3.3.3.3.1. Failure](#333331-failure)
-            - [3.3.3.3.3.1.1. `ResourceNotFound`](#3333311--resourcenotfound-)
-    + [3.3.4. Transfer Endpoints](#334-transfer-endpoints)
-      - [3.3.4.1. `POST /transfer/in`](#3341--post--transfer-in-)
-        * [3.3.4.1.1. Parameters](#33411-parameters)
-          + [3.3.4.1.1.1. Headers](#334111-headers)
-          + [3.3.4.1.1.2. Request Body](#334112-request-body)
-        * [3.3.4.1.2. Responses](#33412-responses)
-          + [3.3.4.1.2.1. HTTP `200`](#334121-http--200-)
-          + [3.3.4.1.2.2. HTTP `400`](#334122-http--400-)
-          + [3.3.4.1.2.3. HTTP `404`](#334123-http--404-)
-          + [3.3.4.1.2.4. Idempotency Key Errors](#334124-idempotency-key-errors)
-        * [3.3.4.1.3. Semantics](#33413-semantics)
-          + [3.3.4.1.3.1. Success](#334131-success)
-          + [3.3.4.1.3.2. Failure](#334132-failure)
-            - [3.3.4.1.3.2.1. `KycExpired`](#3341321--kycexpired-)
-            - [3.3.4.1.3.2.2. `TransferNotAllowed`](#3341322--transfernotallowed-)
-            - [3.3.4.1.3.2.3. `InvalidQuote`](#3341323--invalidquote-)
-            - [3.3.4.1.3.2.4. `ResourceNotFound`](#3341324--resourcenotfound-)
-            - [3.3.4.1.3.2.5. `InvalidFiatAccount`](#3341325--invalidfiataccount-)
-      - [3.3.4.2. `POST /transfer/out`](#3342--post--transfer-out-)
-        * [3.3.4.2.1. Parameters](#33421-parameters)
-          + [3.3.4.2.1.1. Headers](#334211-headers)
-          + [3.3.4.2.1.2. Request Body](#334212-request-body)
-        * [3.3.4.2.2. Responses](#33422-responses)
-          + [3.3.4.2.2.1. HTTP `200`](#334221-http--200-)
-          + [3.3.4.2.2.2. HTTP `400`](#334222-http--400-)
-          + [3.3.4.2.2.3. HTTP `404`](#334223-http--404-)
-          + [3.3.4.2.2.4. Idempotency Key Errors](#334224-idempotency-key-errors)
-        * [3.3.4.2.3. Semantics](#33423-semantics)
-          + [3.3.4.2.3.1. Success](#334231-success)
-          + [3.3.4.2.3.2. Failure](#334232-failure)
-            - [3.3.4.2.3.2.1. `KycExpired`](#3342321--kycexpired-)
-            - [3.3.4.2.3.2.2. `TransferNotAllowed`](#3342322--transfernotallowed-)
-            - [3.3.4.2.3.2.3. `InvalidQuote`](#3342323--invalidquote-)
-            - [3.3.4.2.3.2.4. `ResourceNotFound`](#3342324--resourcenotfound-)
-            - [3.3.4.2.3.2.5. `InvalidFiatAccount`](#3342325--invalidfiataccount-)
-      - [3.3.4.3. `GET /transfer/:transferId/status`](#3343--get--transfer--transferid-status-)
-        * [3.3.4.3.1. Parameters](#33431-parameters)
-          + [3.3.4.3.1.1. Path Parameters](#334311-path-parameters)
-        * [3.3.4.3.2. Responses](#33432-responses)
-          + [3.3.4.3.2.1. HTTP `200`](#334321-http--200-)
-          + [3.3.4.3.2.2. HTTP `404`](#334322-http--404-)
-        * [3.3.4.3.3. Semantics](#33433-semantics)
-          + [3.3.4.3.3.1. Success](#334331-success)
-          + [3.3.4.3.3.2. Failure](#334332-failure)
-            - [3.3.4.3.3.2.1. `ResourceNotFound`](#3343321--resourcenotfound-)
+  - [3.1. Geolocation](#31-geolocation)
+  - [3.2. Clock Synchronization](#32-clock-synchronization)
+    - [3.2.1. `GET /clock`](#321-get-clock)
+      - [3.2.1.1. Parameters](#3211-parameters)
+      - [3.2.1.2. Responses](#3212-responses)
+        - [3.2.1.2.1. HTTP `200`](#32121-http-200)
+      - [3.2.1.3. Semantics](#3213-semantics)
+        - [3.2.1.3.1. Success](#32131-success)
+  - [3.3. Authentication & Authorization](#33-authentication--authorization)
+    - [3.3.1. Sign-In With Ethereum](#331-sign-in-with-ethereum)
+      - [3.3.1.1. SIWE Resources](#3311-siwe-resources)
+      - [3.3.1.2. SIWE Sessions](#3312-siwe-sessions)
+      - [3.3.1.3. SIWE Message Format](#3313-siwe-message-format)
+      - [3.3.1.4. Session Cookies](#3314-session-cookies)
+      - [3.3.1.5. `POST /auth/login`](#3315-post-authlogin)
+        - [3.3.1.5.1. Parameters](#33151-parameters)
+          - [3.3.1.5.1.1. Request Body](#331511-request-body)
+        - [3.3.1.5.2. Responses](#33152-responses)
+          - [3.3.1.5.2.1. HTTP `200`](#331521-http-200)
+          - [3.3.1.5.2.2. HTTP `401`](#331522-http-401)
+        - [3.3.1.5.3. Semantics](#33153-semantics)
+          - [3.3.1.5.3.1. Success](#331531-success)
+          - [3.3.1.5.3.2. Failure](#331532-failure)
+          - [3.3.1.5.3.2.1. `InvalidSignature`](#3315321-invalidsignature)
+          - [3.3.1.5.3.2.2. `InvalidParameters`](#3315322-invalidparameters)
+          - [3.3.1.5.3.2.3. `ContractLoginNotSupported`](#3315323-contractloginnotsupported)
+          - [3.3.1.5.3.2.4. `NonceInUse`](#3315324-nonceinuse)
+          - [3.3.1.5.3.2.5. `IssuedTooEarly`](#3315325-issuedtooearly)
+          - [3.3.1.5.3.2.6. `ExpirationTooLong`](#3315326-expirationtoolong)
+      - [3.3.1.6. Using Sessions](#3316-using-sessions)
+        - [3.3.1.6.1. Non-Privileged Endpoints](#33161-non-privileged-endpoints)
+        - [3.3.1.6.2. Privileged Endpoints](#33162-privileged-endpoints)
+    - [3.3.2. Client API Key](#332-client-api-key)
+    - [3.3.3. HTTPS](#333-https)
+  - [3.4. Formal Specification](#34-formal-specification)
+    - [3.4.1. Quote Endpoints](#341-quote-endpoints)
+      - [3.4.1.1. `GET /quote/in`](#3411-get-quotein)
+        - [3.4.1.1.1. Parameters](#34111-parameters)
+          - [3.4.1.1.1.1. Query Parameters](#341111-query-parameters)
+        - [3.4.1.1.2. Responses](#34112-responses)
+          - [3.4.1.1.2.1. HTTP `200`](#341121-http-200)
+        - [3.4.1.1.2.2. HTTP `400`](#341122-http-400)
+        - [3.4.1.1.3. Semantics](#34113-semantics)
+          - [3.4.1.1.3.1. Success](#341131-success)
+          - [3.4.1.1.3.2. Failure](#341132-failure)
+          - [3.4.1.1.3.2.1. `GeoNotSupported`](#3411321-geonotsupported)
+          - [3.4.1.1.3.2.2. `CryptoAmountTooLow`](#3411322-cryptoamounttoolow)
+          - [3.4.1.1.3.2.3. `CryptoAmountTooHigh`](#3411323-cryptoamounttoohigh)
+          - [3.4.1.1.3.2.4. `FiatAmountTooLow`](#3411324-fiatamounttoolow)
+          - [3.4.1.1.3.2.5. `FiatAmountTooHigh`](#3411325-fiatamounttoohigh)
+          - [3.4.1.1.3.2.6. `CryptoNotSupported`](#3411326-cryptonotsupported)
+          - [3.4.1.1.3.2.7. `FiatNotSupported`](#3411327-fiatnotsupported)
+          - [3.4.1.1.3.2.8. `InvalidParameters`](#3411328-invalidparameters)
+      - [3.4.1.2. `GET /quote/out`](#3412-get-quoteout)
+        - [3.4.1.2.1. Parameters](#34121-parameters)
+          - [3.4.1.2.1.1. Query Parameters](#341211-query-parameters)
+        - [3.4.1.2.2. Responses](#34122-responses)
+          - [3.4.1.2.2.1. HTTP `200`](#341221-http-200)
+          - [3.4.1.2.2.2. HTTP `400`](#341222-http-400)
+        - [3.4.1.2.3. Semantics](#34123-semantics)
+          - [3.4.1.2.3.1. Success](#341231-success)
+          - [3.4.1.2.3.2. Failure](#341232-failure)
+          - [3.4.1.2.3.2.1. `GeoNotSupported`](#3412321-geonotsupported)
+          - [3.4.1.2.3.2.2. `CryptoAmountTooLow`](#3412322-cryptoamounttoolow)
+          - [3.4.1.2.3.2.3. `CryptoAmountTooHigh`](#3412323-cryptoamounttoohigh)
+          - [3.4.1.2.3.2.4. `FiatAmountTooLow`](#3412324-fiatamounttoolow)
+          - [3.4.1.2.3.2.5. `FiatAmountTooHigh`](#3412325-fiatamounttoohigh)
+          - [3.4.1.2.3.2.6. `CryptoNotSupported`](#3412326-cryptonotsupported)
+          - [3.4.1.2.3.2.7. `FiatNotSupported`](#3412327-fiatnotsupported)
+          - [3.4.1.2.3.2.8. `InvalidParameters`](#3412328-invalidparameters)
+    - [3.4.2. KYC Endpoints](#342-kyc-endpoints)
+      - [3.4.2.1. `POST /kyc/:kycSchema`](#3421-post-kyckycschema)
+        - [3.4.2.1.1. Parameters](#34211-parameters)
+          - [3.4.2.1.1.1. Path Parameters](#342111-path-parameters)
+          - [3.4.2.1.1.2. Request Body](#342112-request-body)
+        - [3.4.2.1.2. Responses](#34212-responses)
+          - [3.4.2.1.2.1. HTTP `200`](#342121-http-200)
+          - [3.4.2.1.2.2. HTTP `400`](#342122-http-400)
+          - [3.4.2.1.2.3. HTTP `409`](#342123-http-409)
+        - [3.4.2.1.3. Semantics](#34213-semantics)
+          - [3.4.2.1.3.1. Success](#342131-success)
+          - [3.4.2.1.3.2. Failure](#342132-failure)
+          - [3.4.2.1.3.2.1. `UnsupportedSchema`](#3421321-unsupportedschema)
+          - [3.4.2.1.3.2.2. `InvalidSchema`](#3421322-invalidschema)
+          - [3.4.2.1.3.2.3. `ResourceExists`](#3421323-resourceexists)
+      - [3.4.2.2. `GET /kyc/:kycSchema/status`](#3422-get-kyckycschemastatus)
+        - [3.4.2.2.1. Parameters](#34221-parameters)
+          - [3.4.2.2.1.1. Path Parameters](#342211-path-parameters)
+        - [3.4.2.2.2. Responses](#34222-responses)
+          - [3.4.2.2.2.1. HTTP `200`](#342221-http-200)
+          - [3.4.2.2.2.2. HTTP `404`](#342222-http-404)
+        - [3.4.2.2.3. Semantics](#34223-semantics)
+          - [3.4.2.2.3.1. Success](#342231-success)
+          - [3.4.2.2.3.2. Failure](#342232-failure)
+          - [3.4.2.2.3.2.1. `ResourceNotFound`](#3422321-resourcenotfound)
+      - [3.4.2.3. `DELETE /kyc/:kycSchema`](#3423-delete-kyckycschema)
+        - [3.4.2.3.1. Parameters](#34231-parameters)
+          - [3.4.2.3.1.1. Path Parameters](#342311-path-parameters)
+        - [3.4.2.3.2. Responses](#34232-responses)
+          - [3.4.2.3.2.1. HTTP `200`](#342321-http-200)
+          - [3.4.2.3.2.2. HTTP `404`](#342322-http-404)
+        - [3.4.2.3.3. Semantics](#34233-semantics)
+          - [3.4.2.3.3.1. Success](#342331-success)
+          - [3.4.2.3.3.2. Failure](#342332-failure)
+          - [3.4.2.3.3.2.1. `ResourceNotFound`](#3423321-resourcenotfound)
+    - [3.4.3. Fiat Account Endpoints](#343-fiat-account-endpoints)
+      - [3.4.3.1. `POST /accounts/:fiatAccountSchema`](#3431-post-accountsfiataccountschema)
+        - [3.4.3.1.1. Parameters](#34311-parameters)
+          - [3.4.3.1.1.1. Path Parameters](#343111-path-parameters)
+          - [3.4.3.1.1.2. Request Body](#343112-request-body)
+        - [3.4.3.1.2. Responses](#34312-responses)
+          - [3.4.3.1.2.1. HTTP `200`](#343121-http-200)
+          - [3.4.3.1.2.2. HTTP `400`](#343122-http-400)
+          - [3.4.3.1.2.3. HTTP `409`](#343123-http-409)
+        - [3.4.3.1.3. Semantics](#34313-semantics)
+          - [3.4.3.1.3.1. Success](#343131-success)
+          - [3.4.3.1.3.1. Failure](#343131-failure)
+          - [3.4.3.1.3.1.1. `UnsupportedSchema`](#3431311-unsupportedschema)
+          - [3.4.3.1.3.1.2. `InvalidSchema`](#3431312-invalidschema)
+          - [3.4.3.1.3.1.3. `ResourceExists`](#3431313-resourceexists)
+      - [3.4.3.2. `GET /accounts`](#3432-get-accounts)
+        - [3.4.3.2.1. Parameters](#34321-parameters)
+        - [3.4.3.2.2. Responses](#34322-responses)
+          - [3.4.3.2.2.1. HTTP `200`](#343221-http-200)
+        - [3.4.3.2.3. Semantics](#34323-semantics)
+          - [3.4.3.2.3.1. Success](#343231-success)
+      - [3.4.3.3. `DELETE /accounts/:fiatAccountId`](#3433-delete-accountsfiataccountid)
+        - [3.4.3.3.1. Parameters](#34331-parameters)
+          - [3.4.3.3.1.1. Path Parameters](#343311-path-parameters)
+        - [3.4.3.3.2. Responses](#34332-responses)
+          - [3.4.3.3.2.1. HTTP `200`](#343321-http-200)
+          - [3.4.3.3.2.2 HTTP. `404`](#343322-http-404)
+        - [3.4.3.3.3. Semantics](#34333-semantics)
+          - [3.4.3.3.3.1. Success](#343331-success)
+          - [3.4.3.3.3.1. Failure](#343331-failure)
+          - [3.4.3.3.3.1.1. `ResourceNotFound`](#3433311-resourcenotfound)
+    - [3.4.4. Transfer Endpoints](#344-transfer-endpoints)
+      - [3.4.4.1. `POST /transfer/in`](#3441-post-transferin)
+        - [3.4.4.1.1. Parameters](#34411-parameters)
+          - [3.4.4.1.1.1. Headers](#344111-headers)
+          - [3.4.4.1.1.2. Request Body](#344112-request-body)
+        - [3.4.4.1.2. Responses](#34412-responses)
+          - [3.4.4.1.2.1. HTTP `200`](#344121-http-200)
+          - [3.4.4.1.2.2. HTTP `400`](#344122-http-400)
+          - [3.4.4.1.2.3. HTTP `404`](#344123-http-404)
+          - [3.4.4.1.2.4. Idempotency Key Errors](#344124-idempotency-key-errors)
+        - [3.4.4.1.3. Semantics](#34413-semantics)
+          - [3.4.4.1.3.1. Success](#344131-success)
+          - [3.4.4.1.3.2. Failure](#344132-failure)
+          - [3.4.4.1.3.2.1. `KycExpired`](#3441321-kycexpired)
+          - [3.4.4.1.3.2.2. `TransferNotAllowed`](#3441322-transfernotallowed)
+          - [3.4.4.1.3.2.3. `InvalidQuote`](#3441323-invalidquote)
+          - [3.4.4.1.3.2.4. `ResourceNotFound`](#3441324-resourcenotfound)
+          - [3.4.4.1.3.2.5. `InvalidFiatAccount`](#3441325-invalidfiataccount)
+      - [3.4.4.2. `POST /transfer/out`](#3442-post-transferout)
+        - [3.4.4.2.1. Parameters](#34421-parameters)
+          - [3.4.4.2.1.1. Headers](#344211-headers)
+          - [3.4.4.2.1.2. Request Body](#344212-request-body)
+        - [3.4.4.2.2. Responses](#34422-responses)
+          - [3.4.4.2.2.1. HTTP `200`](#344221-http-200)
+          - [3.4.4.2.2.2. HTTP `400`](#344222-http-400)
+          - [3.4.4.2.2.3. HTTP `404`](#344223-http-404)
+          - [3.4.4.2.2.4. Idempotency Key Errors](#344224-idempotency-key-errors)
+        - [3.4.4.2.3. Semantics](#34423-semantics)
+          - [3.4.4.2.3.1. Success](#344231-success)
+          - [3.4.4.2.3.2. Failure](#344232-failure)
+          - [3.4.4.2.3.2.1. `KycExpired`](#3442321-kycexpired)
+          - [3.4.4.2.3.2.2. `TransferNotAllowed`](#3442322-transfernotallowed)
+          - [3.4.4.2.3.2.3. `InvalidQuote`](#3442323-invalidquote)
+          - [3.4.4.2.3.2.4. `ResourceNotFound`](#3442324-resourcenotfound)
+          - [3.4.4.2.3.2.5. `InvalidFiatAccount`](#3442325-invalidfiataccount)
+      - [3.4.4.3. `GET /transfer/:transferId/status`](#3443-get-transfertransferidstatus)
+        - [3.4.4.3.1. Parameters](#34431-parameters)
+          - [3.4.4.3.1.1. Path Parameters](#344311-path-parameters)
+        - [3.4.4.3.2. Responses](#34432-responses)
+          - [3.4.4.3.2.1. HTTP `200`](#344321-http-200)
+          - [3.4.4.3.2.2. HTTP `404`](#344322-http-404)
+        - [3.4.4.3.3. Semantics](#34433-semantics)
+          - [3.4.4.3.3.1. Success](#344331-success)
+          - [3.4.4.3.3.2. Failure](#344332-failure)
+          - [3.4.4.3.3.2.1. `ResourceNotFound`](#3443321-resourcenotfound)
 - [4. Transfer State Machines](#4-transfer-state-machines)
-  * [4.1. Transfers In](#41-transfers-in)
-  * [4.2. Transfers Out](#42-transfers-out)
+  - [4.1. Transfers In](#41-transfers-in)
+  - [4.2. Transfers Out](#42-transfers-out)
 - [5. Webhooks](#5-webhooks)
-  * [5.1. Webhook Requests](#51-webhook-requests)
-    + [5.1.1. `WebhookKycStatusEventSchema`](#511--webhookkycstatuseventschema-)
-    + [5.1.2. `WebhookTransferInStatusEventSchema`](#512--webhooktransferinstatuseventschema-)
-    + [5.1.3. `WebhookTransferOutStatusEventSchema`](#513--webhooktransferoutstatuseventschema-)
+  - [5.1. Webhook Requests](#51-webhook-requests)
+    - [5.1.1. `WebhookKycStatusEventSchema`](#511-webhookkycstatuseventschema)
+    - [5.1.2. `WebhookTransferInStatusEventSchema`](#512-webhooktransferinstatuseventschema)
+    - [5.1.3. `WebhookTransferOutStatusEventSchema`](#513-webhooktransferoutstatuseventschema)
+  - [5.2. Webhook Request Signing](#52-webhook-request-signing)
 - [6. AML Considerations](#6-aml-considerations)
 - [7. Sandbox Environment](#7-sandbox-environment)
-  * [7.1. Celo Network](#71-celo-network)
-  * [7.2. Authentication](#72-authentication)
-  * [7.3. KYC](#73-kyc)
-  * [7.4. Fiat Accounts](#74-fiat-accounts)
-  * [7.5. Transfers](#75-transfers)
+  - [7.1. Celo Network](#71-celo-network)
+  - [7.2. Authentication](#72-authentication)
+  - [7.3. KYC](#73-kyc)
+  - [7.4. Fiat Accounts](#74-fiat-accounts)
+  - [7.5. Transfers](#75-transfers)
 - [8. Definitions](#8-definitions)
-  * [8.1. Static Definitions](#81-static-definitions)
-    + [8.1.1. `KycStatusEnum`](#811--kycstatusenum-)
-    + [8.1.2. `ErrorEnum`](#812--errorenum-)
-    + [8.1.3. `TransferTypeEnum`](#813--transfertypeenum-)
-    + [8.1.3. `WebhookEventTypeEnum`](#813--webhookeventtypeenum-)
-    + [8.1.4. `TransferStatusEnum`](#814--transferstatusenum-)
-  * [8.2. Dynamic Definitions](#82-dynamic-definitions)
-    + [8.2.1. `FiatTypeEnum`](#821--fiattypeenum-)
-    + [8.2.2. `CryptoTypeEnum`](#822--cryptotypeenum-)
-    + [8.2.3. `KycSchemaEnum`](#823--kycschemaenum-)
-    + [8.2.4. `FiatAccountTypeEnum`](#824--fiataccounttypeenum-)
-    + [8.2.5. `FeeTypeEnum`](#825--feetypeenum-)
-    + [8.2.6. `FeeFrequencyEnum`](#826--feetypeenum-)
-    + [8.2.7. `FiatAccountSchemaEnum`](#827--fiataccountschemaenum-)
-  * [8.3. Initial Entity Support](#83-initial-entity-support)
-    + [8.3.1. KYC Schemas](#831-kyc-schemas)
-	  - [8.3.1.1. `PersonalDataAndDocuments`](#8311--personaldataanddocuments-)
-	+ [8.3.2. Fiat Account Schemas](#832-fiat-account-schemas)
-	  - [8.3.2.1. `AccountNumber`](#8311--accountnumber-)
+  - [8.1. Static Definitions](#81-static-definitions)
+    - [8.1.1. `KycStatusEnum`](#811-kycstatusenum)
+    - [8.1.2. `ErrorEnum`](#812-errorenum)
+    - [8.1.3. `TransferTypeEnum`](#813-transfertypeenum)
+    - [8.1.3. `WebhookEventTypeEnum`](#813-webhookeventtypeenum)
+    - [8.1.4. `TransferStatusEnum`](#814-transferstatusenum)
+  - [8.2. Dynamic Definitions](#82-dynamic-definitions)
+    - [8.2.1. `FiatTypeEnum`](#821-fiattypeenum)
+    - [8.2.2. `CryptoTypeEnum`](#822-cryptotypeenum)
+    - [8.2.3. `KycSchemaEnum`](#823-kycschemaenum)
+    - [8.2.4. `FiatAccountTypeEnum`](#824-fiataccounttypeenum)
+    - [8.2.5. `FeeTypeEnum`](#825-feetypeenum)
+    - [8.2.6. `FeeFrequencyEnum`](#826-feefrequencyenum)
+    - [8.2.7. `FiatAccountSchemaEnum`](#827-fiataccountschemaenum)
+  - [8.3. Initial Entity Support](#83-initial-entity-support)
+    - [8.3.1. KYC Schemas](#831-kyc-schemas)
+      - [8.3.1.1. `PersonalDataAndDocuments`](#8311-personaldataanddocuments)
+    - [8.3.2. Fiat Account Schemas](#832-fiat-account-schemas)
+      - [8.3.2.1. `AccountNumber`](#8321-accountnumber)
       - [8.3.2.2. `MobileMoney`](#8322-mobilemoney)
-        * [8.3.2.2.1. `SupportedOperatorEnum`](#83221-supportedoperatorenum)
+        - [8.3.2.2.1. `SupportedOperatorEnum`](#83221-supportedoperatorenum)
       - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
 - [9. References](#9-references)
-  * [9.1. Normative References](#91-normative-references)
-    + [9.1.1. [RFC2119]](#911--rfc2119-)
-    + [9.1.2. [RFC8174]](#912--rfc8174-)
-    + [9.1.3. [RFC7519]](#913--rfc7519-)
-    + [9.1.4. [EIP-4361]](#914--eip-4361-)
-    + [9.1.5. [EIP-55]](#915--eip-55-)
-    + [9.1.6. [EIP-191]](#916--eip-191-)
-    + [9.1.7. [EIP-1271]](#917--eip-1271-)
-    + [9.1.8. [EIP-2098]](#918--eip-2098-)
-  * [9.2. Informative References](#92-informative-references)
-    + [9.2.1. Webhook Best Practices](#921-webhook-best-practices)
-    + [9.2.2. Idempotency Keys](#922-idempotency-keys)
-    + [9.2.3. ISO 3166-1](#923-iso-3166-1)
-    + [9.2.4. ISO 3166-2](#924-iso-3166-2)
-    + [9.2.5. ISO 8601](#925-iso-8601)
+  - [9.1. Normative References](#91-normative-references)
+    - [9.1.1. [RFC2119]](#911-rfc2119)
+    - [9.1.2. [RFC8174]](#912-rfc8174)
+    - [9.1.3. [RFC7519]](#913-rfc7519)
+    - [9.1.4. [EIP-4361]](#914-eip-4361)
+    - [9.1.5. [EIP-55]](#915-eip-55)
+    - [9.1.6. [EIP-191]](#916-eip-191)
+    - [9.1.7. [EIP-1271]](#917-eip-1271)
+    - [9.1.8. [EIP-2098]](#918-eip-2098)
+  - [9.2. Informative References](#92-informative-references)
+    - [9.2.1. Webhook Best Practices](#921-webhook-best-practices)
+    - [9.2.2. Idempotency Keys](#922-idempotency-keys)
+    - [9.2.3. ISO 3166-1](#923-iso-3166-1)
+    - [9.2.4. ISO 3166-2](#924-iso-3166-2)
+    - [9.2.5. ISO 8601](#925-iso-8601)
 
 # 1. Introduction
 
@@ -252,7 +262,7 @@ In the few cases where CICO providers do offer an API for clients to integrate a
 provider's API is unique, native CICO integrations within clients require completely bespoke integrations. Furthermore, since individual CICO providers may only
 offer limited geographical support for transfers, a client may have to integrate with many different providers in order to offer acceptably broad coverage to its
 users, which requires considerable implementation effort. In many cases, this level of implementation effort is not feasible, which can lead to clients which
-offer poor regional CICO availablity. This may lead to users seeking out a variety of different clients in order to access broad regional support. Not only is
+offer poor regional CICO availability. This may lead to users seeking out a variety of different clients in order to access broad regional support. Not only is
 this a poor user experience, but it is a detriment to both client developers and the network which those clients and CICO providers service. Clients unable to
 devote *considerable* engineering effort towards CICO provider integration lose out, and network TVL is hamstrung due to poor user experience.
 
@@ -329,7 +339,7 @@ transfer intent.
 ## 2.2. KYC
 
 For regulatory and compliance reasons, providers may require that users complete a KYC verification process before initiating a transfer.
-We expect that different providers will have varying KYC requirements depending on a client's geogrpahical region. The FiatConnect
+We expect that different providers will have varying KYC requirements depending on a client's geographical region. The FiatConnect
 specification must not make any assumptions about the particular *shape* of KYC data that providers require. Rather, the specification
 should be extensible so as to allow providers to communicate to the client what sort of KYC data is required. The FiatConnect specification
 allows for a list of standardized *KYC schemas* from which a provider can select those that it accepts. If a provider's KYC needs are
@@ -337,7 +347,7 @@ unmet by the specification's recognized schemas, the provider may request that t
 a close eye should be kept on the reusability of this schema by other potential providers.
 
 KYC validation is not expected to occur before *every* transfer. Rather, we expect that KYC validation with a provider will be an infrequent
-occurence. A user may have to submit KYC details for a particular region before initiating a transfer there, but subsequent transfers in that
+occurrence. A user may have to submit KYC details for a particular region before initiating a transfer there, but subsequent transfers in that
 region will likely reuse the previous KYC. One might expect that these details become "stale" after a time and will need to be resubmitted by the
 end user before initiating further transfers in their region. Ultimately, what a provider decides to do with KYC data once it is submitted is an implementation
 detail and not strictly enforced by the FiatConnect API specification, *except* for requirements on communicating KYC verification statuses to
@@ -360,17 +370,17 @@ We will discuss these two options in more depth later in this document.
 
 A user needs to be able to store details about a source or destination for fiat funds with the provider. The FiatConnect specification refers
 to these as *Fiat Accounts*, but these can commonly be thought of as, e.g., *bank accounts*, *credit cards*, etc. A fiat account refers to
-any user-owned accout that supports withdrawals and deposits of fiat-denominated funds. Similar to KYC details, different providers may support
+any user-owned account that supports withdrawals and deposits of fiat-denominated funds. Similar to KYC details, different providers may support
 different *types* of fiat accounts, and require different schemas depending on the user's geographical region. The FiatConnect specification
 introduces two distinct concepts to account for this; that of a *Fiat Account Type*, and a *Fiat Account Schema*. A *Fiat Account Type* refers to
-the high-level *type* of fiat account, e.g., bank account, credit card, debit card, etc. A *Fiat Accout Schema* refers to the precise shape that
+the high-level *type* of fiat account, e.g., bank account, credit card, debit card, etc. A *Fiat Account Schema* refers to the precise shape that
 account data should take when being communicated from client to server; each *schema* has an associated *type*. This is a subtle, yet important
 distinction. As mentioned in section 2.1, providers may use the *type* of a fiat account for determining whether a transfer is allowed. Different
 providers, however, may have different requirements on how account data is communicated, even for the same account *type*, depending on geographical
 region. Like with KYC schemas, the FiatConnect standard does not make assumptions about fiat account types and schemas; these are designed to be
 extensible by the community.
 
-A CICO provider must provide functionality for a client to store fiat accout details with them; these details must be sufficient in order for the
+A CICO provider must provide functionality for a client to store fiat account details with them; these details must be sufficient in order for the
 provider to initiate a deposit/withdrawal on the user's behalf. Providers must also allow clients to retrieve and delete stored accounts.
 Providers may not allow users to submit fiat account details before undergoing KYC verification for the current region, if KYC verification is required.
 Since providers may have restrictions on what fiat account types are allowed for transfers in a particular region, providers must also provide
@@ -378,7 +388,7 @@ a means for clients to know what these account types are.
 
 ## 2.4. Creating the Transfer
 
-Once a user has completed KYC and has an appropriate fiat account type on file with the provider, the client may intiate a transfer. When creating
+Once a user has completed KYC and has an appropriate fiat account type on file with the provider, the client may initiate a transfer. When creating
 a transfer, the client must be able to reference a fiat account on store with the provider to use as a source or destination for fiat funds. It is
 extremely important that transfer requests are idempotent; if a transfer request/server response is lost in transit, the client should be able to
 safely re-try the request without risk of initiating a duplicate transfer. As such, the FiatConnect specification has a strict requirement that
@@ -428,7 +438,7 @@ Rather than having bespoke clock synchronization solutions for each of these cas
 include a single `/clock` endpoint, which simply returns the server's current timestamp. Servers MUST implement this endpoint. With this information,
 the client can determine the offset between their local time and server time, and synchronize on clocks (to an acceptable approximation).
 The exact method by which clients determine the clock offset is an implementation detail left to the client. (For example, a relatively
-easy and inexpensive method that incoroporates round-trip delay is the approach taken by the
+easy and inexpensive method that incorporates round-trip delay is the approach taken by the
 [Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm).)
 
 ### 3.2.1. `GET /clock`
@@ -459,13 +469,13 @@ The semantics of this endpoint are extremely simple; the server MUST always retu
 
 On success, the server MUST return a 200 response. The `time` field in the response MUST be the server's current time, formatted as an ISO 8601 datetime string.
 
-## 3.2. Authentication & Authorization
+## 3.3. Authentication & Authorization
 
 The FiatConnect API specifies *two* types of authentication; the first authenticates the *user*, and is required for all requests;
 the second authenticates the *client*, and is optionally required, depending on whether or not it has been configured by the client
 with the provider.
 
-### 3.2.1. Sign-In With Ethereum
+### 3.3.1. Sign-In With Ethereum
 
 FiatConnect-compliant APIs are required to use the *Sign-In With Ethereum* standard, otherwise known as [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361)
 in order to identify users and confirm ownership of a Celo blockchain address. At a high level, the Sign-In With Ethereum standard
@@ -473,12 +483,12 @@ requires the client to use a user's private key to sign a plaintext message cont
 server to prove account ownership. FiatConnect APIs MUST use the SIWE standard to create authenticated sessions for the user, and return session cookies to
 the client. More detail on exactly how this should be structured is provided below.
 
-#### 3.2.1.1. SIWE Resources
+#### 3.3.1.1. SIWE Resources
 
 SIWE has rich tooling and support across multiple languages; see [here](https://docs.login.xyz/) for more details, example implementations, and libraries for many popular
 languages.
 
-#### 3.2.1.2. SIWE Sessions
+#### 3.3.1.2. SIWE Sessions
 
 At a high level, the client will craft a SIWE-compliant message and sign it with the user's private key. This message will contain various parameters relating
 to the origin URL which they're requesting to be authorized against, desired session length, etc. Once the client has crafted and signed the message, the client will send
@@ -486,10 +496,10 @@ the signed message to a FiatConnect API at a `POST /auth/login` endpoint. The se
 If everything checks out, the server will create a session for the user according to the details in the signed message. Once the server has created the session,
 it responds to the client with a `200`, and returns session cookies that the client can use in subsequent requests to privileged endpoints on behalf of the signed-in address.
 
-#### 3.2.1.3. SIWE Message Format
+#### 3.3.1.3. SIWE Message Format
 
 Within the FiatConnect specification, all references to SIWE-compliant messages refer to plaintext messages adhering exactly to the
-[SIWE message format](https://docs.login.xyz/general-information/siwe-overview/eip-4361#abnf-message-format), and additionally to the contraints described below.
+[SIWE message format](https://docs.login.xyz/general-information/siwe-overview/eip-4361#abnf-message-format), and additionally to the constraints described below.
 
 ```
 ${domain} wants you to sign in with your Ethereum account:
@@ -521,7 +531,7 @@ with the [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) standard, in such a
 implementation of the `isValidSignature` method as outlined in the EIP-1271 standard. If desired, CICO providers MAY support authenticating as a contract-owned account,
 but it is not required.
 
-#### 3.2.1.4. Session Cookies
+#### 3.3.1.4. Session Cookies
 
 Once the client generates a SIWE-compliant plaintext message, it signs it with the user's externally-owned account private key according to [EIP-191](https://eips.ethereum.org/EIPS/eip-191)
 `personal_sign` format. The client will then send the message and signature to the server at a `POST /auth/login` endpoint, described below. If the server
@@ -533,15 +543,15 @@ If a client sends a session cookie when calling the `POST /auth/login` endpoint 
 expired), the server MUST ignore the provided cookie. If the authentication request is valid, the server MUST set a new value on the cookie referencing the client's new, valid session,
 and return it to the client.
 
-#### 3.2.1.5. `POST /auth/login`
+#### 3.3.1.5. `POST /auth/login`
 
 The `POST /auth/login` endpoint is responsible for verifying signed messages sent by clients, creating and authenticating a user's session, and returning session cookies.
 Note that the Sign-In With Ethereum standard, and FiatConnect, support authorization for externally owned accounts (EOAs) and contract-owned accounts; The `POST /auth/login`
 endpoint MUST honor login requests for EOAs, and MAY support smart contract-owned accounts as well, as described below.
 
-##### 3.2.1.5.1. Parameters
+##### 3.3.1.5.1. Parameters
 
-###### 3.2.1.5.1.1. Request Body
+###### 3.3.1.5.1.1. Request Body
 
 The request body must contain the following fields:
 
@@ -556,13 +566,13 @@ This `signature` string should be a hex string, prefixed with `0x`. The hex data
 32 bytes (64 hex characters) represent `r`, the next 32 bytes (64 hex characters) represent `s`, and the final byte (2 hex characters) represent `v`. This is the "canonical"
 form of the signature as referenced in [EIP-2098](https://eips.ethereum.org/EIPS/eip-2098), rather than the "compact" form.
 
-##### 3.2.1.5.2. Responses
+##### 3.3.1.5.2. Responses
 
-###### 3.2.1.5.2.1. HTTP `200`
+###### 3.3.1.5.2.1. HTTP `200`
 
 On success, the server MUST return an HTTP `200`, update the state of the user's session to be authenticated, and return a session cookie.
 
-###### 3.2.1.5.2.2. HTTP `401`
+###### 3.3.1.5.2.2. HTTP `401`
 
 On failure, the server MUST return an HTTP `401`, with the following response body.
 
@@ -572,13 +582,13 @@ On failure, the server MUST return an HTTP `401`, with the following response bo
 }
 ```
 
-##### 3.2.1.5.3. Semantics
+##### 3.3.1.5.3. Semantics
 
 This endpoint performs validation on a signed SIWE-compliant message. In addition to checking that the signature itself is valid and corresponds to the included
 address, it also performs various safety and security checks on the contents of the message. If all checks pass, the server updates the client's session to be authenticated,
 and returns a `200`.
 
-###### 3.2.1.5.3.1. Success
+###### 3.3.1.5.3.1. Success
 
 On success, the server MUST respond with a `200` status code. The server MUST only respond successfully after performing the following checks:
 
@@ -612,46 +622,46 @@ Once a server authenticates a session using a particular nonce, the server MUST 
 state about nonces in order to check if a client is attempting to sign-in using a nonce that is temporarily forbidden. Careful consideration should be taken to make
 sure that nonce management works correctly when scaling server resources.
 
-###### 3.2.1.5.3.2. Failure
+###### 3.3.1.5.3.2. Failure
 
 On failure, the server MUST return an HTTP `401` error, along with an error code that details exactly why the request failed.
 
-###### 3.2.1.5.3.2.1. `InvalidSignature`
+###### 3.3.1.5.3.2.1. `InvalidSignature`
 
 If the signature is invalid or doesn't match the included `address` field, the server MUST return an `InvalidSignature` error. Note that the address used
 to sign the message may not actually match the address being authenticated in the case where the client is authenticating as a contract-owned account. In
 such cases, `InvalidSignature` MUST NOT be returned when the signature is valid, and the address used to sign the message is considered valid by the contract
 referenced in the `address` field.
 
-###### 3.2.1.5.3.2.2. `InvalidParameters`
+###### 3.3.1.5.3.2.2. `InvalidParameters`
 
 If the request body is missing, malformed, or fails to pass any of the required checks, the server MUST respond with an `InvalidParameters` error. If another
 error type is more descriptive of the actual issue, that error should be used instead.
 
-###### 3.2.1.5.3.2.3. `ContractLoginNotSupported`
+###### 3.3.1.5.3.2.3. `ContractLoginNotSupported`
 
 If the server determines that a client is trying to log in as a contract-owned account but the server does not support contract-owned account logins, the
 server MUST respond with a `ContractLoginNotSupported` error.
 
-###### 3.2.1.5.3.2.4. `NonceInUse`
+###### 3.3.1.5.3.2.4. `NonceInUse`
 
 If the nonce included in the message is already attached to a valid session, the server MUST respond with a `NonceInUse` error.
 
-###### 3.2.1.5.3.2.5. `IssuedTooEarly`
+###### 3.3.1.5.3.2.5. `IssuedTooEarly`
 
 If the `issued-at` field is after the server's current timestamp, the server MUST respond with an `IssuedTooEarly` error.
 
-###### 3.2.1.5.3.2.6. `ExpirationTooLong`
+###### 3.3.1.5.3.2.6. `ExpirationTooLong`
 
 If the `expiration-time` field is more than four hours into the future, the server MUST respond with an `ExpirationTooLong` error.
 
-#### 3.2.1.6. Using Sessions
+#### 3.3.1.6. Using Sessions
 
-Once a client has established a session with a server, they can use that session (by sending the session cookie to the server) to access priveleged endpoints
+Once a client has established a session with a server, they can use that session (by sending the session cookie to the server) to access privileged endpoints
 throughout the API. Certain endpoints impose different requirements on the in-use session. There are *two levels* of endpoints, with respect to their authentication
 requirements. These levels are explained below.
 
-##### 3.2.1.6.1. Non-Privileged Endpoints
+##### 3.3.1.6.1. Non-Privileged Endpoints
 
 The first group of endpoints are those that *do not* require the user to have a logged-in session. These are:
 
@@ -663,7 +673,7 @@ Since it may be a painful user experience to have a user log in to a provider ju
 clients may still access these endpoints when logged in, but a logged-in session (or any session at all) is not required to access these endpoints. `POST /auth/login`
 does not require a user to already be logged in, as described above.
 
-##### 3.2.1.6.2. Privileged Endpoints
+##### 3.3.1.6.2. Privileged Endpoints
 
 The second, and largest set of endpoints, are the ones that require a user to be logged in. These endpoints are the ones that deal with reading and writing user-specific data.
 
@@ -680,9 +690,9 @@ The second, and largest set of endpoints, are the ones that require a user to be
 For these endpoints, a user needs to be logged in with an authenticated session. This session MUST have an expiration time of no greater than four hours (the maximum allowed by FiatConnect).
 
 If a client attempts to access any of these endpoints without a session, the server MUST return a `401` status code with an `Unauthorized` error.
-If a client tries to acces any of these endpoints with an expired session, the server MUST respond with an HTTP `401` status code with a `SessionExpired` error.
+If a client tries to access any of these endpoints with an expired session, the server MUST respond with an HTTP `401` status code with a `SessionExpired` error.
 
-### 3.2.2. Client API Key
+### 3.3.2. Client API Key
 
 In addition to the SIWE-based auth used to authenticate users and create sessions, the FiatConnect specification also supports a more traditional authentication standard, used
 to identify specific clients with requests. Recall the webhook-based status monitoring mentioned earlier in this document. In order to support status
@@ -699,15 +709,15 @@ that clients include an API key in each request, it MUST respond to the client w
 Regardless of whether or not a server requires an API key on every request, it MUST return an HTTP `401` error if an API key is
 provided but does not correspond to any registered client; likewise it MUST return an HTTP `400` error if the API key is poorly formed.
 
-API token authentication is *completely separate* from SIWE-based auth. The priveleged endpoints listed earlier *always* require a user to have a valid session via SIWE
+API token authentication is *completely separate* from SIWE-based auth. The privileged endpoints listed earlier *always* require a user to have a valid session via SIWE
 authentication. API token authentication MAY be required on all endpoints, or optional. Regardless of whether or not the client provides an API token, if the client attempts
-to access a priveleged endpoint without a valid session, the server MUST reject their request.
+to access a privileged endpoint without a valid session, the server MUST reject their request.
 
-### 3.2.3. HTTPS
+### 3.3.3. HTTPS
 
 All servers implementing a FiatConnect-compliant API MUST use HTTPS, and MUST NOT support unsecured HTTP requests.
 
-## 3.3. Formal Specification
+## 3.4. Formal Specification
 
 This section details the precise syntax and semantics of all the endpoints required by the FiatConnect specification, besides those devoted to authentication.
 Endpoints are logically grouped, and roughly presented in order of dependency. The logical groupings are as follows:
@@ -719,7 +729,7 @@ Endpoints are logically grouped, and roughly presented in order of dependency. T
 
 This section references a number of definitions/enums; for an exhaustive list of these, please see later in the document.
 
-### 3.3.1. Quote Endpoints
+### 3.4.1. Quote Endpoints
 
 We assume that the lifecycle of a transfer begins with an end-user requesting a quote. We predict that the typical transfer experience will involve
 a user providing their desired transfer parameters (crypto type, fiat type, amount), and the client then proceeding to show
@@ -734,15 +744,15 @@ and a non-200 as verification that it is not.
 
 Some non-200s may be recovered from by modifying the transfer parameters; others may not be, e.g., for those caused by geos where transfers are completely unsupported.
 
-#### 3.3.1.1. `GET /quote/in`
+#### 3.4.1.1. `GET /quote/in`
 
 The `GET /quote/in` endpoint is used to retrieve quotes used for transfers in to crypto from fiat currencies. In addition to returning quote information, it also
 returns the permissable types of KYC that a user must have on file to initiate the corresponding transfer, as well as the fiat account types that are allowed to be
 used for the transfer.
 
-##### 3.3.1.1.1. Parameters
+##### 3.4.1.1.1. Parameters
 
-###### 3.3.1.1.1.1. Query Parameters
+###### 3.4.1.1.1.1. Query Parameters
 
 * `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The desired fiat type to use for a transfer in quote; selected from a predefined list of fiat types supported by FiatConnect.
@@ -760,9 +770,9 @@ used for the transfer.
   - An [EIP-55](https://eips.ethereum.org/EIPS/eip-55) formatted address, representing the Celo address of the user to get the quote for. For contract-owned accounts, this should be
 	the address of the contract itself.
 
-##### 3.3.1.1.2. Responses
+##### 3.4.1.1.2. Responses
 
-###### 3.3.1.1.2.1. HTTP `200`
+###### 3.4.1.1.2.1. HTTP `200`
 
 On success, the server MUST return an HTTP `200`, with the following response body:
 
@@ -803,7 +813,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 }
 ```
 
-##### 3.3.1.1.2.2. HTTP `400`
+##### 3.4.1.1.2.2. HTTP `400`
 
 On failure, the server MUST return an HTTP `400`, with a response body as follows. Refer to the `ErrorEnum` definition for all possible error values.
 
@@ -817,12 +827,12 @@ On failure, the server MUST return an HTTP `400`, with a response body as follow
 }
 ```
 
-##### 3.3.1.1.3. Semantics
+##### 3.4.1.1.3. Semantics
 
 All transfer in quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
 If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support a transfer in for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
 
-###### 3.3.1.1.3.1. Success
+###### 3.4.1.1.3.1. Success
 
 A successful response indicates that the provider is able to perform a transfer for the requested quote in the specified country/region.
 If `fiatAmount` is provided, the `quote.cryptoAmount` field returned in the success body MUST correspond to the amount of crypto the user should expect to
@@ -847,7 +857,7 @@ KYC schema to values that are allowed for that key. For example, if a server wan
 values for those fields. On the client-side, this could be used to render a list of options, for example.
 
 Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, what schemas are allowed to communicate
-those account details, and what fee, if any, is associated with the requested quote when using a fiat accout of a particular type.
+those account details, and what fee, if any, is associated with the requested quote when using a fiat account of a particular type.
 
 On success, the server MUST return a mapping from fiat account types to lists of schemas that the client may use to add a new account of that
 type. This is expected to vary by geographical region as well as quote details provided by the query parameters.
@@ -864,56 +874,56 @@ if the provider requires a fee for the transfer. For transfers in, this fee is a
 `feeType` represents the *type* of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
 or on each transfer.
 
-###### 3.3.1.1.3.2. Failure
+###### 3.4.1.1.3.2. Failure
 
 On failure, this endpoint MUST return an HTTP `400` error, along with an error code that details exactly why the quote failed.
 
-###### 3.3.1.1.3.2.1. `GeoNotSupported`
+###### 3.4.1.1.3.2.1. `GeoNotSupported`
 
 If a quote is not supported due to the provider not supporting the user's region at all, the server MUST return a `GeoNotSupported` error.
 
-###### 3.3.1.1.3.2.2. `CryptoAmountTooLow`
+###### 3.4.1.1.3.2.2. `CryptoAmountTooLow`
 
 If the user provides `cryptoAmount` in the query parameter, and the value is too low, the server MUST return a `CryptoAmountTooLow` error. The
 server MAY also provide a `minimumCryptoAmount` value with the response body.
 
-###### 3.3.1.1.3.2.3. `CryptoAmountTooHigh`
+###### 3.4.1.1.3.2.3. `CryptoAmountTooHigh`
 
 If the user provides `cryptoAmount` in the query parameter, and the value is too high, the server MUST return a `CryptoAmountTooHigh` error. The
 server MAY also provide a `maximumCryptoAmount` value with the response body.
 
-###### 3.3.1.1.3.2.4. `FiatAmountTooLow`
+###### 3.4.1.1.3.2.4. `FiatAmountTooLow`
 
 If the user provides `fiatAmount` in the query parameter, and the value is too low, the server MUST return a `FiatAmountTooLow` error. The
 server MAY also provide a `minimumFiatAmount` value with the response body.
 
-###### 3.3.1.1.3.2.5. `FiatAmountTooHigh`
+###### 3.4.1.1.3.2.5. `FiatAmountTooHigh`
 
 If the user provides `fiatAmount` in the query parameter, and the value is too high, the server MUST return a `FiatAmountTooHigh` error. The
 server MAY also provide a `maximumFiatAmount` value with the response body.
 
-###### 3.3.1.1.3.2.6. `CryptoNotSupported`
+###### 3.4.1.1.3.2.6. `CryptoNotSupported`
 
 If the provided `cryptoType` is unsupported in the user's current region, but the server supports other transfers in their region,
 the server MUST return a `CryptoNotSupported` error.
 
-###### 3.3.1.1.3.2.7. `FiatNotSupported`
+###### 3.4.1.1.3.2.7. `FiatNotSupported`
 
 If the provided `fiatType` is unsupported in the user's current region, but the server supports other transfers in their region,
 the server MUST return a `FiatNotSupported` error.
 
-###### 3.3.1.1.3.2.8. `InvalidParameters`
+###### 3.4.1.1.3.2.8. `InvalidParameters`
 
 If the request is missing any required parameters, or if the parameters are poorly formed, the server MUST respond
 with an `InvalidParameters` error.
 
-#### 3.3.1.2. `GET /quote/out`
+#### 3.4.1.2. `GET /quote/out`
 
 The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out from crypto to fiat currencies.
 
-##### 3.3.1.2.1. Parameters
+##### 3.4.1.2.1. Parameters
 
-###### 3.3.1.2.1.1. Query Parameters
+###### 3.4.1.2.1.1. Query Parameters
 
 * `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The desired fiat type to use for a transfer out quote; selected from a predefined list of fiat types supported by FiatConnect.
@@ -931,9 +941,9 @@ The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out 
   - An [EIP-55](https://eips.ethereum.org/EIPS/eip-55) formatted address, representing the Celo address of the user to get the quote for. For contract-owned accounts, this should be
 	the address of the contract itself.
 
-##### 3.3.1.2.2. Responses
+##### 3.4.1.2.2. Responses
 
-###### 3.3.1.2.2.1. HTTP `200`
+###### 3.4.1.2.2.1. HTTP `200`
 
 On success, the server MUST return an HTTP `200`, with the following response body:
 
@@ -974,7 +984,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 }
 ```
 
-###### 3.3.1.2.2.2. HTTP `400`
+###### 3.4.1.2.2.2. HTTP `400`
 
 On failure, the MUST return an HTTP `400`, with a response body as follows. Refer to the `ErrorEnum` definition for all possible error values.
 
@@ -989,18 +999,18 @@ On failure, the MUST return an HTTP `400`, with a response body as follows. Refe
 ```
 
 
-##### 3.3.1.2.3. Semantics
+##### 3.4.1.2.3. Semantics
 
 All transfer out quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
 If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support
 a transfer out for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
 
-###### 3.3.1.2.3.1. Success
+###### 3.4.1.2.3.1. Success
 
 A successful response indicates that the provider is able to perform a transfer for the requested quote for the specified country/region.
 If `fiatAmount` is provided, the `quote.cryptoAmount` field returned in the success body MUST correspond to the amount of crypto the user must provide
-in order to recieve `fiatAmount` worth of the fiat currency. If `cryptoAmount` is provided, the `quote.fiatAmount` field MUST correspond to the amount
-of fiat currency the user should expect to recieve in exchange for `cryptoAmount` worth of the cryptocurrency.
+in order to receive `fiatAmount` worth of the fiat currency. If `cryptoAmount` is provided, the `quote.fiatAmount` field MUST correspond to the amount
+of fiat currency the user should expect to receive in exchange for `cryptoAmount` worth of the cryptocurrency.
 
 The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
@@ -1020,7 +1030,7 @@ KYC schema to values that are allowed for that key. For example, if a server wan
 values for those fields. On the client-side, this could be used to render a list of options, for example.
 
 Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, what schemas are allowed to communicate
-those account details, and what fee, if any, is associated with the requested quote when using a fiat accout of a particular type.
+those account details, and what fee, if any, is associated with the requested quote when using a fiat account of a particular type.
 
 On success, the server MUST return a mapping from fiat account types to lists of schemas that the client may use to add a new account of that
 type. This is expected to vary by geographical region as well as quote details provided by the query parameters.
@@ -1037,50 +1047,50 @@ if the provider requires a fee for the transfer. For transfers out, this fee is 
 `feeType` represents the *type* of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
 or on each transfer.
 
-###### 3.3.1.2.3.2. Failure
+###### 3.4.1.2.3.2. Failure
 
 On failure, this endpoint MUST return an HTTP `400` error, along with an error code that details exactly why the quote failed.
 
-###### 3.3.1.2.3.2.1. `GeoNotSupported`
+###### 3.4.1.2.3.2.1. `GeoNotSupported`
 
 If a quote is not supported due to the provider not supporting the user's region at all, the server MUST return a `GeoNotSupported` error.
 
-###### 3.3.1.2.3.2.2. `CryptoAmountTooLow`
+###### 3.4.1.2.3.2.2. `CryptoAmountTooLow`
 
 If the user provides `cryptoAmount` in the query parameter, and the value is too low, the server MUST return a `CryptoAmountTooLow` error. The
 server MAY also provide a `minimumCryptoAmount` value with the response body.
 
-###### 3.3.1.2.3.2.3. `CryptoAmountTooHigh`
+###### 3.4.1.2.3.2.3. `CryptoAmountTooHigh`
 
 If the user provides `cryptoAmount` in the query parameter, and the value is too high, the server MUST return a `CryptoAmountTooHigh` error. The
 server MAY also provide a `maximumCryptoAmount` value with the response body.
 
-###### 3.3.1.2.3.2.4. `FiatAmountTooLow`
+###### 3.4.1.2.3.2.4. `FiatAmountTooLow`
 
 If the user provides `fiatAmount` in the query parameter, and the value is too low, the server MUST return a `FiatAmountTooLow` error. The
 server MAY also provide a `minimumFiatAmount` value with the response body.
 
-###### 3.3.1.2.3.2.5. `FiatAmountTooHigh`
+###### 3.4.1.2.3.2.5. `FiatAmountTooHigh`
 
 If the user provides `fiatAmount` in the query parameter, and the value is too high, the server MUST return a `FiatAmountTooHigh` error. The
 server MAY also provide a `maximumFiatAmount` value with the response body.
 
-###### 3.3.1.2.3.2.6. `CryptoNotSupported`
+###### 3.4.1.2.3.2.6. `CryptoNotSupported`
 
 If the provided `cryptoType` is unsupported in the user's current region, but the server supports other transfers in their region,
 the server MUST return a `CryptoNotSupported` error.
 
-###### 3.3.1.2.3.2.7. `FiatNotSupported`
+###### 3.4.1.2.3.2.7. `FiatNotSupported`
 
 If the provided `fiatType` is unsupported in the user's current region, but the server supports other transfers in their region,
 the server MUST return a `FiatNotSupported` error.
 
-###### 3.3.1.2.3.2.8. `InvalidParameters`
+###### 3.4.1.2.3.2.8. `InvalidParameters`
 
 If the request is missing any required parameters, or if the parameters are poorly formed, the server MUST respond
 with an `InvalidParameters` error.
 
-### 3.3.2. KYC Endpoints
+### 3.4.2. KYC Endpoints
 
 A CICO provider may wish to require different KYC types for a single user across separate transfers for various reasons. For example, if
 a user initiates a transfer from the US, the provider may request a particular type of KYC for the transfer. Later on, if the user initiates
@@ -1093,24 +1103,24 @@ the FiatConnect specification must support monitoring the status of an ongoing v
 different types of KYC validations per-user, we require that they only maintain *one* record of each type for each user at a time. Otherwise, server-side
 implementation would become significantly more difficult, likely requiring an idempotency key to initiate new KYC verifications.
 
-#### 3.3.2.1. `POST /kyc/:kycSchema`
+#### 3.4.2.1. `POST /kyc/:kycSchema`
 
 The `POST /kyc/:kycSchema` endpoint allows a client to provide KYC data of a particular schema to the server for verification.
 
-##### 3.3.2.1.1. Parameters
+##### 3.4.2.1.1. Parameters
 
-###### 3.3.2.1.1.1. Path Parameters
+###### 3.4.2.1.1.1. Path Parameters
 
 * `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
   - The KYC schema being used in the request body
 
-###### 3.3.2.1.1.2. Request Body
+###### 3.4.2.1.1.2. Request Body
 
 The request body schema for this endpoint must match the KYC schema selected in the path parameter.
 
-##### 3.3.2.1.2. Responses
+##### 3.4.2.1.2. Responses
 
-###### 3.3.2.1.2.1. HTTP `200`
+###### 3.4.2.1.2.1. HTTP `200`
 
 On success, the server MUST return an HTTP `200` and respond with the following response schema:
 
@@ -1120,7 +1130,7 @@ On success, the server MUST return an HTTP `200` and respond with the following 
 }
 ```
 
-###### 3.3.2.1.2.2. HTTP `400`
+###### 3.4.2.1.2.2. HTTP `400`
 
 On failure, the server MUST respond with the following response schema:
 
@@ -1130,7 +1140,7 @@ On failure, the server MUST respond with the following response schema:
 }
 ```
 
-###### 3.3.2.1.2.3. HTTP `409`
+###### 3.4.2.1.2.3. HTTP `409`
 
 On conflict, the server MUST respond with the following response schema:
 
@@ -1140,51 +1150,51 @@ On conflict, the server MUST respond with the following response schema:
 }
 ```
 
-##### 3.3.2.1.3. Semantics
+##### 3.4.2.1.3. Semantics
 
 This endpoint should accept data that the server will use to verify a user's KYC status. Upon receipt of valid data, the server SHOULD initiate a verification of the
 provided data, likely using a third party KYC service. If the user's region as reported by the independent KYC verification process does not match their "provided" geo
 (i.e., the one calculated from the caller's IP), the KYC verification SHOULD likely eventually be denied. Once a user submits KYC data, the server MUST maintain the status
 of the verification. If a client has enabled webhooks for the API, the server MUST publish these statuses to the webhook endpoint asynchronously.
 
-###### 3.3.2.1.3.1. Success
+###### 3.4.2.1.3.1. Success
 
 If the selected schema (via the path parameter) is valid in the user's geo, and the request body exactly matches the selected schema, and the server does not already
 have a KYC verification (either pending or complete) on file for the user, the server MUST return an HTTP `200`. The response body MUST contain the current state of the
 KYC verification in the `kycStatus` field.
 
-###### 3.3.2.1.3.2. Failure
+###### 3.4.2.1.3.2. Failure
 
 The server may fail this request for two primary reasons; if the query is poorly formed, or if the server has already received KYC data for the user in the selected schema.
 
-###### 3.3.2.1.3.2.1. `UnsupportedSchema`
+###### 3.4.2.1.3.2.1. `UnsupportedSchema`
 
 If the KYC schema selected in the path parameter is not supported for the user's geo, the server MUST return an `UnsupportedSchema` error.
 
-###### 3.3.2.1.3.2.2. `InvalidSchema`
+###### 3.4.2.1.3.2.2. `InvalidSchema`
 
 If the KYC schema selected in the path parameter is supported for the user's geo, but the request body does not match the selected schema, the server
 MUST return an `InvalidSchema` error.
 
-###### 3.3.2.1.3.2.3. `ResourceExists`
+###### 3.4.2.1.3.2.3. `ResourceExists`
 
 If the server already has KYC data on file for the user in the selected schema, the server MUST return a `ResourceExists` error.
 
-#### 3.3.2.2. `GET /kyc/:kycSchema/status`
+#### 3.4.2.2. `GET /kyc/:kycSchema/status`
 
 The `GET /kyc/:kycSchema/status` endpoint is used to query the status of an ongoing, completed, or expired KYC verification for a particular KYC schema type.
 Note that these statuses MUST also be made available via webhook, if configured by the client.
 
-##### 3.3.2.2.1. Parameters
+##### 3.4.2.2.1. Parameters
 
-###### 3.3.2.2.1.1. Path Parameters
+###### 3.4.2.2.1.1. Path Parameters
 
 * `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
   - The KYC schema used for the verification whose status is being requested
 
-##### 3.3.2.2.2. Responses
+##### 3.4.2.2.2. Responses
 
-###### 3.3.2.2.2.1. HTTP `200`
+###### 3.4.2.2.2.1. HTTP `200`
 
 On success, the server MUST return an HTTP `200` status code, with the following response body:
 
@@ -1194,7 +1204,7 @@ On success, the server MUST return an HTTP `200` status code, with the following
 }
 ```
 
-###### 3.3.2.2.2.2. HTTP `404`
+###### 3.4.2.2.2.2. HTTP `404`
 
 If the resource does not exist, the server MUST return an HTTP `404` status code, with the following response body:
 
@@ -1204,40 +1214,40 @@ If the resource does not exist, the server MUST return an HTTP `404` status code
 }
 ```
 
-##### 3.3.2.2.3. Semantics
+##### 3.4.2.2.3. Semantics
 
 If KYC data has been submitted for a particular schema type, this endpoint MUST return the current status of the KYC verification for that schema.
 
-###### 3.3.2.2.3.1. Success
+###### 3.4.2.2.3.1. Success
 
 On success, the server MUST return the status of the KYC verification.
 
-###### 3.3.2.2.3.2. Failure
+###### 3.4.2.2.3.2. Failure
 
 This endpoint may fail if there is no record of KYC data being submitted for the requested schema.
 
-###### 3.3.2.2.3.2.1. `ResourceNotFound`
+###### 3.4.2.2.3.2.1. `ResourceNotFound`
 
 If the server has no data on file for a KYC verification of the given schema, the server MUST return a `ResourceNotFound` error.
 
-#### 3.3.2.3. `DELETE /kyc/:kycSchema`
+#### 3.4.2.3. `DELETE /kyc/:kycSchema`
 
 The `DELETE /kyc/:kycSchema` endpoint is used to delete a KYC record for a particular KYC schema.
 
-##### 3.3.2.3.1. Parameters
+##### 3.4.2.3.1. Parameters
 
-###### 3.3.2.3.1.1. Path Parameters
+###### 3.4.2.3.1.1. Path Parameters
 
 * `kycSchema`: {`KycSchemaEnum`} [REQUIRED]
   - The KYC schema to delete from the server
 
-##### 3.3.2.3.2. Responses
+##### 3.4.2.3.2. Responses
 
-###### 3.3.2.3.2.1. HTTP `200`
+###### 3.4.2.3.2.1. HTTP `200`
 
 On success, the server MUST return an HTTP `200` status code, with an empty response body.
 
-###### 3.3.2.3.2.2. HTTP `404`
+###### 3.4.2.3.2.2. HTTP `404`
 
 If the resource does not exist, the server MUST return an HTTP `404` status code, with the following response body:
 
@@ -1247,24 +1257,24 @@ If the resource does not exist, the server MUST return an HTTP `404` status code
 }
 ```
 
-##### 3.3.2.3.3. Semantics
+##### 3.4.2.3.3. Semantics
 
 If KYC data has been submitted for a particular schema type, this endpoint MUST delete all record of the data from the server. If a user wishes to
 engage in a transfer that requires this KYC later, the user must resubmit the appropriate KYC information.
 
-###### 3.3.2.3.3.1. Success
+###### 3.4.2.3.3.1. Success
 
-On succesful deletion, the server MUST return an HTTP `200` status code.
+On successful deletion, the server MUST return an HTTP `200` status code.
 
-###### 3.3.2.3.3.2. Failure
+###### 3.4.2.3.3.2. Failure
 
 This endpoint may fail if there is no record of KYC data for the requested schema.
 
-###### 3.3.2.3.3.2.1. `ResourceNotFound`
+###### 3.4.2.3.3.2.1. `ResourceNotFound`
 
 If the server has no data on file for a KYC verification of the given schema, the server MUST return a `ResourceNotFound` error.
 
-### 3.3.3. Fiat Account Endpoints
+### 3.4.3. Fiat Account Endpoints
 
 FiatConnect's Fiat Account model consists of two primary concepts; the notion of an "account schema", and an "account type". Account schemas refer to the precise
 *representation* of an account; i.e., the exact structure and fields required when communicating Fiat Account objects from client to server. All account schemas share
@@ -1281,24 +1291,24 @@ In order for clients to uniquely select accounts on file when communicating with
 with unique identifiers (i.e. a UUID) that the client can use to select an account. These identifiers MAY be globally unique across all users, but need not be. A server
 MUST NOT allow a user to interact with fiat account identifiers (i.e., selecting one for a transfer) for accounts not owned by that user.
 
-#### 3.3.3.1. `POST /accounts/:fiatAccountSchema`
+#### 3.4.3.1. `POST /accounts/:fiatAccountSchema`
 
 The `POST /accounts/:fiatAccountSchema` endpoint is used to store a new fiat account on file with the server.
 
-##### 3.3.3.1.1. Parameters
+##### 3.4.3.1.1. Parameters
 
-###### 3.3.3.1.1.1. Path Parameters
+###### 3.4.3.1.1.1. Path Parameters
 
 * `fiatAccountSchema`: {`FiatAccountSchemaEnum`} [REQUIRED]
   - The fiat account schema to use to add the fiat account
 
-###### 3.3.3.1.1.2. Request Body
+###### 3.4.3.1.1.2. Request Body
 
-The request body schema for this endpoint must match the fiat accout schema  selected in the path parameter.
+The request body schema for this endpoint must match the fiat account schema  selected in the path parameter.
 
-##### 3.3.3.1.2. Responses
+##### 3.4.3.1.2. Responses
 
-###### 3.3.3.1.2.1. HTTP `200`
+###### 3.4.3.1.2.1. HTTP `200`
 
 On success, the server MUST respond with an HTTP `200` status code, along with a response body with the following schema:
 
@@ -1311,7 +1321,7 @@ On success, the server MUST respond with an HTTP `200` status code, along with a
 }
 ```
 
-###### 3.3.3.1.2.2. HTTP `400`
+###### 3.4.3.1.2.2. HTTP `400`
 
 On failure, the server MUST return an HTTP `400` error code, along with a response body with the following schema:
 
@@ -1321,7 +1331,7 @@ On failure, the server MUST return an HTTP `400` error code, along with a respon
 }
 ```
 
-###### 3.3.3.1.2.3. HTTP `409`
+###### 3.4.3.1.2.3. HTTP `409`
 
 On conflict, the server MUST return an HTTP `409` error code, along with a response body with the following schema:
 
@@ -1331,46 +1341,46 @@ On conflict, the server MUST return an HTTP `409` error code, along with a respo
 }
 ```
 
-##### 3.3.3.1.3. Semantics
+##### 3.4.3.1.3. Semantics
 
-This endpoint is used to add a new fiat accout for a user.
+This endpoint is used to add a new fiat account for a user.
 
-###### 3.3.3.1.3.1. Success
+###### 3.4.3.1.3.1. Success
 
 On success, the server MUST return metadata associated with the account. The server MUST also generate a unique `fiatAccountId` that the
 client can later use to reference the account on file.
 
-###### 3.3.3.1.3.1. Failure
+###### 3.4.3.1.3.1. Failure
 
 This endpoint may fail for two main reasons; if there's an issue with the selected schema/payload, or if the account already exists for
 the user. The server MAY implement checks to ensure that multiple accounts whose "unique fields" are the same cannot be added for a user.
 The semantics of these checks may be different for each fiat account schema/fiat account type, and are up to the server to implement. For
 example, a user may not be allowed to add two debit cards with the same numbers.
 
-###### 3.3.3.1.3.1.1. `UnsupportedSchema`
+###### 3.4.3.1.3.1.1. `UnsupportedSchema`
 
 If the schema selected in the path parameter is not supported by the server, the server MUST return an `UnsupportedSchema` error.
 
-###### 3.3.3.1.3.1.2. `InvalidSchema`
+###### 3.4.3.1.3.1.2. `InvalidSchema`
 
 If the schema of the request body does not match the schema selected by the path parameter, the server MUST return an `InvalidSchema` error.
 
-###### 3.3.3.1.3.1.3. `ResourceExists`
+###### 3.4.3.1.3.1.3. `ResourceExists`
 
-If the server determines that the user is trying to add an accout that is fundamentally identical to one that the user has already added, the
+If the server determines that the user is trying to add an account that is fundamentally identical to one that the user has already added, the
 server MUST return a `ResourceExists` error.
 
-#### 3.3.3.2. `GET /accounts`
+#### 3.4.3.2. `GET /accounts`
 
 The `GET /accounts` endpoint is used to return a list of all fiat accounts on file for a user.
 
-##### 3.3.3.2.1. Parameters
+##### 3.4.3.2.1. Parameters
 
 This endpoint requires no parameters.
 
-##### 3.3.3.2.2. Responses
+##### 3.4.3.2.2. Responses
 
-###### 3.3.3.2.2.1. HTTP `200`
+###### 3.4.3.2.2.1. HTTP `200`
 
 On success, the server MUST respond with an HTTP `200` status code, along with a response body with the following schema. Informally,
 this is a mapping from fiat account types that the user has on file to metadata about those accounts.
@@ -1386,34 +1396,34 @@ this is a mapping from fiat account types that the user has on file to metadata 
 }
 ```
 
-##### 3.3.3.2.3. Semantics
+##### 3.4.3.2.3. Semantics
 
 This endpoint is simply used to return a list of metadata about all of the fiat accounts that a user has on file with a provider.
 
-###### 3.3.3.2.3.1. Success
+###### 3.4.3.2.3.1. Success
 
 On success, this endpoint MUST return a mapping from fiat account types to metadata about fiat accounts that the user has on file.
 
-#### 3.3.3.3. `DELETE /accounts/:fiatAccountId`
+#### 3.4.3.3. `DELETE /accounts/:fiatAccountId`
 
 The `DELETE /accounts/:fiatAccountId` endpoint is used to delete a user's fiat account from the server.
 
-##### 3.3.3.3.1. Parameters
+##### 3.4.3.3.1. Parameters
 
-###### 3.3.3.3.1.1. Path Parameters
+###### 3.4.3.3.1.1. Path Parameters
 
 * `fiatAccountId`: {`string`} [REQUIRED]
   - The internal fiat account ID to delete
 
-##### 3.3.3.3.2. Responses
+##### 3.4.3.3.2. Responses
 
-###### 3.3.3.3.2.1. HTTP `200`
+###### 3.4.3.3.2.1. HTTP `200`
 
 On success, the server MUST return an HTTP `200` status code, with an empty response body.
 
-###### 3.3.3.3.2.2 HTTP. `404`
+###### 3.4.3.3.2.2 HTTP. `404`
 
-If the resource does not exist, the server MUST return an HTTP `404` error code, along with the following repsonse body.
+If the resource does not exist, the server MUST return an HTTP `404` error code, along with the following response body.
 
 ```
 {
@@ -1421,25 +1431,25 @@ If the resource does not exist, the server MUST return an HTTP `404` error code,
 }
 ```
 
-##### 3.3.3.3.3. Semantics
+##### 3.4.3.3.3. Semantics
 
 This endpoint allows a user to delete a fiat account record from the server. The user MUST only be able to delete accounts which they have
 added themselves. In other words, if a server receives a `fiatAccountId` that corresponds to an account added by a user other than the one
 calling the endpoint, the server MUST return an HTTP `404` error code.
 
-###### 3.3.3.3.3.1. Success
+###### 3.4.3.3.3.1. Success
 
 On successful deletion of the fiat account record, the server MUST return an HTTP `200` status code.
 
-###### 3.3.3.3.3.1. Failure
+###### 3.4.3.3.3.1. Failure
 
 The server may fail if there is no fiat account on file with the provided `fiatAccountId` for the current user.
 
-###### 3.3.3.3.3.1.1. `ResourceNotFound`
+###### 3.4.3.3.3.1.1. `ResourceNotFound`
 
 If no fiat account is on file with the provided `fiatAccountId` for the current user, the server MUST return a `ResourceNotFound` error.
 
-### 3.3.4. Transfer Endpoints
+### 3.4.4. Transfer Endpoints
 
 Once a user has created a fiat account with a CICO provider, they may begin a transfer. CICO providers MUST reject a transfer request if a fiat account identifier is
 provided that refers to an account type that is not allowed in the user's geo. A CICO provider MUST allow concurrent transfers for a single user. (This allows
@@ -1450,18 +1460,18 @@ is lost in transit and the client never receives a response. An idempotency key 
 the risk of creating a duplicate transaction. Idempotency keys MUST be implemented as request headers according to IETF's NWG's
 [draft proposal](https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header-00).
 
-#### 3.3.4.1. `POST /transfer/in`
+#### 3.4.4.1. `POST /transfer/in`
 
 The `POST /transfer/in` endpoint is used to initiate a new transfer in from fiat to crypto.
 
-##### 3.3.4.1.1. Parameters
+##### 3.4.4.1.1. Parameters
 
-###### 3.3.4.1.1.1. Headers
+###### 3.4.4.1.1.1. Headers
 
 * `Idempotency-Key: <idempotency-key>`
   - An idempotency key, generated by the client
 
-###### 3.3.4.1.1.2. Request Body
+###### 3.4.4.1.1.2. Request Body
 
 The request body must contain the following fields:
 
@@ -1470,9 +1480,9 @@ The request body must contain the following fields:
 * `quoteId`: {`string`} [REQUIRED]
   - Identifier of the quote to use for the transfer.
 
-##### 3.3.4.1.2. Responses
+##### 3.4.4.1.2. Responses
 
-###### 3.3.4.1.2.1. HTTP `200`
+###### 3.4.4.1.2.1. HTTP `200`
 
 On a successfully initiated transfer in request, the server MUST respond with an HTTP `200` status code, along with the following response body:
 
@@ -1484,7 +1494,7 @@ On a successfully initiated transfer in request, the server MUST respond with an
 }
 ```
 
-###### 3.3.4.1.2.2. HTTP `400`
+###### 3.4.4.1.2.2. HTTP `400`
 
 If the transfer parameters are invalid, or if the transfer is not possible for reasons *other* than the fiat account not existing, the server MUST
 return an HTTP `400` error code, along with the following response body:
@@ -1495,7 +1505,7 @@ return an HTTP `400` error code, along with the following response body:
 }
 ```
 
-###### 3.3.4.1.2.3. HTTP `404`
+###### 3.4.4.1.2.3. HTTP `404`
 
 If the selected fiat account does not exist, the server MUST respond with an HTTP `404` error code, along with the following response body:
 
@@ -1505,12 +1515,12 @@ If the selected fiat account does not exist, the server MUST respond with an HTT
 }
 ```
 
-###### 3.3.4.1.2.4. Idempotency Key Errors
+###### 3.4.4.1.2.4. Idempotency Key Errors
 
 The server MUST follow the semantics outlined in this [draft proposal](https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header-00) with
 respect to idempotency key errors.
 
-##### 3.3.4.1.3. Semantics
+##### 3.4.4.1.3. Semantics
 
 This endpoint allows a user to initiate a new transfer in request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
@@ -1520,52 +1530,52 @@ well as the amount, fiat type, and crypto type.
 
 When a new transfer is initiated, the server MUST
 generate a transfer ID that the client can use to monitor the progress of the transfer. If the client has enabled webhooks, and the server supports them, the server
-MUST call the user-specified webhook before returning an HTTP `200`. The response body MUST contain a `transferAddress`, indiciating the address that the provider will
+MUST call the user-specified webhook before returning an HTTP `200`. The response body MUST contain a `transferAddress`, indicating the address that the provider will
 use to send funds to the user's address from.
 
-###### 3.3.4.1.3.1. Success
+###### 3.4.4.1.3.1. Success
 
 On success, the server MUST return the `transferId` associated with the pending transfer, as well as the initial status of the transfer and the address that funds will be
 sent from. If supported and configured, the endpoint MUST also report the initial status of the transfer to the client-specified webhook.
 
-###### 3.3.4.1.3.2. Failure
+###### 3.4.4.1.3.2. Failure
 
 This endpoint may fail for a number of reasons; the error code returned by the endpoint will vary depending on failure reason.
 
-###### 3.3.4.1.3.2.1. `KycExpired`
+###### 3.4.4.1.3.2.1. `KycExpired`
 
 If a user's KYC has expired for their current geo, the server MUST reject the transfer and return a `KycExpired` error.
 
-###### 3.3.4.1.3.2.2. `TransferNotAllowed`
+###### 3.4.4.1.3.2.2. `TransferNotAllowed`
 
 If a transfer is not allowed for a generic reason (such as unacceptable transfer parameters) the server MUST reject the transfer and return a `TransferNotAllowed` error.
 
-###### 3.3.4.1.3.2.3. `InvalidQuote`
+###### 3.4.4.1.3.2.3. `InvalidQuote`
 
 If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, or if the provided quote is for the
 wrong type of transfer, the server MUST reject the transfer and return an `InvalidQuote` error.
 
-###### 3.3.4.1.3.2.4. `ResourceNotFound`
+###### 3.4.4.1.3.2.4. `ResourceNotFound`
 
 If the selected `fiatAccountId` is not found for the current user, the server MUST reject the transfer and return a `ResourceNotFound` error.
 
-###### 3.3.4.1.3.2.5. `InvalidFiatAccount`
+###### 3.4.4.1.3.2.5. `InvalidFiatAccount`
 
 If the selected `fiatAccountId` corresponds to an existing fiat account for the user, but that fiat account is not valid for use with this transfer, the server MUST
 return an `InvalidFiatAccount` error
 
-#### 3.3.4.2. `POST /transfer/out`
+#### 3.4.4.2. `POST /transfer/out`
 
 The `POST /transfer/out` endpoint is used to initiate a new transfer out from crypto to fiat.
 
-##### 3.3.4.2.1. Parameters
+##### 3.4.4.2.1. Parameters
 
-###### 3.3.4.2.1.1. Headers
+###### 3.4.4.2.1.1. Headers
 
 * `Idempotency-Key: <idempotency-key>`
   - An idempotency key, generated by the client
 
-###### 3.3.4.2.1.2. Request Body
+###### 3.4.4.2.1.2. Request Body
 
 The request body must contain the following fields:
 
@@ -1574,9 +1584,9 @@ The request body must contain the following fields:
 * `quoteId`: {`string`} [REQUIRED]
   - Identifier of the quote to use for the transfer.
 
-##### 3.3.4.2.2. Responses
+##### 3.4.4.2.2. Responses
 
-###### 3.3.4.2.2.1. HTTP `200`
+###### 3.4.4.2.2.1. HTTP `200`
 
 On a successfully initiated transfer out request, the server MUST respond with an HTTP `200` status code, along with the following response body:
 
@@ -1588,7 +1598,7 @@ On a successfully initiated transfer out request, the server MUST respond with a
 }
 ```
 
-###### 3.3.4.2.2.2. HTTP `400`
+###### 3.4.4.2.2.2. HTTP `400`
 
 If the transfer parameters are invalid, or if the transfer is not possible for reasons *other* than the fiat account not existing, the server MUST
 return an HTTP `400` error code, along with the following response body:
@@ -1599,7 +1609,7 @@ return an HTTP `400` error code, along with the following response body:
 }
 ```
 
-###### 3.3.4.2.2.3. HTTP `404`
+###### 3.4.4.2.2.3. HTTP `404`
 
 If the selected fiat account does not exist, the server MUST respond with an HTTP `404` error code, along with the following response body:
 
@@ -1609,12 +1619,12 @@ If the selected fiat account does not exist, the server MUST respond with an HTT
 }
 ```
 
-###### 3.3.4.2.2.4. Idempotency Key Errors
+###### 3.4.4.2.2.4. Idempotency Key Errors
 
 The server MUST follow the semantics outlined in this [draft proposal](https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header-00) with
 respect to idempotency key errors.
 
-##### 3.3.4.2.3. Semantics
+##### 3.4.4.2.3. Semantics
 
 This endpoint allows a user to initiate a new transfer out request. The server MUST support idempotency keys, and MUST NOT accept any requests which lack them.
 If a user provides a `fiatAccountId` that refers to an account they have on file that is allowed for the transfer, and the transfer parameters are acceptable,
@@ -1627,52 +1637,52 @@ generate a transfer ID that the client can use to monitor the progress of the tr
 MUST call the user-specified webhook before returning an HTTP `200`. The server MUST also return a `transferAddress` representing the address that the user must send
 funds to in order to complete the transfer.
 
-###### 3.3.4.2.3.1. Success
+###### 3.4.4.2.3.1. Success
 
 On success, the server MUST return the `transferId` associated with the pending transfer, as well as the initial status of the transfer and the address to send
-funds to for the transfer.. If supported and configured, the endpoint MUST also report the initial status of the transfer to the client-specified webhook.
+funds to for the transfer. If supported and configured, the endpoint MUST also report the initial status of the transfer to the client-specified webhook.
 
-###### 3.3.4.2.3.2. Failure
+###### 3.4.4.2.3.2. Failure
 
 This endpoint may fail for a number of reasons; the error code returned by the endpoint will vary depending on failure reason.
 
-###### 3.3.4.2.3.2.1. `KycExpired`
+###### 3.4.4.2.3.2.1. `KycExpired`
 
 If a user's KYC has expired for their current geo, the server MUST reject the transfer and return a `KycExpired` error.
 
-###### 3.3.4.2.3.2.2. `TransferNotAllowed`
+###### 3.4.4.2.3.2.2. `TransferNotAllowed`
 
 If a transfer is not allowed for a generic reason (such as unacceptable transfer parameters) the server MUST reject the transfer and return a `TransferNotAllowed` error.
 
-###### 3.3.4.2.3.2.3. `InvalidQuote`
+###### 3.4.4.2.3.2.3. `InvalidQuote`
 
 If the quote associated with `quoteId` is expired, or if no quote is found for the user with a matching `quoteId`, or if the provided quote is for the
 wrong type of transfer, the server MUST reject the transfer and return an `InvalidQuote` error.
 
-###### 3.3.4.2.3.2.4. `ResourceNotFound`
+###### 3.4.4.2.3.2.4. `ResourceNotFound`
 
 If the selected `fiatAccountId` is not found for the current user, the server MUST reject the transfer and return a `ResourceNotFound` error.
 
-###### 3.3.4.2.3.2.5. `InvalidFiatAccount`
+###### 3.4.4.2.3.2.5. `InvalidFiatAccount`
 
 If the selected `fiatAccountId` corresponds to an existing fiat account for the user, but that fiat account is not valid for use with this transfer, the server MUST
 return an `InvalidFiatAccount` error
 
-#### 3.3.4.3. `GET /transfer/:transferId/status`
+#### 3.4.4.3. `GET /transfer/:transferId/status`
 
 The `GET /transfer/:transferId/status` endpoint is used to get the status of an ongoing or completed transfer, as well as metadata about
 the transfer.
 
-##### 3.3.4.3.1. Parameters
+##### 3.4.4.3.1. Parameters
 
-###### 3.3.4.3.1.1. Path Parameters
+###### 3.4.4.3.1.1. Path Parameters
 
 * `transferId`: {`string`} [REQUIRED]
   - The transfer ID for the transfer whose status to return.
 
-##### 3.3.4.3.2. Responses
+##### 3.4.4.3.2. Responses
 
-###### 3.3.4.3.2.1. HTTP `200`
+###### 3.4.4.3.2.1. HTTP `200`
 
 On success, the server MUST return an HTTP `200` status code, along with a response body with the following schema:
 
@@ -1691,7 +1701,7 @@ On success, the server MUST return an HTTP `200` status code, along with a respo
 }
 ```
 
-###### 3.3.4.3.2.2. HTTP `404`
+###### 3.4.4.3.2.2. HTTP `404`
 
 If the user has no transfer on file with the provided `transferId`, the server MUST return an HTTP `200` status code,
 along with a response body with the following schema:
@@ -1702,25 +1712,25 @@ along with a response body with the following schema:
 }
 ```
 
-##### 3.3.4.3.3. Semantics
+##### 3.4.4.3.3. Semantics
 
 This endpoint is meant to be used by clients to monitor the status of an ongoing or completed transfer request, as well
 as retrieve details about the transfer. Note that servers MUST also make this status information available via webhooks,
 if the client has configured them.
 
-###### 3.3.4.3.3.1. Success
+###### 3.4.4.3.3.1. Success
 
 If the user has a transfer on file with the corresponding `transferId`, the server MUST respond with an HTTP
 `200` status code. The fields in the success response body correspond to the details of the submitted transfer. In particular,
-`amountProvided` refers to the amount of fiat or crypto that the user has provided for the transfer. `amountRecieved` refers to the amount
+`amountProvided` refers to the amount of fiat or crypto that the user has provided for the transfer. `amountReceived` refers to the amount
 of crypto or fiat that the server will be crediting to the user. `fee`, if present refers to the fee, if any, associated with the transfer,
 denominated in fiat or crypto, depending on the transfer type.
 
-###### 3.3.4.3.3.2. Failure
+###### 3.4.4.3.3.2. Failure
 
 This endpoint MUST fail when the user has no transfer on file with the provided `transferId`.
 
-###### 3.3.4.3.3.2.1. `ResourceNotFound`
+###### 3.4.4.3.3.2.1. `ResourceNotFound`
 
 If the user has no transfer on file with the provided `transferId`, the server MUST return a `ResourceNotFound` error.
 
@@ -1881,7 +1891,7 @@ This signature verification design is based off of [Persona's webhook documentat
 
 Anti-Money Laundering (AML) checks are an important part of regulatory compliance in the financial services industry. This proposal, however,
 does not require CICO providers to implement such checks. Providers MAY implement their own AML checks if they wish, according to local law.
-It is likely that by requiring KYC verificaiton, CICO providers will be able to collect enough relevant information on the user in order to
+It is likely that by requiring KYC verification, CICO providers will be able to collect enough relevant information on the user in order to
 facilitate AML checks, if required.
 
 # 7. Sandbox Environment
@@ -1902,7 +1912,7 @@ than those recognized by the production API.
 ## 7.3. KYC
 
 All KYC submissions in the sandbox environment MUST eventually result in the `KycStatusEnum.KycApproved` status. Sandbox environments MUST still send status updates
-by webhook throughout the process, but verifications willalways end in approval.
+by webhook throughout the process, but verifications will always end in approval.
 
 ## 7.4. Fiat Accounts
 
@@ -1996,7 +2006,7 @@ An enum listing the types of transfer statuses recognized by FiatConnect.
 ```
 [
 	`TransferStarted`,
-	`TranfserFiatFundsDebited`,
+	`TransferFiatFundsDebited`,
 	`TransferSendingCryptoFunds`,
 	`TransferAmlFailed`,
 	`TransferReadyForUserToSendCryptoFunds`,
@@ -2034,7 +2044,7 @@ An enum listing the types of fiat currencies supported by FiatConnect.
 
 ### 8.2.2. `CryptoTypeEnum`
 
-An enum listing the types of crypto tokens suppored by FiatConnect.
+An enum listing the types of crypto tokens supported by FiatConnect.
 
 ```
 [
@@ -2090,7 +2100,7 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 ]
 ```
 
-### 8.2.8. `FiatAccountSchemaEnum`
+### 8.2.7. `FiatAccountSchemaEnum`
 
 ```
 [
