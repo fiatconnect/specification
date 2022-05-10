@@ -2223,13 +2223,12 @@ platform can be used to consume Fiat Connect services by providing their `mobile
 	accountName: `string`,
 	institutionName: `string`,
 	iban: `string`,
-  bankName?: `string`,
 	country: `string`,
 	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
 }
 ```
 
-The `country` field MUST be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. `bankName` was added for verification purpose only (In a case where there maybe a mistake as each bank located in a specific country can only have a unique international identifier).
+The `country` field MUST be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
 
 # 9. References
 
