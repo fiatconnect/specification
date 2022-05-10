@@ -19,436 +19,12 @@ tags:
 schemes:
 - "https"
 - "http"
-paths:
-  /clock:
-    get:
-      summary: "Get the server's current time"
-      tags:
-        - "clock"
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/ClockResponse"
-  /auth/login:
-    post:
-      summary: "Log in with a SIWE message and get a session cookie"
-      tags:
-        - "auth"
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-      parameters:
-        - in: "body"
-          name: "siwe"
-          description: "SIWE object"
-          schema:
-            type: "object"
-            required:
-              - "message"
-              - "signature"
-            properties:
-              message:
-                type: "string"
-                description: "The plaintext SIWE message"
-              signature:
-                type: "string"
-                description: "An EIP-191 (for EOA) or EIP-1271 (for contract-owned accounts) signature for the SIWE message"
-      responses:
-        "200":
-          description: "successful operation"
-        "401":
-          description: "failed operation"
-          schema:
-            $ref: "#/definitions/LoginErrorResponse"
-  /quote/in:
-    get:
-      tags:
-      - "quote"
-      summary: "Retrieve a quote for a transfer from fiat to crypto"
-      description: ""
-      operationId: "getQuoteIn"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Information about the transfer"
-        required: true
-        schema:
-          $ref: "#/definitions/QuoteRequest"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: '#/definitions/QuoteResponse'
-        "400":
-          description: "failed operation"
-          schema:
-            $ref: '#/definitions/QuoteErrorResponse'
-  /quote/out:
-    get:
-      tags:
-      - "quote"
-      summary: "Retrieve a quote for a transfer from crypto to fiat"
-      description: ""
-      operationId: "getQuoteOut"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Information about the transfer"
-        required: true
-        schema:
-          $ref: "#/definitions/QuoteRequest"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: '#/definitions/QuoteResponse'
-        "400":
-          description: "failed operation"
-          schema:
-            $ref: '#/definitions/QuoteErrorResponse'
-  /kyc/{kycSchema}:
-    post:
-      tags:
-      - "kyc"
-      summary: "Provide KYC data of a particular schema to the server"
-      description: ""
-      operationId: "addKyc"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "The user's KYC information"
-        required: true
-        schema:
-          $ref: "#/definitions/KycInfo"
-      - name: "kycSchema"
-        allOf:
-          - $ref: '#/definitions/KycSchemaEnum'
-        in: "path"
-        description: "The type of kyc schema to provide"
-        required: true
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            type: "object"
-            properties:
-              kycStatus:
-                $ref: '#/definitions/KycStatusEnum'
-        "400":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/SchemaErrorEnum'
-        "409":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/ResourceExists'
-      security:
-        - siwe_auth: []
-    delete:
-      tags:
-      - "kyc"
-      summary: "Delete a KYC record for a particular KYC schema"
-      description: ""
-      operationId: "deleteKyc"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "kycSchema"
-        allOf:
-          - $ref: '#/definitions/KycSchemaEnum'
-        in: "path"
-        description: "The type of kyc schema to delete"
-        required: true
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            type: "object"
-        "404":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/ResourceNotFound'
-      security:
-        - siwe_auth: []
-  /kyc/{kycSchema}/status:
-    get:
-      tags:
-      - "kyc"
-      summary: "Query the status of a KYC verification for a specific schema type"
-      description: ""
-      operationId: "getKycStatus"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "kycSchema"
-        allOf:
-          - $ref: '#/definitions/KycSchemaEnum'
-        in: "path"
-        description: "The type of kyc schema to query"
-        required: true
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            type: "object"
-            properties:
-              kycStatus:
-                $ref: '#/definitions/KycStatusEnum'
-        "404":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/ResourceNotFound'
-      security:
-        - siwe_auth: []
-  /accounts/{fiatAccountSchema}:
-    post:
-      tags:
-      - "fiat account"
-      summary: "Provide fiat account data of a particular schema to the server"
-      description: ""
-      operationId: "addFiatAccount"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "The user's fiat account information"
-        required: true
-        schema:
-          $ref: "#/definitions/FiatAccountInfoBody"
-      - name: "fiatAccountSchema"
-        allOf:
-          - $ref: '#/definitions/FiatAccountSchemaEnum'
-        in: "path"
-        description: "The type of fiat account schema being provided"
-        required: true
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: '#/definitions/FiatAccountInfoResponse'
-        "400":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/SchemaErrorEnum'
-        "409":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/ResourceExists'
-      security:
-        - siwe_auth: []
-  /accounts:
-    get:
-      tags:
-      - "fiat account"
-      summary: "Query for all fiat accounts on file for a user"
-      description: ""
-      operationId: "getFiatAccounts"
-      produces:
-      - "application/json"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            type: object
-            properties:
-              <FiatAccountTypeEnum>:
-                type: "array"
-                items:  
-                  $ref: '#/definitions/FiatAccountInfoResponse'
-      security:
-        - siwe_auth: []
-  /accounts/{fiatAccountId}:
-    delete:
-      tags:
-      - "fiat account"
-      summary: "Delete fiat account information for a particular user"
-      description: ""
-      operationId: "deleteFiatAccount"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "fiatAccountId"
-        type: string
-        in: "path"
-        description: "The id of the fiat account being deleted"
-        required: true
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            type: "object"
-        "404":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/ResourceNotFound'
-      security:
-        - siwe_auth: []
-  /transfer/in:
-    post:
-      tags:
-      - "transfer"
-      summary: "Initiate a new transfer from fiat to crypto"
-      description: ""
-      operationId: "transferIn"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Information necessary to make the transfer"
-        required: true
-        schema:
-          $ref: "#/definitions/TransferRequest"
-      - name: "Idempotency-Key"
-        type: string
-        in: "header"
-        description: "An indepotency key generated by the client"
-        required: true
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: '#/definitions/TransferResponse'
-        "400":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/TransferErrorEnum'
-        "404":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/ResourceNotFound'
-      security:
-        - siwe_auth: []
-  /transfer/out:
-    post:
-      tags:
-      - "transfer"
-      summary: "Initiate a new transfer from crypto to fiat"
-      description: ""
-      operationId: "transferOut"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Information necessary to make the transfer"
-        required: true
-        schema:
-          $ref: "#/definitions/TransferRequest"
-      - name: "Idempotency-Key"
-        type: string
-        in: "header"
-        description: "An indepotency key generated by the client"
-        required: true
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: '#/definitions/TransferResponse'
-        "400":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/TransferErrorEnum'
-        "404":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/ResourceNotFound'
-      security:
-        - siwe_auth: []
-  /transfer/{transferId}/status:
-    get:
-      tags:
-      - "transfer"
-      summary: "Check the status of a transfer"
-      description: ""
-      operationId: "getTransferStatus"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "transferId"
-        type: string
-        in: "path"
-        description: "The id of the tranfer being requested"
-        required: true
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: '#/definitions/TransferStatusResponse'
-        "404":
-          description: "failed operation"
-          schema:
-            type: "object"
-            properties:
-              error:
-                $ref: '#/definitions/ResourceNotFound'
-      security:
-        - siwe_auth: []
-securityDefinitions:
-  siwe_auth:
-    type: "basic"
 definitions:
   KycInfo:
     type: "object"
   KycStatusEnum:
     type: "string"
-    enum:
+    enum: &KycStatusEnum
       - KycNotCreated
       - KycPending
       - KycApproved
@@ -456,13 +32,13 @@ definitions:
       - KycExpired
   KycSchemaEnum:
     type: "string"
-    enum:
+    enum: &KycSchemaEnum
       - NameAndAddress
       - IdAndSelfie
       - PersonalDataAndDocuments
   FiatType:
     type: "string"
-    enum:
+    enum: &FiatType
       - USD
       - EUR
       - REAL
@@ -481,30 +57,30 @@ definitions:
       - XAF
   CryptoType:
     type: "string"
-    enum:
+    enum: &CryptoType
       - cUSD
       - cEUR
       - cREAL
       - CELO
   FeeType:
     type: "string"
-    enum:
+    enum: &FeeType
       - KycFee
       - PlatformFee
   FeeFrequency:
     type: "string"
-    enum:
+    enum: &FeeFrequency
       - OneTime
       - Recurring
   FiatAccountTypeEnum:
     type: "string"
-    enum:
+    enum: &FiatAccountTypeEnum
       - BankAccount
       - MobileMoney
       - DuniaWallet
   FiatAccountSchemaEnum:
     type: "string"
-    enum:
+    enum: &FiatAccountSchemaEnum
       - AccountNumber
   QuoteRequest:
     type: "object"
@@ -707,3 +283,427 @@ definitions:
     type: "string"
     enum: 
       - ResourceNotFound
+paths:
+  /clock:
+    get:
+      summary: "Get the server's current time"
+      tags:
+        - "clock"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ClockResponse"
+  /auth/login:
+    post:
+      summary: "Log in with a SIWE message and get a session cookie"
+      tags:
+        - "auth"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "siwe"
+          description: "SIWE object"
+          schema:
+            type: "object"
+            required:
+              - "message"
+              - "signature"
+            properties:
+              message:
+                type: "string"
+                description: "The plaintext SIWE message"
+              signature:
+                type: "string"
+                description: "An EIP-191 (for EOA) or EIP-1271 (for contract-owned accounts) signature for the SIWE message"
+      responses:
+        "200":
+          description: "successful operation"
+        "401":
+          description: "failed operation"
+          schema:
+            $ref: "#/definitions/LoginErrorResponse"
+  /quote/in:
+    get:
+      tags:
+      - "quote"
+      summary: "Retrieve a quote for a transfer from fiat to crypto"
+      description: ""
+      operationId: "getQuoteIn"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information about the transfer"
+        required: true
+        schema:
+          $ref: "#/definitions/QuoteRequest"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/QuoteResponse'
+        "400":
+          description: "failed operation"
+          schema:
+            $ref: '#/definitions/QuoteErrorResponse'
+  /quote/out:
+    get:
+      tags:
+      - "quote"
+      summary: "Retrieve a quote for a transfer from crypto to fiat"
+      description: ""
+      operationId: "getQuoteOut"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information about the transfer"
+        required: true
+        schema:
+          $ref: "#/definitions/QuoteRequest"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/QuoteResponse'
+        "400":
+          description: "failed operation"
+          schema:
+            $ref: '#/definitions/QuoteErrorResponse'
+  /kyc/{kycSchema}:
+    post:
+      tags:
+      - "kyc"
+      summary: "Provide KYC data of a particular schema to the server"
+      description: ""
+      operationId: "addKyc"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "The user's KYC information"
+        required: true
+        schema:
+          $ref: "#/definitions/KycInfo"
+      - name: "kycSchema"
+        enum: *KycSchemaEnum
+        type: "string"
+        in: "path"
+        description: "The type of kyc schema to provide"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              kycStatus:
+                $ref: '#/definitions/KycStatusEnum'
+        "400":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/SchemaErrorEnum'
+        "409":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceExists'
+      security:
+        - siwe_auth: []
+    delete:
+      tags:
+      - "kyc"
+      summary: "Delete a KYC record for a particular KYC schema"
+      description: ""
+      operationId: "deleteKyc"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "kycSchema"
+        enum: *KycSchemaEnum
+        type: "string"
+        in: "path"
+        description: "The type of kyc schema to delete"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "object"
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - siwe_auth: []
+  /kyc/{kycSchema}/status:
+    get:
+      tags:
+      - "kyc"
+      summary: "Query the status of a KYC verification for a specific schema type"
+      description: ""
+      operationId: "getKycStatus"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "kycSchema"
+        enum: *KycSchemaEnum
+        type: "string"
+        in: "path"
+        description: "The type of kyc schema to query"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              kycStatus:
+                $ref: '#/definitions/KycStatusEnum'
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - siwe_auth: []
+  /accounts/{fiatAccountSchema}:
+    post:
+      tags:
+      - "fiat account"
+      summary: "Provide fiat account data of a particular schema to the server"
+      description: ""
+      operationId: "addFiatAccount"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "The user's fiat account information"
+        required: true
+        schema:
+          $ref: "#/definitions/FiatAccountInfoBody"
+      - name: "fiatAccountSchema"
+        enum: *FiatAccountSchemaEnum
+        type: "string"
+        in: "path"
+        description: "The type of fiat account schema being provided"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/FiatAccountInfoResponse'
+        "400":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/SchemaErrorEnum'
+        "409":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceExists'
+      security:
+        - siwe_auth: []
+  /accounts:
+    get:
+      tags:
+      - "fiat account"
+      summary: "Query for all fiat accounts on file for a user"
+      description: ""
+      operationId: "getFiatAccounts"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: object
+            properties:
+              <FiatAccountTypeEnum>:
+                type: "array"
+                items:  
+                  $ref: '#/definitions/FiatAccountInfoResponse'
+      security:
+        - siwe_auth: []
+  /accounts/delete/{fiatAccountId}:
+    delete:
+      tags:
+      - "fiat account"
+      summary: "Delete fiat account information for a particular user"
+      description: ""
+      operationId: "deleteFiatAccount"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "fiatAccountId"
+        type: string
+        in: "path"
+        description: "The id of the fiat account being deleted"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "object"
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - siwe_auth: []
+  /transfer/in:
+    post:
+      tags:
+      - "transfer"
+      summary: "Initiate a new transfer from fiat to crypto"
+      description: ""
+      operationId: "transferIn"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information necessary to make the transfer"
+        required: true
+        schema:
+          $ref: "#/definitions/TransferRequest"
+      - name: "Idempotency-Key"
+        type: string
+        in: "header"
+        description: "An indepotency key generated by the client"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/TransferResponse'
+        "400":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/TransferErrorEnum'
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - siwe_auth: []
+  /transfer/out:
+    post:
+      tags:
+      - "transfer"
+      summary: "Initiate a new transfer from crypto to fiat"
+      description: ""
+      operationId: "transferOut"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information necessary to make the transfer"
+        required: true
+        schema:
+          $ref: "#/definitions/TransferRequest"
+      - name: "Idempotency-Key"
+        type: string
+        in: "header"
+        description: "An indepotency key generated by the client"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/TransferResponse'
+        "400":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/TransferErrorEnum'
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - siwe_auth: []
+  /transfer/{transferId}/status:
+    get:
+      tags:
+      - "transfer"
+      summary: "Check the status of a transfer"
+      description: ""
+      operationId: "getTransferStatus"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "transferId"
+        type: string
+        in: "path"
+        description: "The id of the tranfer being requested"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/TransferStatusResponse'
+        "404":
+          description: "failed operation"
+          schema:
+            type: "object"
+            properties:
+              error:
+                $ref: '#/definitions/ResourceNotFound'
+      security:
+        - siwe_auth: []
+securityDefinitions:
+  siwe_auth:
+    type: "basic"
