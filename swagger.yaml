@@ -43,15 +43,20 @@ paths:
         - "application/json"
       parameters:
         - in: "body"
-          name: "message"
-          description: "The plaintext SIWE message"
-          required: true
-          type: "string"
-        - in: "body"
-          name: "signature"
-          description: "An EIP-191 (for EOA) or EIP-1271 (for contract-owned accounts) signature for the SIWE message"
-          required: true
-          type: "string"
+          name: "siwe"
+          description: "SIWE object"
+          schema:
+            type: "object"
+            required:
+              - "message"
+              - "signature"
+            properties:
+              message:
+                type: "string"
+                description: "The plaintext SIWE message"
+              signature:
+                type: "string"
+                description: "An EIP-191 (for EOA) or EIP-1271 (for contract-owned accounts) signature for the SIWE message"
       responses:
         "200":
           description: "successful operation"
