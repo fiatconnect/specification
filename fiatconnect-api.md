@@ -2222,7 +2222,7 @@ platform can be used to consume Fiat Connect services by providing their `mobile
 {
 	accountName: `string`,
 	institutionName: `string`,
-	ibanNumber: `string`,
+	iban: `string`,
   bankName?: `string`,
 	country: `string`,
 	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
