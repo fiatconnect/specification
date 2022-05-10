@@ -43,7 +43,7 @@ paths:
         - "application/json"
       parameters:
         - in: "body"
-          name: "swie"
+          name: "siwe"
           description: "SIWE object"
           schema:
             type: "object"
