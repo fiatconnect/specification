@@ -225,7 +225,7 @@
       - [8.3.2.2. `MobileMoney`](#8322-mobilemoney)
         * [8.3.2.2.1. `SupportedOperatorEnum`](#83221-supportedoperatorenum)
       - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
-      - [8.3.2.4. `BankAccount`](#8324-bankaccount)
+      - [8.3.2.4. `IBANNumber`](#8324-ibannumber)
 - [9. References](#9-references)
   * [9.1. Normative References](#91-normative-references)
     + [9.1.1. [RFC2119]](#911--rfc2119-)
