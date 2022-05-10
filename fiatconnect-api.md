@@ -2214,7 +2214,7 @@ platform can be used to consume Fiat Connect services by providing their `mobile
 }
 ```
 
-####  8.3.2.4. `BankAccount`
+####  8.3.2.4. `IBANNumber`
 
 `IBANNumber` is a representation of a bank account that is agnostic to the user's home country. The most important field is the `iban`, which stands for International Bank Account Number. More info on [Wikipedia](https://en.wikipedia.org/wiki/International_Bank_Account_Number) and [World First](https://www.worldfirst.com/uk/help-support/what-is-an-iban-number/).
 
