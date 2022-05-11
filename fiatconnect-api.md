@@ -2074,7 +2074,8 @@ represents what *kind* of account that schema represents.
 [
 	`BankAccount`,
 	`MobileMoney`,
-	`DuniaWallet`
+	`DuniaWallet`,
+	`IfscAccount`
 ]
 ```
 
@@ -2222,6 +2223,25 @@ platform can be used to consume Fiat Connect services by providing their `mobile
   fiatAccountType: `FiatAccountTypeEnum.DuniaWallet`
 }
 ```
+
+#### 8.3.2.4. `IfscAccount`
+
+`IfscAccount` is an account schema that represents transfers for `INR` currency.
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	ifsc: `string`,
+	accountNumber: `string`,
+	country: `string`,
+	fiatAccountType: `FiatAccountTypeEnum.IfscAccount`
+}
+```
+
+The `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
+The `ifsc` or Indian Financial System Code is an 11-digit alpha-numeric code that is unique for bank branches that offer online money transfer options.
+
 
 # 9. References
 
