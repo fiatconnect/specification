@@ -12,12 +12,10 @@ on:
         description: 'Validate Swagger.yaml'
 
 jobs:
-  test_swagger_editor_validator_remote:
+  validate_swagger:
     runs-on: ubuntu-latest
-    name: Swagger Editor Validator Remote
+    name: Validate Swagger
     steps:
       - uses: actions/checkout@v2
       - name: Validate OpenAPI definition
-        uses: char0n/swagger-editor-validate@v1
-        with:
-          definition-file: swagger.yaml
+        run: yarn validate
