@@ -1,0 +1,12 @@
+{
+  "name": "specification",
+  "version": "0.0.1",
+  "description": "FiatConnect API Specification",
+  "repository": "https://github.com/fiatconnect/specification.git",
+  "scripts": {
+    "validate": "yarn swagger-cli validate swagger.yaml"
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-cli": "^4.0.4"
+  }
+}
