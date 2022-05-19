@@ -17,5 +17,6 @@ jobs:
     name: Validate Swagger
     steps:
       - uses: actions/checkout@v2
+      - run: yarn
       - name: Validate OpenAPI definition
         run: yarn validate
