@@ -2072,7 +2072,7 @@ represents what *kind* of account that schema represents.
 
 ```
 [
-	`BankAccount`,
+	`AccountNumber`,
 	`MobileMoney`,
 	`DuniaWallet`
 ]
@@ -2159,7 +2159,7 @@ account information from the `GET /accounts` endpoint.
 	institutionName: `string`,
 	accountNumber: `string`,
 	country: `string`,
-	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
+	fiatAccountType: `FiatAccountTypeEnum.AccountNumber`
 }
 ```
 
