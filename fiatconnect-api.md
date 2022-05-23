@@ -235,6 +235,7 @@
       - [8.3.2.2. `MobileMoney`](#8322-mobilemoney)
         - [8.3.2.2.1. `SupportedOperatorEnum`](#83221-supportedoperatorenum)
       - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
+      - [8.3.2.4. `IBANNumber`](#8324-ibannumber)
 - [9. References](#9-references)
   - [9.1. Normative References](#91-normative-references)
     - [9.1.1. [RFC2119]](#911-rfc2119)
@@ -2104,7 +2105,10 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 
 ```
 [
-	`AccountNumber`
+	`AccountNumber`,
+	`MobileMoney`,
+	`DuniaWallet`,
+	`IBANNumber`
 ]
 ```
 
@@ -2222,6 +2226,24 @@ platform can be used to consume Fiat Connect services by providing their `mobile
   fiatAccountType: `FiatAccountTypeEnum.DuniaWallet`
 }
 ```
+
+####  8.3.2.4. `IBANNumber`
+
+`IBANNumber` is a representation of a bank account that is agnostic to the user's home country. The primary identifying field is `iban`, which represents an
+[International Bank Account Number](https://en.wikipedia.org/wiki/International_Bank_Account_Number). See [here](https://www.worldfirst.com/uk/help-support/what-is-an-iban-number/) for more context.
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	iban: `string`,
+	country: `string`,
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
+}
+```
+
+The `country` field MUST be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The syntax of the `iban` field MUST correspond to that of a valid International
+Bank Account Number.
 
 # 9. References
 
