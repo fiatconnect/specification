@@ -1,0 +1,22 @@
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Validate Swagger.yaml'
+
+jobs:
+  validate_swagger:
+    runs-on: ubuntu-latest
+    name: Validate Swagger
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn
+      - name: Validate OpenAPI definition
+        run: yarn validate
