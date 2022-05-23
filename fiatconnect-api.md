@@ -235,6 +235,8 @@
       - [8.3.2.2. `MobileMoney`](#8322-mobilemoney)
         - [8.3.2.2.1. `SupportedOperatorEnum`](#83221-supportedoperatorenum)
       - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
+      - [8.3.2.4. `IBANNumber`](#8324-ibannumber)
+      - [8.3.2.5. `IFSCAccount`](#8325-ifscaccount)
 - [9. References](#9-references)
   - [9.1. Normative References](#91-normative-references)
     - [9.1.1. [RFC2119]](#911-rfc2119)
@@ -2019,13 +2021,13 @@ An enum listing the types of transfer statuses recognized by FiatConnect.
 
 ### 8.2.1. `FiatTypeEnum`
 
-An enum listing the types of fiat currencies supported by FiatConnect.
+An enum listing the types of fiat currencies supported by FiatConnect. All values should be [ISO 4217 Currency Codes](https://en.wikipedia.org/wiki/ISO_4217)
 
 ```
 [
   `USD`,
   `EUR`,
-  `REAL`,
+  `BRL`,
   `GNF`,
   `INR`,
   `NGN`,
@@ -2104,7 +2106,11 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 
 ```
 [
-	`AccountNumber`
+	`AccountNumber`,
+	`MobileMoney`,
+	`DuniaWallet`,
+	`IBANNumber`,
+	`IFSCAccount`
 ]
 ```
 
@@ -2222,6 +2228,44 @@ platform can be used to consume Fiat Connect services by providing their `mobile
   fiatAccountType: `FiatAccountTypeEnum.DuniaWallet`
 }
 ```
+
+####  8.3.2.4. `IBANNumber`
+
+`IBANNumber` is a representation of a bank account that is agnostic to the user's home country. The primary identifying field is `iban`, which represents an
+[International Bank Account Number](https://en.wikipedia.org/wiki/International_Bank_Account_Number). See [here](https://www.worldfirst.com/uk/help-support/what-is-an-iban-number/) for more context.
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	iban: `string`,
+	country: `string`,
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
+}
+```
+
+The `country` field MUST be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The syntax of the `iban` field MUST correspond to that of a valid International
+Bank Account Number.
+
+#### 8.3.2.5. `IFSCAccount`
+
+`IFSCAccount` is an account schema that represents transfers for `INR` currency.
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	ifsc: `string`,
+	accountNumber: `string`,
+	country: `string`,
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
+}
+```
+
+The `country` field is a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
+The `ifsc` or Indian Financial System Code is an 11-digit alpha-numeric code that is unique for bank branches that offer online money transfer options.
+The `accountNumber` field is unique between individuals and no two banks or account holders can have the same account number.
+Banks use different starting codes for their branches for differentiation. (In India, bank account numbers usually contain 7 to 21 digits.)
 
 # 9. References
 

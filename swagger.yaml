@@ -41,7 +41,7 @@ definitions:
     enum: &FiatType
       - USD
       - EUR
-      - REAL
+      - BRL
       - GNF
       - INR
       - NGN
