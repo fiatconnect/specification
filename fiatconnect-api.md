@@ -2077,7 +2077,6 @@ represents what *kind* of account that schema represents.
 	`BankAccount`,
 	`MobileMoney`,
 	`DuniaWallet`,
-	`IfscAccount`
 ]
 ```
 
@@ -2111,7 +2110,7 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 	`MobileMoney`,
 	`DuniaWallet`,
 	`IBANNumber`,
-	`IfscAccount`
+	`IFSCAccount`
 ]
 ```
 
