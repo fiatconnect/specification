@@ -236,6 +236,7 @@
         - [8.3.2.2.1. `SupportedOperatorEnum`](#83221-supportedoperatorenum)
       - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
       - [8.3.2.4. `IBANNumber`](#8324-ibannumber)
+      - [8.3.2.5. `IFSCAccount`](#8325-ifscaccount)
 - [9. References](#9-references)
   - [9.1. Normative References](#91-normative-references)
     - [9.1.1. [RFC2119]](#911-rfc2119)
@@ -2108,7 +2109,8 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 	`AccountNumber`,
 	`MobileMoney`,
 	`DuniaWallet`,
-	`IBANNumber`
+	`IBANNumber`,
+	`IFSCAccount`
 ]
 ```
 
@@ -2244,6 +2246,26 @@ platform can be used to consume Fiat Connect services by providing their `mobile
 
 The `country` field MUST be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The syntax of the `iban` field MUST correspond to that of a valid International
 Bank Account Number.
+
+#### 8.3.2.5. `IFSCAccount`
+
+`IFSCAccount` is an account schema that represents transfers for `INR` currency.
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	ifsc: `string`,
+	accountNumber: `string`,
+	country: `string`,
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`
+}
+```
+
+The `country` field is a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
+The `ifsc` or Indian Financial System Code is an 11-digit alpha-numeric code that is unique for bank branches that offer online money transfer options.
+The `accountNumber` field is unique between individuals and no two banks or account holders can have the same account number.
+Banks use different starting codes for their branches for differentiation. (In India, bank account numbers usually contain 7 to 21 digits.)
 
 # 9. References
 
