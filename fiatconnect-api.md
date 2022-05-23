@@ -2076,7 +2076,7 @@ represents what *kind* of account that schema represents.
 [
 	`BankAccount`,
 	`MobileMoney`,
-	`DuniaWallet`,
+	`DuniaWallet`
 ]
 ```
 
