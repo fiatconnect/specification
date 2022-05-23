@@ -2095,7 +2095,10 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 
 ```
 [
-	`AccountNumber`
+	`AccountNumber`,
+	`MobileMoney`,
+	`DuniaWallet`,
+	`IBANNumber`
 ]
 ```
 
