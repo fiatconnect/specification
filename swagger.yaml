@@ -465,7 +465,7 @@ definitions:
     enum:
       - USD
       - EUR
-      - REAL
+      - BRL
       - GNF
       - INR
       - NGN

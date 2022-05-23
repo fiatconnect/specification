@@ -2021,13 +2021,13 @@ An enum listing the types of transfer statuses recognized by FiatConnect.
 
 ### 8.2.1. `FiatTypeEnum`
 
-An enum listing the types of fiat currencies supported by FiatConnect.
+An enum listing the types of fiat currencies supported by FiatConnect. All values should be [ISO 4217 Currency Codes](https://en.wikipedia.org/wiki/ISO_4217)
 
 ```
 [
   `USD`,
   `EUR`,
-  `REAL`,
+  `BRL`,
   `GNF`,
   `INR`,
   `NGN`,
