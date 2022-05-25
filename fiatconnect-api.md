@@ -141,7 +141,7 @@
           - [3.4.3.2.2.1. HTTP `200`](#343221-http-200)
         - [3.4.3.2.3. Semantics](#34323-semantics)
           - [3.4.3.2.3.1. Success](#343231-success)
-      - [3.4.3.3. `DELETE /accounts/:fiatAccountId`](#3433-delete-accountsfiataccountid)
+      - [3.4.3.3. `DELETE /accounts/delete/:fiatAccountId`](#3433-delete-accountsfiataccountid)
         - [3.4.3.3.1. Parameters](#34331-parameters)
           - [3.4.3.3.1.1. Path Parameters](#343311-path-parameters)
         - [3.4.3.3.2. Responses](#34332-responses)
@@ -1406,9 +1406,9 @@ This endpoint is simply used to return a list of metadata about all of the fiat 
 
 On success, this endpoint MUST return a mapping from fiat account types to metadata about fiat accounts that the user has on file.
 
-#### 3.4.3.3. `DELETE /accounts/:fiatAccountId`
+#### 3.4.3.3. `DELETE /accounts/delete/:fiatAccountId`
 
-The `DELETE /accounts/:fiatAccountId` endpoint is used to delete a user's fiat account from the server.
+The `DELETE /accounts/delete/:fiatAccountId` endpoint is used to delete a user's fiat account from the server.
 
 ##### 3.4.3.3.1. Parameters
 
