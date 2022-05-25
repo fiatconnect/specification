@@ -564,7 +564,7 @@ paths:
                   $ref: '#/definitions/FiatAccountInfoResponse'
       security:
         - siwe_auth: []
-  /accounts/delete/{fiatAccountId}:
+  /accounts/{fiatAccountId}:
     delete:
       tags:
       - "fiat account"
