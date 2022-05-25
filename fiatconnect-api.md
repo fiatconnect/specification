@@ -121,7 +121,7 @@
           - [3.4.2.3.3.2. Failure](#342332-failure)
           - [3.4.2.3.3.2.1. `ResourceNotFound`](#3423321-resourcenotfound)
     - [3.4.3. Fiat Account Endpoints](#343-fiat-account-endpoints)
-      - [3.4.3.1. `POST /accounts/:fiatAccountSchema`](#3431-post-accountsfiataccountschema)
+      - [3.4.3.1. `POST /accounts`](#3431-post-accounts)
         - [3.4.3.1.1. Parameters](#34311-parameters)
           - [3.4.3.1.1.1. Path Parameters](#343111-path-parameters)
           - [3.4.3.1.1.2. Request Body](#343112-request-body)
@@ -682,9 +682,9 @@ The second, and largest set of endpoints, are the ones that require a user to be
 * `POST /kyc/:kycSchema`
 * `GET /kyc/:kycSchema/status`
 * `DELETE /kyc/:kycSchema`
-* `POST /accounts/:fiatAccountSchema`
+* `POST /accounts`
 * `GET /accounts`
-* `DELETE /account/:fiatAccountId`
+* `DELETE /account/delete/:fiatAccountId`
 * `GET /transfer/:transferId/status`
 * `POST /transfer/in`
 * `POST /transfer/out`
@@ -1293,20 +1293,20 @@ In order for clients to uniquely select accounts on file when communicating with
 with unique identifiers (i.e. a UUID) that the client can use to select an account. These identifiers MAY be globally unique across all users, but need not be. A server
 MUST NOT allow a user to interact with fiat account identifiers (i.e., selecting one for a transfer) for accounts not owned by that user.
 
-#### 3.4.3.1. `POST /accounts/:fiatAccountSchema`
+#### 3.4.3.1. `POST /accounts`
 
-The `POST /accounts/:fiatAccountSchema` endpoint is used to store a new fiat account on file with the server.
+The `POST /accounts` endpoint is used to store a new fiat account on file with the server.
 
 ##### 3.4.3.1.1. Parameters
 
-###### 3.4.3.1.1.1. Path Parameters
+###### 3.4.3.1.1.1. Request Body
+
+The request body must contain the following fields:
 
 * `fiatAccountSchema`: {`FiatAccountSchemaEnum`} [REQUIRED]
   - The fiat account schema to use to add the fiat account
-
-###### 3.4.3.1.1.2. Request Body
-
-The request body schema for this endpoint must match the fiat account schema  selected in the path parameter.
+* `data`: {`object`} [REQUIRED]
+  - An object containing the data required by the Fiat Account schema chosen in the `fiatAccountSchema` field above.
 
 ##### 3.4.3.1.2. Responses
 
