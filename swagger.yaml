@@ -19,6 +19,277 @@ tags:
 schemes:
 - "https"
 - "http"
+definitions:
+  KycInfo:
+    type: "object"
+  KycStatusEnum:
+    type: "string"
+    enum: &KycStatusEnum
+      - KycNotCreated
+      - KycPending
+      - KycApproved
+      - KycDenied
+      - KycExpired
+  KycSchemaEnum:
+    type: "string"
+    enum: &KycSchemaEnum
+      - NameAndAddress
+      - IdAndSelfie
+      - PersonalDataAndDocuments
+  FiatType:
+    type: "string"
+    enum: &FiatType
+      - USD
+      - EUR
+      - BRL
+      - GNF
+      - INR
+      - NGN
+      - GHS
+      - KES
+      - ZAR
+      - PHP
+      - UGX
+      - GBP
+      - XOF
+      - RWF
+      - CNY
+      - XAF
+  CryptoType:
+    type: "string"
+    enum: &CryptoType
+      - cUSD
+      - cEUR
+      - cREAL
+      - CELO
+  FeeType:
+    type: "string"
+    enum: &FeeType
+      - KycFee
+      - PlatformFee
+  FeeFrequency:
+    type: "string"
+    enum: &FeeFrequency
+      - OneTime
+      - Recurring
+  FiatAccountTypeEnum:
+    type: "string"
+    enum: &FiatAccountTypeEnum
+      - BankAccount
+      - MobileMoney
+      - DuniaWallet
+  FiatAccountSchemaEnum:
+    type: "string"
+    enum: &FiatAccountSchemaEnum
+      - AccountNumber
+      - MobileMoney
+      - DuniaWallet
+  QuoteRequest:
+    type: "object"
+    properties:
+      fiatType:
+        $ref: '#/definitions/FiatType'
+      cryptoType:
+        $ref: '#/definitions/CryptoType'
+      fiatAmount:
+        type: "number"
+      cryptoAmount:
+        type: "number"
+      country:
+        type: "string"
+      region:
+        type: "string"
+  QuoteResponse:
+    type: "object"
+    properties:
+      quote:
+        type: "object"
+        properties:
+          fiatType:
+            $ref: '#/definitions/FiatType'
+          cryptoType:
+            $ref: '#/definitions/CryptoType'
+          fiatAmount:
+            type: "number"
+          cryptoAmount:
+            type: "number"
+          quoteId:
+            type: "string"
+          guaranteedUntil:
+            type: "string"
+      kyc:
+        type: "object"
+        properties:
+          kycRequired: 
+            type: "boolean"
+          kycSchemas:
+            type: "array"
+            items:
+              $ref: '#/definitions/KycSchemaEnum'
+      fiatAccount:
+        type: "object"
+        properties:
+          <FiatAccountTypeEnum>:
+            type: "object"
+            properties:
+              fiatAccountSchemas:
+                type: "array"
+                items:
+                  $ref: '#/definitions/FiatAccountSchemaEnum'
+              fee?:
+                type: "number"
+              feeType?:
+                $ref: '#/definitions/FeeType'
+              feeFrequency?:
+                $ref: '#/definitions/FeeFrequency'
+              settlementTimeLowerBound?:
+                type: "string"
+              settlementTimeUpperBound?:
+                type: "string"
+  LoginErrorResponse:
+    type: "object"
+    properties:
+      error:
+        $ref: "#/definitions/LoginErrorEnum"
+  QuoteErrorResponse:
+    type: "object"
+    properties:
+      error:
+         $ref: '#/definitions/QuoteErrorEnum'
+      minimumFiatAmount?:
+        type: "number"
+      maximumFiatAmount?:
+        type: "number"
+      minimumCryptoAmount?:
+        type: "number"
+      maximumCryptoAmount?:
+        type: "number"
+  ClockResponse:
+    type: "object"
+    properties:
+      time:
+        type: "string"
+  FiatAccountInfoBody:
+    type: "object"
+    properties:
+      fiatAccountId:
+        type: "string"
+      name:
+        type: "string"
+      institution:
+        type: "string"
+      fiatAccountType:
+        $ref: '#/definitions/FiatAccountTypeEnum'
+  FiatAccountInfoResponse:
+    type: "object"
+    properties: 
+      fiatAccountId: 
+        type: "string"
+      name: 
+        type: "string"
+      institution:
+        type: "string"
+      fiatAccountType: 
+        $ref: '#/definitions/FiatAccountTypeEnum'
+  TransferRequest:
+    type: "object"
+    properties:
+      fiatType:
+        $ref: '#/definitions/FiatType'
+      cryptoType:
+        $ref: '#/definitions/CryptoType'
+      amount:
+        type: "number"
+      fiatAccountId:
+        type: "string"
+      quoteId:
+        type: "string"
+  TransferResponse:
+    type: "object"
+    properties:
+      transferId: 
+        type: "string"
+      transferStatus: 
+        $ref: '#/definitions/TransferStatusEnum'
+      transferAddress:
+        type: "string"
+  TransferStatusEnum:
+    type: "string"
+    enum: &TransferStatusEnum
+      - TransferStarted
+      - TransferFiatFundsDebited
+      - TransferSendingCryptoFunds
+      - TransferAmlFailed
+      - TransferReadyForUserToSendCryptoFunds
+      - TransferReceivedCryptoFunds
+      - TransferComplete
+      - TransferFailed
+  TransferStatusResponse:
+    type: "object"
+    properties:
+      status:
+        $ref: '#/definitions/TransferStatusEnum'
+      transferType:
+        type: "string"
+        enum:
+          - TransferIn
+          - TransferOut
+      fiatType:
+        $ref: '#/definitions/FiatType'
+      cryptoType:
+        $ref: '#/definitions/CryptoType'
+      amountProvided:
+        type: "number"
+      amountRecieved:
+        type: "number"
+      fee:
+        type: "number"
+      fiatAccountId:
+        type: "string"
+      transferId:
+        type: "string"
+      transferAddress:
+        type: "string"
+  TransferErrorEnum:
+    type: "string"
+    enum: &TransferErrorEnum
+      - TransferNotAllowed
+      - KycExpired
+      - InvalidQuote
+      - InvalidFiatAccount
+  SchemaErrorEnum:
+    type: "string"
+    enum:
+      - UnsupportedSchema
+      - InvalidSchema
+  LoginErrorEnum:
+    type: "string"
+    enum:
+      - InvalidSignature
+      - InvalidParameters
+      - ContractLoginNotSupported
+      - NonceInUse
+      - IssuedTooEarly
+      - ExpirationTooLong
+  QuoteErrorEnum:
+    type: "string"
+    enum:
+      - GeoNotSupported
+      - CryptoAmountTooLow
+      - CryptoAmountTooHigh
+      - FiatAmountTooLow
+      - FiatAmountTooHigh
+      - CryptoNotSupported
+      - FiatNotSupported
+      - InvalidParameters
+  ResourceExists:
+    type: "string"
+    enum: 
+      - ResourceExists
+  ResourceNotFound:
+    type: "string"
+    enum: 
+      - ResourceNotFound
 paths:
   /clock:
     get:
@@ -137,8 +408,8 @@ paths:
         schema:
           $ref: "#/definitions/KycInfo"
       - name: "kycSchema"
-        allOf:
-          - $ref: '#/definitions/KycSchemaEnum'
+        enum: *KycSchemaEnum
+        type: "string"
         in: "path"
         description: "The type of kyc schema to provide"
         required: true
@@ -176,8 +447,8 @@ paths:
       - "application/json"
       parameters:
       - name: "kycSchema"
-        allOf:
-          - $ref: '#/definitions/KycSchemaEnum'
+        enum: *KycSchemaEnum
+        type: "string"
         in: "path"
         description: "The type of kyc schema to delete"
         required: true
@@ -206,8 +477,8 @@ paths:
       - "application/json"
       parameters:
       - name: "kycSchema"
-        allOf:
-          - $ref: '#/definitions/KycSchemaEnum'
+        enum: *KycSchemaEnum
+        type: "string"
         in: "path"
         description: "The type of kyc schema to query"
         required: true
@@ -247,8 +518,8 @@ paths:
         schema:
           $ref: "#/definitions/FiatAccountInfoBody"
       - name: "fiatAccountSchema"
-        allOf:
-          - $ref: '#/definitions/FiatAccountSchemaEnum'
+        enum: *FiatAccountSchemaEnum
+        type: "string"
         in: "path"
         description: "The type of fiat account schema being provided"
         required: true
@@ -294,7 +565,7 @@ paths:
                   $ref: '#/definitions/FiatAccountInfoResponse'
       security:
         - siwe_auth: []
-  /accounts/{fiatAccountId}:
+  /accounts/delete/{fiatAccountId}:
     delete:
       tags:
       - "fiat account"
@@ -443,267 +714,3 @@ paths:
 securityDefinitions:
   siwe_auth:
     type: "basic"
-definitions:
-  KycInfo:
-    type: "object"
-  KycStatusEnum:
-    type: "string"
-    enum:
-      - KycNotCreated
-      - KycPending
-      - KycApproved
-      - KycDenied
-      - KycExpired
-  KycSchemaEnum:
-    type: "string"
-    enum:
-      - NameAndAddress
-      - IdAndSelfie
-      - PersonalDataAndDocuments
-  FiatType:
-    type: "string"
-    enum:
-      - USD
-      - EUR
-      - BRL
-      - GNF
-      - INR
-      - NGN
-      - GHS
-      - KES
-      - ZAR
-      - PHP
-      - UGX
-      - GBP
-      - XOF
-      - RWF
-      - CNY
-      - XAF
-  CryptoType:
-    type: "string"
-    enum:
-      - cUSD
-      - cEUR
-      - cREAL
-      - CELO
-  FeeType:
-    type: "string"
-    enum:
-      - KycFee
-      - PlatformFee
-  FeeFrequency:
-    type: "string"
-    enum:
-      - OneTime
-      - Recurring
-  FiatAccountTypeEnum:
-    type: "string"
-    enum:
-      - BankAccount
-      - MobileMoney
-      - DuniaWallet
-  FiatAccountSchemaEnum:
-    type: "string"
-    enum:
-      - AccountNumber
-  QuoteRequest:
-    type: "object"
-    properties:
-      fiatType:
-        $ref: '#/definitions/FiatType'
-      cryptoType:
-        $ref: '#/definitions/CryptoType'
-      fiatAmount:
-        type: "number"
-      cryptoAmount:
-        type: "number"
-      country:
-        type: "string"
-      region:
-        type: "string"
-  QuoteResponse:
-    type: "object"
-    properties:
-      quote:
-        type: "object"
-        properties:
-          fiatType:
-            $ref: '#/definitions/FiatType'
-          cryptoType:
-            $ref: '#/definitions/CryptoType'
-          fiatAmount:
-            type: "number"
-          cryptoAmount:
-            type: "number"
-          quoteId:
-            type: "string"
-          guaranteedUntil:
-            type: "string"
-      kyc:
-        type: "object"
-        properties:
-          kycRequired: 
-            type: "boolean"
-          kycSchemas:
-            type: "array"
-            items:
-              $ref: '#/definitions/KycSchemaEnum'
-      fiatAccount:
-        type: "object"
-        properties:
-          <FiatAccountTypeEnum>:
-            type: "object"
-            properties:
-              fiatAccountSchemas:
-                type: "array"
-                items:
-                  $ref: '#/definitions/FiatAccountSchemaEnum'
-              fee?:
-                type: "number"
-              feeType?:
-                $ref: '#/definitions/FeeType'
-              feeFrequency?:
-                $ref: '#/definitions/FeeFrequency'
-              settlementTimeLowerBound?:
-                type: "string"
-              settlementTimeUpperBound?:
-                type: "string"
-  LoginErrorResponse:
-    type: "object"
-    properties:
-      error:
-        $ref: "#/definitions/LoginErrorEnum"
-  QuoteErrorResponse:
-    type: "object"
-    properties:
-      error:
-         $ref: '#/definitions/QuoteErrorEnum'
-      minimumFiatAmount?:
-        type: "number"
-      maximumFiatAmount?:
-        type: "number"
-      minimumCryptoAmount?:
-        type: "number"
-      maximumCryptoAmount?:
-        type: "number"
-  ClockResponse:
-    type: "object"
-    properties:
-      time:
-        type: "string"
-  FiatAccountInfoBody:
-    type: "object"
-    properties:
-      fiatAccountId:
-        type: "string"
-      name:
-        type: "string"
-      institution:
-        type: "string"
-      fiatAccountType:
-        $ref: '#/definitions/FiatAccountTypeEnum'
-  FiatAccountInfoResponse:
-    type: "object"
-    properties: 
-      fiatAccountId: 
-        type: "string"
-      name: 
-        type: "string"
-      institution:
-        type: "string"
-      fiatAccountType: 
-        $ref: '#/definitions/FiatAccountTypeEnum'
-  TransferRequest:
-    type: "object"
-    properties:
-      fiatType:
-        $ref: '#/definitions/FiatType'
-      cryptoType:
-        $ref: '#/definitions/CryptoType'
-      amount:
-        type: "number"
-      fiatAccountId:
-        type: "string"
-      quoteId:
-        type: "string"
-  TransferResponse:
-    type: "object"
-    properties:
-      transferId: 
-        type: "string"
-      transferStatus: 
-        $ref: '#/definitions/TransferStatusEnum'
-      transferAddress:
-        type: "string"
-  TransferStatusEnum:
-    type: "string"
-    enum:
-      - TransferStarted
-      - TransferPending
-      - TransferComplete
-      - TransferFailed
-  TransferStatusResponse:
-    type: "object"
-    properties:
-      status:
-        $ref: '#/definitions/TransferStatusEnum'
-      transferType:
-        type: "string"
-        enum:
-          - TransferIn
-          - TransferOut
-      fiatType:
-        $ref: '#/definitions/FiatType'
-      cryptoType:
-        $ref: '#/definitions/CryptoType'
-      amountProvided:
-        type: "number"
-      amountRecieved:
-        type: "number"
-      fee:
-        type: "number"
-      fiatAccountId:
-        type: "string"
-      transferId:
-        type: "string"
-      transferAddress:
-        type: "string"
-  TransferErrorEnum:
-    type: "string"
-    enum:
-      - TransferNotAllowed
-      - KycExpired
-      - InvalidQuote
-  SchemaErrorEnum:
-    type: "string"
-    enum:
-      - UnsupportedSchema
-      - InvalidSchema
-  LoginErrorEnum:
-    type: "string"
-    enum:
-      - InvalidSignature
-      - InvalidParameters
-      - ContractLoginNotSupported
-      - NonceInUse
-      - IssuedTooEarly
-      - ExpirationTooLong
-  QuoteErrorEnum:
-    type: "string"
-    enum:
-      - GeoNotSupported
-      - CryptoAmountTooLow
-      - CryptoAmountTooHigh
-      - FiatAmountTooLow
-      - FiatAmountTooHigh
-      - CryptoNotSupported
-      - FiatNotSupported
-      - InvalidParameters
-  ResourceExists:
-    type: "string"
-    enum: 
-      - ResourceExists
-  ResourceNotFound:
-    type: "string"
-    enum: 
-      - ResourceNotFound
