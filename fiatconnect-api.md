@@ -683,7 +683,7 @@ The second, and largest set of endpoints, are the ones that require a user to be
 * `DELETE /kyc/:kycSchema`
 * `POST /accounts`
 * `GET /accounts`
-* `DELETE /account/:fiatAccountId`
+* `DELETE /account/delete/:fiatAccountId`
 * `GET /transfer/:transferId/status`
 * `POST /transfer/in`
 * `POST /transfer/out`

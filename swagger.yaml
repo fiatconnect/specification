@@ -169,17 +169,23 @@ definitions:
     properties:
       time:
         type: "string"
-  FiatAccountInfoBody:
+  FiatAccountInfoRequest:
     type: "object"
     properties:
-      fiatAccountId:
+      fiatAccountSchema:
+        enum: *FiatAccountSchemaEnum
         type: "string"
-      name:
-        type: "string"
-      institution:
-        type: "string"
-      fiatAccountType:
-        $ref: '#/definitions/FiatAccountTypeEnum'
+      data:
+        type: "object"
+        properties:
+          fiatAccountId:
+            type: "string"
+          name:
+            type: "string"
+          institution:
+            type: "string"
+          fiatAccountType:
+            $ref: '#/definitions/FiatAccountTypeEnum'
   FiatAccountInfoResponse:
     type: "object"
     properties: 
@@ -499,7 +505,7 @@ paths:
                 $ref: '#/definitions/ResourceNotFound'
       security:
         - siwe_auth: []
-  /accounts/{fiatAccountSchema}:
+  /accounts:
     post:
       tags:
       - "fiat account"
@@ -516,13 +522,7 @@ paths:
         description: "The user's fiat account information"
         required: true
         schema:
-          $ref: "#/definitions/FiatAccountInfoBody"
-      - name: "fiatAccountSchema"
-        enum: *FiatAccountSchemaEnum
-        type: "string"
-        in: "path"
-        description: "The type of fiat account schema being provided"
-        required: true
+          $ref: "#/definitions/FiatAccountInfoRequest"
       responses:
         "200":
           description: "successful operation"
@@ -544,7 +544,6 @@ paths:
                 $ref: '#/definitions/ResourceExists'
       security:
         - siwe_auth: []
-  /accounts:
     get:
       tags:
       - "fiat account"
