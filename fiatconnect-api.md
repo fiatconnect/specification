@@ -670,6 +670,7 @@ The first group of endpoints are those that *do not* require the user to have a 
 * `GET /quote/in`
 * `GET /quote/out`
 * `POST /auth/login`
+* `GET /clock`
 
 Since it may be a painful user experience to have a user log in to a provider just to get a quote, authentication is not required for these endpoints. Of course,
 clients may still access these endpoints when logged in, but a logged-in session (or any session at all) is not required to access these endpoints. `POST /auth/login`
