@@ -194,12 +194,6 @@ definitions:
   TransferRequest:
     type: "object"
     properties:
-      fiatType:
-        $ref: '#/definitions/FiatType'
-      cryptoType:
-        $ref: '#/definitions/CryptoType'
-      amount:
-        type: "number"
       fiatAccountId:
         type: "string"
       quoteId:
