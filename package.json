@@ -1,6 +1,6 @@
 {
   "name": "specification",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "FiatConnect API Specification",
   "repository": "https://github.com/fiatconnect/specification.git",
   "scripts": {
