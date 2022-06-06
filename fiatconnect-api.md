@@ -121,10 +121,9 @@
           - [3.4.2.3.3.2. Failure](#342332-failure)
           - [3.4.2.3.3.2.1. `ResourceNotFound`](#3423321-resourcenotfound)
     - [3.4.3. Fiat Account Endpoints](#343-fiat-account-endpoints)
-      - [3.4.3.1. `POST /accounts/:fiatAccountSchema`](#3431-post-accountsfiataccountschema)
+      - [3.4.3.1. `POST /accounts`](#3431-post-accounts)
         - [3.4.3.1.1. Parameters](#34311-parameters)
-          - [3.4.3.1.1.1. Path Parameters](#343111-path-parameters)
-          - [3.4.3.1.1.2. Request Body](#343112-request-body)
+          - [3.4.3.1.1.1. Request Body](#343112-request-body)
         - [3.4.3.1.2. Responses](#34312-responses)
           - [3.4.3.1.2.1. HTTP `200`](#343121-http-200)
           - [3.4.3.1.2.2. HTTP `400`](#343122-http-400)
@@ -141,7 +140,7 @@
           - [3.4.3.2.2.1. HTTP `200`](#343221-http-200)
         - [3.4.3.2.3. Semantics](#34323-semantics)
           - [3.4.3.2.3.1. Success](#343231-success)
-      - [3.4.3.3. `DELETE /accounts/delete/:fiatAccountId`](#3433-delete-accountsfiataccountid)
+      - [3.4.3.3. `DELETE /accounts/:fiatAccountId`](#3433-delete-accountsfiataccountid)
         - [3.4.3.3.1. Parameters](#34331-parameters)
           - [3.4.3.3.1.1. Path Parameters](#343311-path-parameters)
         - [3.4.3.3.2. Responses](#34332-responses)
@@ -682,9 +681,9 @@ The second, and largest set of endpoints, are the ones that require a user to be
 * `POST /kyc/:kycSchema`
 * `GET /kyc/:kycSchema/status`
 * `DELETE /kyc/:kycSchema`
-* `POST /accounts/:fiatAccountSchema`
+* `POST /accounts`
 * `GET /accounts`
-* `DELETE /account/:fiatAccountId`
+* `DELETE /accounts/:fiatAccountId`
 * `GET /transfer/:transferId/status`
 * `POST /transfer/in`
 * `POST /transfer/out`
@@ -1293,20 +1292,20 @@ In order for clients to uniquely select accounts on file when communicating with
 with unique identifiers (i.e. a UUID) that the client can use to select an account. These identifiers MAY be globally unique across all users, but need not be. A server
 MUST NOT allow a user to interact with fiat account identifiers (i.e., selecting one for a transfer) for accounts not owned by that user.
 
-#### 3.4.3.1. `POST /accounts/:fiatAccountSchema`
+#### 3.4.3.1. `POST /accounts`
 
-The `POST /accounts/:fiatAccountSchema` endpoint is used to store a new fiat account on file with the server.
+The `POST /accounts` endpoint is used to store a new fiat account on file with the server.
 
 ##### 3.4.3.1.1. Parameters
 
-###### 3.4.3.1.1.1. Path Parameters
+###### 3.4.3.1.1.1. Request Body
+
+The request body must contain the following fields:
 
 * `fiatAccountSchema`: {`FiatAccountSchemaEnum`} [REQUIRED]
   - The fiat account schema to use to add the fiat account
-
-###### 3.4.3.1.1.2. Request Body
-
-The request body schema for this endpoint must match the fiat account schema  selected in the path parameter.
+* `data`: {`object`} [REQUIRED]
+  - An object containing the data required by the Fiat Account schema chosen in the `fiatAccountSchema` field above.
 
 ##### 3.4.3.1.2. Responses
 
@@ -1406,9 +1405,9 @@ This endpoint is simply used to return a list of metadata about all of the fiat 
 
 On success, this endpoint MUST return a mapping from fiat account types to metadata about fiat accounts that the user has on file.
 
-#### 3.4.3.3. `DELETE /accounts/delete/:fiatAccountId`
+#### 3.4.3.3. `DELETE /accounts/:fiatAccountId`
 
-The `DELETE /accounts/delete/:fiatAccountId` endpoint is used to delete a user's fiat account from the server.
+The `DELETE /accounts/:fiatAccountId` endpoint is used to delete a user's fiat account from the server.
 
 ##### 3.4.3.3.1. Parameters
 
