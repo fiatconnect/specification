@@ -84,6 +84,8 @@ definitions:
       - AccountNumber
       - MobileMoney
       - DuniaWallet
+      - IBANNumber
+      - IFSCAccount
   QuoteRequest:
     type: "object"
     properties:
