@@ -2276,9 +2276,9 @@ Banks use different starting codes for their branches for differentiation. (In I
 ```
 { 
     "name": "string",
-    "cardNumber": "Number",
+    "cardNumber": "string",
     "expiry": "string",
-    "cvv": "Number"
+    "cvv": "string"
 }
 ```
 
