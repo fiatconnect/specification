@@ -2110,7 +2110,8 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 	`MobileMoney`,
 	`DuniaWallet`,
 	`IBANNumber`,
-	`IFSCAccount`
+	`IFSCAccount`,
+	`BRLAccount`
 ]
 ```
 
@@ -2266,6 +2267,28 @@ The `country` field is a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_
 The `ifsc` or Indian Financial System Code is an 11-digit alpha-numeric code that is unique for bank branches that offer online money transfer options.
 The `accountNumber` field is unique between individuals and no two banks or account holders can have the same account number.
 Banks use different starting codes for their branches for differentiation. (In India, bank account numbers usually contain 7 to 21 digits.)
+
+#### 8.3.2.6. `BRLAccount`
+
+`BRLAccount` is an account schema that represents transfers for `BRL` currency.
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	accountNumber: `string`,
+	country: `string`,
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`,
+	branchIdentifier: `string`,
+	CPFNumber: `string`
+}
+```
+
+The `country` field is a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
+The `branchIdentifier` is unique 5-digit alpha-numeric code for bank branches that offer online money transfer options. 
+The `CPFNumber`(Cadastro de Pessoas Físicas) is the Brazilian individual taxpayer registry identification.It's an 11-digit number.
+The `accountNumber` field is unique between individuals and no two banks or account holders can have the same account number.
+Banks use different starting codes for their branches for differentiation.
 
 # 9. References
 
