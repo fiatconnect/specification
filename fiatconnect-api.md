@@ -2110,7 +2110,8 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 	`MobileMoney`,
 	`DuniaWallet`,
 	`IBANNumber`,
-	`IFSCAccount`
+	`IFSCAccount`,
+	`USDAccount`
 ]
 ```
 
@@ -2266,6 +2267,28 @@ The `country` field is a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_
 The `ifsc` or Indian Financial System Code is an 11-digit alpha-numeric code that is unique for bank branches that offer online money transfer options.
 The `accountNumber` field is unique between individuals and no two banks or account holders can have the same account number.
 Banks use different starting codes for their branches for differentiation. (In India, bank account numbers usually contain 7 to 21 digits.)
+
+#### 8.3.2.6. `USDAccount`
+
+`USDAccount` is an account schema that represents transfers for `USD` currency.
+
+```
+{
+	accountName: `string`,
+	institutionName: `string`,
+	accountNumber: `string`,
+	country: `string`,
+	fiatAccountType: `FiatAccountTypeEnum.BankAccount`,
+	branchIdentifier: `string`,
+	routingNumber: `string`
+}
+```
+
+The `country` field is a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
+The `branchIdentifier` is unique alpha-numeric code for bank branches that offer online money transfer options.
+The `routingNumber` is a nine-digit code used by financial institutions to identify other financial institutions. It's also known as an RTN (routing transit number) and an ABA (American Bankers Association) routing number.
+The `accountNumber` field is unique between individuals and no two banks or account holders can have the same account number.
+Banks use different starting codes for their branches for differentiation.
 
 # 9. References
 
