@@ -521,7 +521,7 @@ The `domain` field MUST correspond to the [RFC 3986](https://datatracker.ietf.or
 The `address` field MUST correspond to the Celo blockchain address that the user is attempting to login/authorize themself as. For externally-owned accounts, this
 must conform to the mixed-case checksum encoding specified in [EIP-55](https://eips.ethereum.org/EIPS/eip-55).
 The `uri` field MUST correspond to the origin URL of the API to authorize for, with the `/auth/login` path appended, e.g. `https://example.com/auth/login`.
-The `nonce` field MUST be a unique 8 character alpha-numeric string not previously seen in as part of any unexpired request from the given client.
+The `nonce` field MUST be a unique, at least 8 characters long, alpha-numeric string not previously seen for any unexpired login request from the given client.
 The `issued-at` field MUST be the ISO 8601 datetime string of the time at which the client generated the message.
 The `expiration-time` field MUST be an ISO 8601 datetime string that specifies when this message will no longer valid, and when a session created with this message
 will expire. This field MUST NOT be more than four hours (14400 seconds) later than the `issued-at` field.
