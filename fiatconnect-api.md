@@ -123,7 +123,7 @@
     - [3.4.3. Fiat Account Endpoints](#343-fiat-account-endpoints)
       - [3.4.3.1. `POST /accounts`](#3431-post-accounts)
         - [3.4.3.1.1. Parameters](#34311-parameters)
-          - [3.4.3.1.1.1. Request Body](#343112-request-body)
+          - [3.4.3.1.1.1. Request Body](#343111-request-body)
         - [3.4.3.1.2. Responses](#34312-responses)
           - [3.4.3.1.2.1. HTTP `200`](#343121-http-200)
           - [3.4.3.1.2.2. HTTP `400`](#343122-http-400)
