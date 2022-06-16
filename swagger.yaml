@@ -55,6 +55,19 @@ definitions:
       - RWF
       - CNY
       - XAF
+      - ARS
+      - BOB
+      - CLP
+      - COP
+      - FKP
+      - GYD
+      - PYG
+      - PEN 
+      - SRD
+      - UYU
+      - VES
+      - MXN
+      - PAB
   CryptoType:
     type: "string"
     enum: &CryptoType
