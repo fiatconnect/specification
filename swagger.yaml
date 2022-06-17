@@ -338,7 +338,7 @@ paths:
           schema:
             $ref: "#/definitions/LoginErrorResponse"
   /quote/in:
-    get:
+    post:
       tags:
       - "quote"
       summary: "Retrieve a quote for a transfer from fiat to crypto"
@@ -365,7 +365,7 @@ paths:
           schema:
             $ref: '#/definitions/QuoteErrorResponse'
   /quote/out:
-    get:
+    post:
       tags:
       - "quote"
       summary: "Retrieve a quote for a transfer from crypto to fiat"

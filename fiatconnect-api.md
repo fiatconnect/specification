@@ -666,8 +666,8 @@ requirements. These levels are explained below.
 
 The first group of endpoints are those that *do not* require the user to have a logged-in session. These are:
 
-* `GET /quote/in`
-* `GET /quote/out`
+* `POST /quote/in`
+* `POST /quote/out`
 * `POST /auth/login`
 * `GET /clock`
 
@@ -746,9 +746,9 @@ and a non-200 as verification that it is not.
 
 Some non-200s may be recovered from by modifying the transfer parameters; others may not be, e.g., for those caused by geos where transfers are completely unsupported.
 
-#### 3.4.1.1. `GET /quote/in`
+#### 3.4.1.1. `POST /quote/in`
 
-The `GET /quote/in` endpoint is used to retrieve quotes used for transfers in to crypto from fiat currencies. In addition to returning quote information, it also
+The `POST /quote/in` endpoint is used to retrieve quotes used for transfers in to crypto from fiat currencies. In addition to returning quote information, it also
 returns the permissable types of KYC that a user must have on file to initiate the corresponding transfer, as well as the fiat account types that are allowed to be
 used for the transfer.
 
@@ -919,9 +919,9 @@ the server MUST return a `FiatNotSupported` error.
 If the request is missing any required parameters, or if the parameters are poorly formed, the server MUST respond
 with an `InvalidParameters` error.
 
-#### 3.4.1.2. `GET /quote/out`
+#### 3.4.1.2. `POST /quote/out`
 
-The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out from crypto to fiat currencies.
+The `POST /quote/out` endpoint is used to retrieve quotes used for transfers out from crypto to fiat currencies.
 
 ##### 3.4.1.2.1. Parameters
 
