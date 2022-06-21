@@ -127,7 +127,12 @@ definitions:
           kycSchemas:
             type: "array"
             items:
-              $ref: '#/definitions/KycSchemaEnum'
+              type: "object"
+              properties:
+                kycSchema:
+                  $ref: '#/definitions/KycSchemaEnum'
+                allowedValues:
+                  type: "object"
       fiatAccount:
         type: "object"
         properties:
