@@ -236,6 +236,7 @@
       - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
       - [8.3.2.4. `IBANNumber`](#8324-ibannumber)
       - [8.3.2.5. `IFSCAccount`](#8325-ifscaccount)
+      - [8.3.2.6. `PaymentCardAccount`](#8326-paymentcardaccount)
 - [9. References](#9-references)
   - [9.1. Normative References](#91-normative-references)
     - [9.1.1. [RFC2119]](#911-rfc2119)
