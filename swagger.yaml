@@ -86,6 +86,7 @@ definitions:
       - DuniaWallet
       - IBANNumber
       - IFSCAccount
+      - USDAccount
   QuoteRequest:
     type: "object"
     properties:
