@@ -2275,10 +2275,11 @@ Banks use different starting codes for their branches for differentiation. (In I
 
 ```
 { 
-    "name": "string",
-    "cardNumber": "string",
-    "expiry": "string",
-    "cvv": "string"
+    name: `string`,
+    cardNumber: `string`,
+    expiry: `string`,
+    cvv: `string`,
+    fiatAccountType:`FiatAccountTypeEnum.PaymentCardAccount`
 }
 ```
 
