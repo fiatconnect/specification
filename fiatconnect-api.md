@@ -236,6 +236,7 @@
       - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
       - [8.3.2.4. `IBANNumber`](#8324-ibannumber)
       - [8.3.2.5. `IFSCAccount`](#8325-ifscaccount)
+      - [8.3.2.6. `USDAccount`](#8326-usdaccount)
 - [9. References](#9-references)
   - [9.1. Normative References](#91-normative-references)
     - [9.1.1. [RFC2119]](#911-rfc2119)
@@ -2279,13 +2280,11 @@ Banks use different starting codes for their branches for differentiation. (In I
 	accountNumber: `string`,
 	country: `string`,
 	fiatAccountType: `FiatAccountTypeEnum.BankAccount`,
-	branchIdentifier: `string`,
 	routingNumber: `string`
 }
 ```
 
 The `country` field is a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
-The `branchIdentifier` is unique alpha-numeric code for bank branches that offer online money transfer options.
 The `routingNumber` is a nine-digit code used by financial institutions to identify other financial institutions. It's also known as an RTN (routing transit number) and an ABA (American Bankers Association) routing number.
 The `accountNumber` field is unique between individuals and no two banks or account holders can have the same account number.
 Banks use different starting codes for their branches for differentiation.
