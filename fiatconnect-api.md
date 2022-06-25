@@ -2042,6 +2042,19 @@ An enum listing the types of fiat currencies supported by FiatConnect. All value
   `RWF`,
   `CNY`,
   `XAF`,
+  `ARS`,
+  `BOB`,
+  `CLP`,
+  `COP`,
+  `FKP`,
+  `GYD`,
+  `PYG`,
+  `PEN`,
+  `SRD`,
+  `UYU`,
+  `VES`,
+  `MXN`,
+  `PAB`,
 ]
 ```
 
