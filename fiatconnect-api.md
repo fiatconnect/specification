@@ -51,9 +51,9 @@
     - [3.3.3. HTTPS](#333-https)
   - [3.4. Formal Specification](#34-formal-specification)
     - [3.4.1. Quote Endpoints](#341-quote-endpoints)
-      - [3.4.1.1. `GET /quote/in`](#3411-get-quotein)
+      - [3.4.1.1. `POST /quote/in`](#3411-post-quotein)
         - [3.4.1.1.1. Parameters](#34111-parameters)
-          - [3.4.1.1.1.1. Query Parameters](#341111-query-parameters)
+          - [3.4.1.1.1.1. Request body](#341111-request-body)
         - [3.4.1.1.2. Responses](#34112-responses)
           - [3.4.1.1.2.1. HTTP `200`](#341121-http-200)
         - [3.4.1.1.2.2. HTTP `400`](#341122-http-400)
@@ -68,9 +68,9 @@
           - [3.4.1.1.3.2.6. `CryptoNotSupported`](#3411326-cryptonotsupported)
           - [3.4.1.1.3.2.7. `FiatNotSupported`](#3411327-fiatnotsupported)
           - [3.4.1.1.3.2.8. `InvalidParameters`](#3411328-invalidparameters)
-      - [3.4.1.2. `GET /quote/out`](#3412-get-quoteout)
+      - [3.4.1.2. `POST /quote/out`](#3412-post-quoteout)
         - [3.4.1.2.1. Parameters](#34121-parameters)
-          - [3.4.1.2.1.1. Query Parameters](#341211-query-parameters)
+          - [3.4.1.2.1.1. Request body](#341211-request-body)
         - [3.4.1.2.2. Responses](#34122-responses)
           - [3.4.1.2.2.1. HTTP `200`](#341221-http-200)
           - [3.4.1.2.2.2. HTTP `400`](#341222-http-400)
@@ -666,8 +666,8 @@ requirements. These levels are explained below.
 
 The first group of endpoints are those that *do not* require the user to have a logged-in session. These are:
 
-* `GET /quote/in`
-* `GET /quote/out`
+* `POST /quote/in`
+* `POST /quote/out`
 * `POST /auth/login`
 * `GET /clock`
 
@@ -746,15 +746,15 @@ and a non-200 as verification that it is not.
 
 Some non-200s may be recovered from by modifying the transfer parameters; others may not be, e.g., for those caused by geos where transfers are completely unsupported.
 
-#### 3.4.1.1. `GET /quote/in`
+#### 3.4.1.1. `POST /quote/in`
 
-The `GET /quote/in` endpoint is used to retrieve quotes used for transfers in to crypto from fiat currencies. In addition to returning quote information, it also
+The `POST /quote/in` endpoint is used to retrieve quotes used for transfers in to crypto from fiat currencies. In addition to returning quote information, it also
 returns the permissable types of KYC that a user must have on file to initiate the corresponding transfer, as well as the fiat account types that are allowed to be
 used for the transfer.
 
 ##### 3.4.1.1.1. Parameters
 
-###### 3.4.1.1.1.1. Query Parameters
+###### 3.4.1.1.1.1. Request Body
 
 * `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The desired fiat type to use for a transfer in quote; selected from a predefined list of fiat types supported by FiatConnect.
@@ -841,7 +841,7 @@ If `fiatAmount` is provided, the `quote.cryptoAmount` field returned in the succ
 receive by providing `fiatAmount` worth of the fiat currency. If `cryptoAmount` is provided, the `quote.fiatAmount` field MUST correspond to the amount
 of fiat currency required in order to receive the requested amount of crypto.
 
-The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
+The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the request body provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
 is a globally unique identifier for the quote, and is used by the client to initiate a transfer with the parameters associated with the quote including
 conversion rate, fee, amount, crypto type, fiat type, etc. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
@@ -862,7 +862,7 @@ Finally, a successful response must also return information about what fiat acco
 those account details, and what fee, if any, is associated with the requested quote when using a fiat account of a particular type.
 
 On success, the server MUST return a mapping from fiat account types to lists of schemas that the client may use to add a new account of that
-type. This is expected to vary by geographical region as well as quote details provided by the query parameters.
+type. This is expected to vary by geographical region as well as quote details provided by the request body.
 Each `fiatAccount[FiatAccountTypeEnum]` MUST correspond to a fiat account type that is allowed to be used for the requested quote.
 `fiatAccount[FiatAccountTypeEnum].fiatAccountSchemas` is a list of objects, where each object represents a fiat account schema that can be used to communicate data
 about the corresponding fiat account type. Each object MUST contain a `fiatAccountSchema` field representing the actual fiat account schema that can be used, and an
@@ -886,22 +886,22 @@ If a quote is not supported due to the provider not supporting the user's region
 
 ###### 3.4.1.1.3.2.2. `CryptoAmountTooLow`
 
-If the user provides `cryptoAmount` in the query parameter, and the value is too low, the server MUST return a `CryptoAmountTooLow` error. The
+If the user provides `cryptoAmount` in the request body, and the value is too low, the server MUST return a `CryptoAmountTooLow` error. The
 server MAY also provide a `minimumCryptoAmount` value with the response body.
 
 ###### 3.4.1.1.3.2.3. `CryptoAmountTooHigh`
 
-If the user provides `cryptoAmount` in the query parameter, and the value is too high, the server MUST return a `CryptoAmountTooHigh` error. The
+If the user provides `cryptoAmount` in the request body, and the value is too high, the server MUST return a `CryptoAmountTooHigh` error. The
 server MAY also provide a `maximumCryptoAmount` value with the response body.
 
 ###### 3.4.1.1.3.2.4. `FiatAmountTooLow`
 
-If the user provides `fiatAmount` in the query parameter, and the value is too low, the server MUST return a `FiatAmountTooLow` error. The
+If the user provides `fiatAmount` in the request body, and the value is too low, the server MUST return a `FiatAmountTooLow` error. The
 server MAY also provide a `minimumFiatAmount` value with the response body.
 
 ###### 3.4.1.1.3.2.5. `FiatAmountTooHigh`
 
-If the user provides `fiatAmount` in the query parameter, and the value is too high, the server MUST return a `FiatAmountTooHigh` error. The
+If the user provides `fiatAmount` in the request body, and the value is too high, the server MUST return a `FiatAmountTooHigh` error. The
 server MAY also provide a `maximumFiatAmount` value with the response body.
 
 ###### 3.4.1.1.3.2.6. `CryptoNotSupported`
@@ -919,13 +919,13 @@ the server MUST return a `FiatNotSupported` error.
 If the request is missing any required parameters, or if the parameters are poorly formed, the server MUST respond
 with an `InvalidParameters` error.
 
-#### 3.4.1.2. `GET /quote/out`
+#### 3.4.1.2. `POST /quote/out`
 
-The `GET /quote/out` endpoint is used to retrieve quotes used for transfers out from crypto to fiat currencies.
+The `POST /quote/out` endpoint is used to retrieve quotes used for transfers out from crypto to fiat currencies.
 
 ##### 3.4.1.2.1. Parameters
 
-###### 3.4.1.2.1.1. Query Parameters
+###### 3.4.1.2.1.1. Request Body
 
 * `fiatType`: {`FiatTypeEnum`} [REQUIRED]
   - The desired fiat type to use for a transfer out quote; selected from a predefined list of fiat types supported by FiatConnect.
@@ -1014,7 +1014,7 @@ If `fiatAmount` is provided, the `quote.cryptoAmount` field returned in the succ
 in order to receive `fiatAmount` worth of the fiat currency. If `cryptoAmount` is provided, the `quote.fiatAmount` field MUST correspond to the amount
 of fiat currency the user should expect to receive in exchange for `cryptoAmount` worth of the cryptocurrency.
 
-The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the query parameters provided to the endpoint.
+The `quote.fiatType`, `quote.cryptoType`, `quote.fiatAmount`, and `quote.cryptoAmount` fields in the response body MUST correspond to the request body provided to the endpoint.
 The `quote.guaranteedUntil` field represents the time that the quote is guaranteed until, as an ISO 8601 datetime string. The `quote.quoteId` field
 is a globally unique identifier for the quote, and is used by the client to initiate a transfer with the parameters associated with the quote including
 conversion rate, fee, amount, crypto type, fiat type, etc.  A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
@@ -1035,7 +1035,7 @@ Finally, a successful response must also return information about what fiat acco
 those account details, and what fee, if any, is associated with the requested quote when using a fiat account of a particular type.
 
 On success, the server MUST return a mapping from fiat account types to lists of schemas that the client may use to add a new account of that
-type. This is expected to vary by geographical region as well as quote details provided by the query parameters.
+type. This is expected to vary by geographical region as well as quote details provided by the request body.
 Each `fiatAccount[FiatAccountTypeEnum]` MUST correspond to a fiat account type that is allowed to be used for the requested quote.
 `fiatAccount[FiatAccountTypeEnum].fiatAccountSchemas` is a list of objects, where each object represents a fiat account schema that can be used to communicate data
 about the corresponding fiat account type. Each object MUST contain a `fiatAccountSchema` field representing the actual fiat account schema that can be used, and an
@@ -1059,22 +1059,22 @@ If a quote is not supported due to the provider not supporting the user's region
 
 ###### 3.4.1.2.3.2.2. `CryptoAmountTooLow`
 
-If the user provides `cryptoAmount` in the query parameter, and the value is too low, the server MUST return a `CryptoAmountTooLow` error. The
+If the user provides `cryptoAmount` in the request body, and the value is too low, the server MUST return a `CryptoAmountTooLow` error. The
 server MAY also provide a `minimumCryptoAmount` value with the response body.
 
 ###### 3.4.1.2.3.2.3. `CryptoAmountTooHigh`
 
-If the user provides `cryptoAmount` in the query parameter, and the value is too high, the server MUST return a `CryptoAmountTooHigh` error. The
+If the user provides `cryptoAmount` in the request body, and the value is too high, the server MUST return a `CryptoAmountTooHigh` error. The
 server MAY also provide a `maximumCryptoAmount` value with the response body.
 
 ###### 3.4.1.2.3.2.4. `FiatAmountTooLow`
 
-If the user provides `fiatAmount` in the query parameter, and the value is too low, the server MUST return a `FiatAmountTooLow` error. The
+If the user provides `fiatAmount` in the request body, and the value is too low, the server MUST return a `FiatAmountTooLow` error. The
 server MAY also provide a `minimumFiatAmount` value with the response body.
 
 ###### 3.4.1.2.3.2.5. `FiatAmountTooHigh`
 
-If the user provides `fiatAmount` in the query parameter, and the value is too high, the server MUST return a `FiatAmountTooHigh` error. The
+If the user provides `fiatAmount` in the request body, and the value is too high, the server MUST return a `FiatAmountTooHigh` error. The
 server MAY also provide a `maximumFiatAmount` value with the response body.
 
 ###### 3.4.1.2.3.2.6. `CryptoNotSupported`

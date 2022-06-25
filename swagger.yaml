@@ -343,12 +343,12 @@ paths:
           schema:
             $ref: "#/definitions/LoginErrorResponse"
   /quote/in:
-    get:
+    post:
       tags:
       - "quote"
       summary: "Retrieve a quote for a transfer from fiat to crypto"
       description: ""
-      operationId: "getQuoteIn"
+      operationId: "postQuoteIn"
       consumes:
       - "application/json"
       produces:
@@ -370,12 +370,12 @@ paths:
           schema:
             $ref: '#/definitions/QuoteErrorResponse'
   /quote/out:
-    get:
+    post:
       tags:
       - "quote"
       summary: "Retrieve a quote for a transfer from crypto to fiat"
       description: ""
-      operationId: "getQuoteOut"
+      operationId: "postQuoteOut"
       consumes:
       - "application/json"
       produces:
