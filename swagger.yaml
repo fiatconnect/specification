@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "FiatConnect provides a standardized server-side API specification for CICO providers to provide cash-in/cash-out functionality to clients."
-  version: "1.0.0"
+  version: "0.1.0"
   title: "FiatConnect Specification"
 tags:
 - name: "clock"
@@ -128,7 +128,12 @@ definitions:
           kycSchemas:
             type: "array"
             items:
-              $ref: '#/definitions/KycSchemaEnum'
+              type: "object"
+              properties:
+                kycSchema:
+                  $ref: '#/definitions/KycSchemaEnum'
+                allowedValues:
+                  type: "object"
       fiatAccount:
         type: "object"
         properties:
@@ -339,12 +344,12 @@ paths:
           schema:
             $ref: "#/definitions/LoginErrorResponse"
   /quote/in:
-    get:
+    post:
       tags:
       - "quote"
       summary: "Retrieve a quote for a transfer from fiat to crypto"
       description: ""
-      operationId: "getQuoteIn"
+      operationId: "postQuoteIn"
       consumes:
       - "application/json"
       produces:
@@ -366,12 +371,12 @@ paths:
           schema:
             $ref: '#/definitions/QuoteErrorResponse'
   /quote/out:
-    get:
+    post:
       tags:
       - "quote"
       summary: "Retrieve a quote for a transfer from crypto to fiat"
       description: ""
-      operationId: "getQuoteOut"
+      operationId: "postQuoteOut"
       consumes:
       - "application/json"
       produces:
