@@ -236,6 +236,7 @@
       - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
       - [8.3.2.4. `IBANNumber`](#8324-ibannumber)
       - [8.3.2.5. `IFSCAccount`](#8325-ifscaccount)
+      - [8.3.2.6. `PaymentCardAccount`](#8326-paymentcardaccount)
 - [9. References](#9-references)
   - [9.1. Normative References](#91-normative-references)
     - [9.1.1. [RFC2119]](#911-rfc2119)
@@ -2077,7 +2078,8 @@ represents what *kind* of account that schema represents.
 [
 	`BankAccount`,
 	`MobileMoney`,
-	`DuniaWallet`
+	`DuniaWallet`,
+	`PaymentCardAccount`
 ]
 ```
 
@@ -2111,7 +2113,8 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 	`MobileMoney`,
 	`DuniaWallet`,
 	`IBANNumber`,
-	`IFSCAccount`
+	`IFSCAccount`,
+	`PaymentCardAccount`
 ]
 ```
 
@@ -2267,6 +2270,23 @@ The `country` field is a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_
 The `ifsc` or Indian Financial System Code is an 11-digit alpha-numeric code that is unique for bank branches that offer online money transfer options.
 The `accountNumber` field is unique between individuals and no two banks or account holders can have the same account number.
 Banks use different starting codes for their branches for differentiation. (In India, bank account numbers usually contain 7 to 21 digits.)
+
+#### 8.3.2.6. `PaymentCardAccount`
+
+`PaymentCardAccount` is an account schema representing transfer in type of transactions.
+
+```
+{ 
+    name: `string`,
+    cardNumber: `string`,
+    expiry: `string`,
+    cvv: `string`,
+    fiatAccountType:`FiatAccountTypeEnum.PaymentCardAccount`
+}
+```
+
+The `name` field denotes the name printed on the card.The `expiry` should be in `MMYYYY` format.
+The `cardNumber` is sixteen digits printed on a debit or credit card.A card verification value or a `cvv` number is a 3-digit code printed at the back of a credit or debit card.
 
 # 9. References
 

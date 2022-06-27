@@ -78,6 +78,7 @@ definitions:
       - BankAccount
       - MobileMoney
       - DuniaWallet
+      - PaymentCardAccount
   FiatAccountSchemaEnum:
     type: "string"
     enum: &FiatAccountSchemaEnum
@@ -86,6 +87,7 @@ definitions:
       - DuniaWallet
       - IBANNumber
       - IFSCAccount
+      - PaymentCardAccount
   QuoteRequest:
     type: "object"
     properties:
