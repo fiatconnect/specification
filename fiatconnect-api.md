@@ -787,7 +787,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoAmount: `float`,
 		quoteId: `string`,
 		guaranteedUntil: `string`,
-    transferType: `TransferTypeEnum.TransferIn`
+		transferType: `TransferTypeEnum.TransferIn`
 	},
 	kyc: {
 		kycRequired: `boolean`,
@@ -959,7 +959,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoAmount: `float`,
 		quoteId: `string`,
 		guaranteedUntil: `string`,
-    transferType: `TransferTypeEnum.TransferOut`
+		transferType: `TransferTypeEnum.TransferOut`
 	},
 	kyc: {
 		kycRequired: `boolean`,
