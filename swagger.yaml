@@ -119,6 +119,8 @@ definitions:
             type: "string"
           guaranteedUntil:
             type: "string"
+          transferType:
+            $ref: '#/definitions/TransferType'
       kyc:
         type: "object"
         properties:
