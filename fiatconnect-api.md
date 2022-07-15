@@ -869,7 +869,7 @@ about the corresponding fiat account type. Each object MUST contain a `fiatAccou
 optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
 This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
 
-The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee amount for the transfer
+The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee as a string-ified numerical amount (e.g. `"1.0"`) for the transfer
 when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
 if the provider requires a fee for the transfer. For transfers in, this fee is assumed to be denominated in the selected `fiatType`. If
 `fiatAccount[FiatAccountTypeEnum].fee` is provided, the server MAY return `fiatAccount[FiatAccountTypeEnum].feeType` and/or `fiatAccount[FiatAccountTypeEnum].feeFrequency`.
