@@ -1042,8 +1042,8 @@ about the corresponding fiat account type. Each object MUST contain a `fiatAccou
 optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
 This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
 
-The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee as a string-ified numerical amount (e.g. `"1.0"`) for the transfer
-when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
+The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee for the transfer
+when using a fiat account of the corresponding type. If present, the fee field is given as a string-ified numerical amount (e.g. `"1.0"`). A server MAY choose to include the fee field for a particular fiat account type, though it MUST be included
 if the provider requires a fee for the transfer. For transfers out, this fee is assumed to be denominated in the selected `cryptoType`. If
 `fiatAccount[FiatAccountTypeEnum].fee` is provided, the server MAY return `fiatAccount[FiatAccountTypeEnum].feeType` and/or `fiatAccount[FiatAccountTypeEnum].feeFrequency`.
 `feeType` represents the *type* of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
@@ -1725,8 +1725,8 @@ if the client has configured them.
 If the user has a transfer on file with the corresponding `transferId`, the server MUST respond with an HTTP
 `200` status code. The fields in the success response body correspond to the details of the submitted transfer. In particular,
 `amountProvided` refers to the amount of fiat or crypto that the user has provided for the transfer. `amountReceived` refers to the amount
-of crypto or fiat that the server will be crediting to the user. `fee`, if present refers to the fee as a string-ified numerical amount (e.g. `"1.0"`), if any, associated with the transfer,
-denominated in fiat or crypto, depending on the transfer type.
+of crypto or fiat that the server will be crediting to the user. `fee`, if present refers to the fee, if any, associated with the transfer,
+denominated in fiat or crypto, depending on the transfer type. `fee` is given as a string-ified numerical amount (e.g. `"1.0"`).
 
 ###### 3.4.4.3.3.2. Failure
 
