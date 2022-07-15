@@ -1725,7 +1725,7 @@ if the client has configured them.
 If the user has a transfer on file with the corresponding `transferId`, the server MUST respond with an HTTP
 `200` status code. The fields in the success response body correspond to the details of the submitted transfer. In particular,
 `amountProvided` refers to the amount of fiat or crypto that the user has provided for the transfer. `amountReceived` refers to the amount
-of crypto or fiat that the server will be crediting to the user. `fee`, if present refers to the fee amount, if any, associated with the transfer,
+of crypto or fiat that the server will be crediting to the user. `fee`, if present refers to the fee as a string-ified numerical amount (e.g. `"1.0"`), if any, associated with the transfer,
 denominated in fiat or crypto, depending on the transfer type.
 
 ###### 3.4.4.3.3.2. Failure
