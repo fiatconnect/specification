@@ -760,10 +760,10 @@ used for the transfer.
   - The desired fiat type to use for a transfer in quote; selected from a predefined list of fiat types supported by FiatConnect.
 * `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The desired crypto type to use for a transfer in quote; selected from a predefined list of crypto types supported by FiatConnect.
-* `fiatAmount`: {`float`}
-  - The amount of the selected fiat type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of crypto specified for the quote.
-* `cryptoAmount`: {`float`}
-  - The amount of the selected crypto type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
+* `fiatAmount`: {`string`}
+  - String-ified numerical amount (E.g. `"5.00"`) of the selected fiat type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of crypto specified for the quote.
+* `cryptoAmount`: {`string`}
+  - String-ified numerical amount (E.g. `"1.0"`) of the selected crypto type to use for this transfer in quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
 * `country`: {`string`} [REQUIRED]
   - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
 * `region`: {`string`}
@@ -783,8 +783,8 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 	quote: {
 		fiatType: `FiatTypeEnum`,
 		cryptoType: `CryptoTypeEnum`,
-		fiatAmount: `float`,
-		cryptoAmount: `float`,
+		fiatAmount: `string`,
+		cryptoAmount: `string`,
 		quoteId: `string`,
 		guaranteedUntil: `string`
 	},
@@ -805,7 +805,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 					[string]: `string[]`
 				}
 			}[],
-			fee?: `float`,
+			fee?: `string`,
 			feeType?: `FeeTypeEnum`,
 			feeFrequency?: `FeeFrequencyEnum`,
 			settlementTimeLowerBound?: `string`,
@@ -822,10 +822,10 @@ On failure, the server MUST return an HTTP `400`, with a response body as follow
 ```
 {
 	error: `ErrorEnum`,
-	minimumFiatAmount?: `float`,
-	maximumFiatAmount?: `float`,
-	minimumCryptoAmount?: `float`,
-	maximumCryptoAmount?: `float`
+	minimumFiatAmount?: `string`,
+	maximumFiatAmount?: `string`,
+	minimumCryptoAmount?: `string`,
+	maximumCryptoAmount?: `string`
 }
 ```
 
@@ -869,7 +869,7 @@ about the corresponding fiat account type. Each object MUST contain a `fiatAccou
 optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
 This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
 
-The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee for the transfer
+The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee amount for the transfer
 when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
 if the provider requires a fee for the transfer. For transfers in, this fee is assumed to be denominated in the selected `fiatType`. If
 `fiatAccount[FiatAccountTypeEnum].fee` is provided, the server MAY return `fiatAccount[FiatAccountTypeEnum].feeType` and/or `fiatAccount[FiatAccountTypeEnum].feeFrequency`.
@@ -931,10 +931,10 @@ The `POST /quote/out` endpoint is used to retrieve quotes used for transfers out
   - The desired fiat type to use for a transfer out quote; selected from a predefined list of fiat types supported by FiatConnect.
 * `cryptoType`: {`CryptoTypeEnum`} [REQUIRED]
   - The desired crypto type to use for a transfer out quote; selected from a predefined list of crypto types supported by FiatConnect.
-* `fiatAmount`: {`float`}
-  - The amount of the selected fiat type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of crypto specified for the quote.
-* `cryptoAmount`: {`float`}
-  - The amount of the selected crypto type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
+* `fiatAmount`: {`string`}
+  - String-ified numerical amount (e.g. `"5.00"`) of the selected fiat type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of crypto specified for the quote.
+* `cryptoAmount`: {`string`}
+  - String-ified numerical amount (e.g. `"1.0"`) of the selected crypto type to use for this transfer out quote; if provided, the returned quote will be denominated in the type of fiat specified for the quote.
 * `country`: {`string`} [REQUIRED]
   - An ISO 3166-1 alpha-2 country code representing the country where the quote should be requested for.
 * `region`: {`string`}
@@ -954,8 +954,8 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 	quote: {
 		fiatType: `FiatTypeEnum`,
 		cryptoType: `CryptoTypeEnum`,
-		fiatAmount: `float`,
-		cryptoAmount: `float`,
+		fiatAmount: `string`,
+		cryptoAmount: `string`,
 		quoteId: `string`,
 		guaranteedUntil: `string`
 	},
@@ -976,7 +976,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 					[string]: `string[]`
 				}
 			}[],
-			fee?: `float`,
+			fee?: `string`,
 			feeType?: `FeeTypeEnum`,
 			feeFrequency?: `FeeFrequencyEnum`,
 			settlementTimeLowerBound?: `string`,
@@ -993,10 +993,10 @@ On failure, the MUST return an HTTP `400`, with a response body as follows. Refe
 ```
 {
 	error: `ErrorEnum`,
-	minimumFiatAmount?: `float`,
-	maximumFiatAmount?: `float`,
-	minimumCryptoAmount?: `float`,
-	maximumCryptoAmount?: `float`
+	minimumFiatAmount?: `string`,
+	maximumFiatAmount?: `string`,
+	minimumCryptoAmount?: `string`,
+	maximumCryptoAmount?: `string`
 }
 ```
 
@@ -1042,7 +1042,7 @@ about the corresponding fiat account type. Each object MUST contain a `fiatAccou
 optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
 This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
 
-The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee for the transfer
+The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee amount for the transfer
 when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
 if the provider requires a fee for the transfer. For transfers out, this fee is assumed to be denominated in the selected `cryptoType`. If
 `fiatAccount[FiatAccountTypeEnum].fee` is provided, the server MAY return `fiatAccount[FiatAccountTypeEnum].feeType` and/or `fiatAccount[FiatAccountTypeEnum].feeFrequency`.
@@ -1694,9 +1694,9 @@ On success, the server MUST return an HTTP `200` status code, along with a respo
 	transferType: `TransferTypeEnum`,
 	fiatType: `FiatTypeEnum`,
 	cryptoType: `CryptoTypeEnum`,
-	amountProvided: `float`,
-	amountReceived: `float`,
-	fee?: `float`,
+	amountProvided: `string`,
+	amountReceived: `string`,
+	fee?: `string`,
 	fiatAccountId: `string`,
 	transferId: `string`,
 	transferAddress: `string`
@@ -1725,7 +1725,7 @@ if the client has configured them.
 If the user has a transfer on file with the corresponding `transferId`, the server MUST respond with an HTTP
 `200` status code. The fields in the success response body correspond to the details of the submitted transfer. In particular,
 `amountProvided` refers to the amount of fiat or crypto that the user has provided for the transfer. `amountReceived` refers to the amount
-of crypto or fiat that the server will be crediting to the user. `fee`, if present refers to the fee, if any, associated with the transfer,
+of crypto or fiat that the server will be crediting to the user. `fee`, if present refers to the fee amount, if any, associated with the transfer,
 denominated in fiat or crypto, depending on the transfer type.
 
 ###### 3.4.4.3.3.2. Failure
@@ -1846,9 +1846,9 @@ one returned from the `GET /accounts/:transferId` endpoint
 	transferType: `TransferTypeEnum`,
 	fiatType: `FiatTypeEnum`,
 	cryptoType: `CryptoTypeEnum`,
-	amountProvided: `float`,
-	amountReceived: `float`,
-	fee?: `float`,
+	amountProvided: `string`,
+	amountReceived: `string`,
+	fee?: `string`,
 	fiatAccountId: `string`,
 	transferId: `string`,
 	transferAddress: `string`
@@ -1866,9 +1866,9 @@ one returned from the `GET /accounts/:transferId` endpoint
 	transferType: `TransferTypeEnum`,
 	fiatType: `FiatTypeEnum`,
 	cryptoType: `CryptoTypeEnum`,
-	amountProvided: `float`,
-	amountReceived: `float`,
-	fee?: `float`,
+	amountProvided: `string`,
+	amountReceived: `string`,
+	fee?: `string`,
 	fiatAccountId: `string`,
 	transferId: `string`,
 	transferAddress: `string`
