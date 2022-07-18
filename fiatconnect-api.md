@@ -204,54 +204,55 @@
     - [5.1.2. `WebhookTransferInStatusEventSchema`](#512-webhooktransferinstatuseventschema)
     - [5.1.3. `WebhookTransferOutStatusEventSchema`](#513-webhooktransferoutstatuseventschema)
   - [5.2. Webhook Request Signing](#52-webhook-request-signing)
-- [6. AML Considerations](#6-aml-considerations)
-- [7. Sandbox Environment](#7-sandbox-environment)
-  - [7.1. Celo Network](#71-celo-network)
-  - [7.2. Authentication](#72-authentication)
-  - [7.3. KYC](#73-kyc)
-  - [7.4. Fiat Accounts](#74-fiat-accounts)
-  - [7.5. Transfers](#75-transfers)
-- [8. Definitions](#8-definitions)
-  - [8.1. Static Definitions](#81-static-definitions)
-    - [8.1.1. `KycStatusEnum`](#811-kycstatusenum)
-    - [8.1.2. `ErrorEnum`](#812-errorenum)
-    - [8.1.3. `TransferTypeEnum`](#813-transfertypeenum)
-    - [8.1.3. `WebhookEventTypeEnum`](#813-webhookeventtypeenum)
-    - [8.1.4. `TransferStatusEnum`](#814-transferstatusenum)
-  - [8.2. Dynamic Definitions](#82-dynamic-definitions)
-    - [8.2.1. `FiatTypeEnum`](#821-fiattypeenum)
-    - [8.2.2. `CryptoTypeEnum`](#822-cryptotypeenum)
-    - [8.2.3. `KycSchemaEnum`](#823-kycschemaenum)
-    - [8.2.4. `FiatAccountTypeEnum`](#824-fiataccounttypeenum)
-    - [8.2.5. `FeeTypeEnum`](#825-feetypeenum)
-    - [8.2.6. `FeeFrequencyEnum`](#826-feefrequencyenum)
-    - [8.2.7. `FiatAccountSchemaEnum`](#827-fiataccountschemaenum)
-  - [8.3. Initial Entity Support](#83-initial-entity-support)
-    - [8.3.1. KYC Schemas](#831-kyc-schemas)
-      - [8.3.1.1. `PersonalDataAndDocuments`](#8311-personaldataanddocuments)
-    - [8.3.2. Fiat Account Schemas](#832-fiat-account-schemas)
-      - [8.3.2.1. `AccountNumber`](#8321-accountnumber)
-      - [8.3.2.2. `MobileMoney`](#8322-mobilemoney)
-        - [8.3.2.2.1. `SupportedOperatorEnum`](#83221-supportedoperatorenum)
-      - [8.3.2.3. `DuniaWallet`](#8323-duniawallet)
-      - [8.3.2.4. `IBANNumber`](#8324-ibannumber)
-      - [8.3.2.5. `IFSCAccount`](#8325-ifscaccount)
-- [9. References](#9-references)
-  - [9.1. Normative References](#91-normative-references)
-    - [9.1.1. [RFC2119]](#911-rfc2119)
-    - [9.1.2. [RFC8174]](#912-rfc8174)
-    - [9.1.3. [RFC7519]](#913-rfc7519)
-    - [9.1.4. [EIP-4361]](#914-eip-4361)
-    - [9.1.5. [EIP-55]](#915-eip-55)
-    - [9.1.6. [EIP-191]](#916-eip-191)
-    - [9.1.7. [EIP-1271]](#917-eip-1271)
-    - [9.1.8. [EIP-2098]](#918-eip-2098)
-  - [9.2. Informative References](#92-informative-references)
-    - [9.2.1. Webhook Best Practices](#921-webhook-best-practices)
-    - [9.2.2. Idempotency Keys](#922-idempotency-keys)
-    - [9.2.3. ISO 3166-1](#923-iso-3166-1)
-    - [9.2.4. ISO 3166-2](#924-iso-3166-2)
-    - [9.2.5. ISO 8601](#925-iso-8601)
+- [6. Amounts](#6-amounts)
+- [7. AML Considerations](#7-aml-considerations)
+- [8. Sandbox Environment](#8-sandbox-environment)
+  - [8.1. Celo Network](#81-celo-network)
+  - [8.2. Authentication](#82-authentication)
+  - [8.3. KYC](#83-kyc)
+  - [8.4. Fiat Accounts](#84-fiat-accounts)
+- [8.5. Transfers](#85-transfers)
+- [9. Definitions](#9-definitions)
+  - [9.1. Static Definitions](#91-static-definitions)
+    - [9.1.1. `KycStatusEnum`](#911-kycstatusenum)
+    - [9.1.2. `ErrorEnum`](#912-errorenum)
+    - [9.1.3. `TransferTypeEnum`](#913-transfertypeenum)
+    - [9.1.3. `WebhookEventTypeEnum`](#913-webhookeventtypeenum)
+    - [9.1.4. `TransferStatusEnum`](#914-transferstatusenum)
+  - [9.2. Dynamic Definitions](#92-dynamic-definitions)
+    - [9.2.1. `FiatTypeEnum`](#921-fiattypeenum)
+    - [9.2.2. `CryptoTypeEnum`](#922-cryptotypeenum)
+    - [9.2.3. `KycSchemaEnum`](#923-kycschemaenum)
+    - [9.2.4. `FiatAccountTypeEnum`](#924-fiataccounttypeenum)
+    - [9.2.5. `FeeTypeEnum`](#925-feetypeenum)
+    - [9.2.6. `FeeFrequencyEnum`](#926-feefrequencyenum)
+    - [9.2.7. `FiatAccountSchemaEnum`](#927-fiataccountschemaenum)
+  - [9.3. Initial Entity Support](#93-initial-entity-support)
+    - [9.3.1. KYC Schemas](#931-kyc-schemas)
+      - [9.3.1.1. `PersonalDataAndDocuments`](#9311-personaldataanddocuments)
+    - [9.3.2. Fiat Account Schemas](#932-fiat-account-schemas)
+      - [9.3.2.1. `AccountNumber`](#9321-accountnumber)
+      - [9.3.2.2. `MobileMoney`](#9322-mobilemoney)
+        - [9.3.2.2.1. `SupportedOperatorEnum`](#93221-supportedoperatorenum)
+      - [9.3.2.3. `DuniaWallet`](#9323-duniawallet)
+      - [9.3.2.4. `IBANNumber`](#9324-ibannumber)
+      - [9.3.2.5. `IFSCAccount`](#9325-ifscaccount)
+- [10. References](#10-references)
+  - [10.1. Normative References](#101-normative-references)
+    - [10.1.1. [RFC2119]](#1011-rfc2119)
+    - [10.1.2. [RFC8174]](#1012-rfc8174)
+    - [10.1.3. [RFC7519]](#1013-rfc7519)
+    - [10.1.4. [EIP-4361]](#1014-eip-4361)
+    - [10.1.5. [EIP-55]](#1015-eip-55)
+    - [10.1.6. [EIP-191]](#1016-eip-191)
+    - [10.1.7. [EIP-1271]](#1017-eip-1271)
+    - [10.1.8. [EIP-2098]](#1018-eip-2098)
+  - [10.2. Informative References](#102-informative-references)
+    - [10.2.1. Webhook Best Practices](#1021-webhook-best-practices)
+    - [10.2.2. Idempotency Keys](#1022-idempotency-keys)
+    - [10.2.3. ISO 3166-1](#1023-iso-3166-1)
+    - [10.2.4. ISO 3166-2](#1024-iso-3166-2)
+    - [10.2.5. ISO 8601](#1025-iso-8601)
 
 # 1. Introduction
 
@@ -1890,51 +1891,88 @@ the UNIX timestamp that the request was sent. The second will be of the form `s=
 MUST be computed from the shared webhook private key and a dot-separated string consisting of the UNIX timestamp joined with the request body.
 This signature verification design is based off of [Persona's webhook documentation](https://docs.withpersona.com/docs/best-practices).
 
-# 6. AML Considerations
+# 6. Amounts
+
+In the interest of preventing rounding errors, [floating point errors](https://floating-point-gui.de/), or similar errors, numerical amounts 
+MUST be communicated as strings for every request parameter and every response field throughout the FiatConnect API. 
+
+Clients and servers alike SHOULD NOT cast fiat or crypto amounts to floating point numbers or integers, but should instead
+consider libraries such as [bignumber.js](https://github.com/MikeMcl/bignumber.js/) for handling large numbers and decimals 
+to an arbitrary number of decimal places.
+
+## 6.1 Units
+
+Except where otherwise noted, amounts of cryptocurrencies MUST be given in the units of that currency, e.g. `1.5` Celo means
+one and a half Celo (not `1.5e-18` Celo, which would be the case if amounts were instead given in 
+[wei](https://www.investopedia.com/terms/w/wei.asp#:~:text=What%20Is%20a%20Wei%3F,one%20quintillionth%20of%20an%20ether.)).
+
+Amounts of fiat currencies MUST be given in the units of that currency, e.g. `5.00` USD means five USD.
+
+## 6.2 Decimal Places
+
+Given that amounts are communicated in divisible units-- such as US Dollars, which are divisible into `100` cents, or Celo, which 
+is divisible into `10^18` wei--  it is expected that the client or server will sometimes need to communicate non-integer amounts. 
+For all amounts, [decimal notation](https://en.wikipedia.org/wiki/Decimal#Decimal_notation) must be used-- for example, 
+One half should be given as `0.5`.
+
+## 6.3 Precision
+
+FiatConnect-compliant API's MUST observe 18 decimal places of precision for all cryptocurrencies and 2 decimal places of
+precision for all fiat currencies. 
+
+Note that this does NOT mean a CICO provider is required to support transfers of 
+extremely small amounts; see [here](#3411322-cryptoamounttoolow).
+
+Note also that while client and server MUST give amounts in the full degree of precision to unambiguously communicate 
+the correct amount (up to 18 decimal places for crypto and 2 for fiat currencies), they MAY omit decimal places when it 
+does not serve to disambiguate the amount. For example, `0.5` is a valid fiat amount, even though it has only one decimal place, 
+as long as it is understood to mean one half, and not fifty-one one-hundredths. 
+
+# 7. AML Considerations
 
 Anti-Money Laundering (AML) checks are an important part of regulatory compliance in the financial services industry. This proposal, however,
 does not require CICO providers to implement such checks. Providers MAY implement their own AML checks if they wish, according to local law.
 It is likely that by requiring KYC verification, CICO providers will be able to collect enough relevant information on the user in order to
 facilitate AML checks, if required.
 
-# 7. Sandbox Environment
+# 8. Sandbox Environment
 
 In order to facilitate ease of client integration and testing against FiatConnect-compliant APIs, each FiatConnect API MUST have a corresponding *sandbox*
 API available. This sandbox API should be identical in behavior to the production FiatConnect API in every way, except for a number of key differences.
 
-## 7.1. Celo Network
+## 8.1. Celo Network
 
 FiatConnect sandbox API implementations MUST operate against the Celo Alfajores network, rather than Mainnet. The Alfajores network operates with tokens
 with no monetary value, which allows testing of transfers without transacting real-world value.
 
-## 7.2. Authentication
+## 8.2. Authentication
 
 Sandbox servers MUST recognize a different set of client API keys than the production API, in order to allow clients to register a different set of webhook URLs
 than those recognized by the production API.
 
-## 7.3. KYC
+## 8.3. KYC
 
 All KYC submissions in the sandbox environment MUST eventually result in the `KycStatusEnum.KycApproved` status. Sandbox environments MUST still send status updates
 by webhook throughout the process, but verifications will always end in approval.
 
-## 7.4. Fiat Accounts
+## 8.4. Fiat Accounts
 
 Sandbox APIs MUST never internally connect to a provided Fiat Account or perform any sort of validation that user-submitted Fiat Account details are "valid".
 Sandbox APIs MUST never actually interact with a user's personal fiat accounts.
 
-## 7.5. Transfers
+## 8.5. Transfers
 
 Transfers in sandbox APIs will be much like ones in production APIs, but they will transfer tokens on the Alfajores network, which have no actual value. Sandbox APIs
 MUST never debit/credit actual fiat accounts, but they SHOULD receive/send crypto from/to the user's address depending on the type of transfer requested.
 
-# 8. Definitions
+# 9. Definitions
 
 This document references a number of definitions, all of which are enumerated in their entirety below. There are two "types" of definitions; those
 which are static, and *not* subject to change upon this proposal's acceptance, and those that are dynamic, and meant to be extended by the community.
 
-## 8.1. Static Definitions
+## 9.1. Static Definitions
 
-### 8.1.1. `KycStatusEnum`
+### 9.1.1. `KycStatusEnum`
 
 An enum listing KYC verification statuses.
 
@@ -1948,7 +1986,7 @@ An enum listing KYC verification statuses.
 ]
 ```
 
-### 8.1.2. `ErrorEnum`
+### 9.1.2. `ErrorEnum`
 
 An enum listing the error types used by various endpoints.
 
@@ -1979,7 +2017,7 @@ An enum listing the error types used by various endpoints.
 ]
 ```
 
-### 8.1.3. `TransferTypeEnum`
+### 9.1.3. `TransferTypeEnum`
 
 An enum listing transfer types.
 
@@ -1990,7 +2028,7 @@ An enum listing transfer types.
 ]
 ```
 
-### 8.1.3. `WebhookEventTypeEnum`
+### 9.1.3. `WebhookEventTypeEnum`
 
 An enum listing payload types for webhook status updates.
 
@@ -2002,7 +2040,7 @@ An enum listing payload types for webhook status updates.
 ]
 ```
 
-### 8.1.4. `TransferStatusEnum`
+### 9.1.4. `TransferStatusEnum`
 
 An enum listing the types of transfer statuses recognized by FiatConnect.
 
@@ -2018,9 +2056,9 @@ An enum listing the types of transfer statuses recognized by FiatConnect.
 	`TransferFailed`
 ]
 ```
-## 8.2. Dynamic Definitions
+## 9.2. Dynamic Definitions
 
-### 8.2.1. `FiatTypeEnum`
+### 9.2.1. `FiatTypeEnum`
 
 An enum listing the types of fiat currencies supported by FiatConnect. All values should be [ISO 4217 Currency Codes](https://en.wikipedia.org/wiki/ISO_4217)
 
@@ -2058,7 +2096,7 @@ An enum listing the types of fiat currencies supported by FiatConnect. All value
 ]
 ```
 
-### 8.2.2. `CryptoTypeEnum`
+### 9.2.2. `CryptoTypeEnum`
 
 An enum listing the types of crypto tokens supported by FiatConnect.
 
@@ -2071,7 +2109,7 @@ An enum listing the types of crypto tokens supported by FiatConnect.
 ]
 ```
 
-### 8.2.3. `KycSchemaEnum`
+### 9.2.3. `KycSchemaEnum`
 
 An enum listing the KYC schema types recognized by the FiatConnect specification.
 
@@ -2081,7 +2119,7 @@ An enum listing the KYC schema types recognized by the FiatConnect specification
 ]
 ```
 
-### 8.2.4. `FiatAccountTypeEnum`
+### 9.2.4. `FiatAccountTypeEnum`
 
 An enum listing the *types* of Fiat Accounts recognized by the FiatConnect specification. A Fiat Account Type is a property of each Fiat Account Schema, and
 represents what *kind* of account that schema represents.
@@ -2094,7 +2132,7 @@ represents what *kind* of account that schema represents.
 ]
 ```
 
-### 8.2.5. `FeeTypeEnum`
+### 9.2.5. `FeeTypeEnum`
 
 An enum listing the *types* of fees that providers may require on transfers.
 
@@ -2105,7 +2143,7 @@ An enum listing the *types* of fees that providers may require on transfers.
 ]
 ```
 
-### 8.2.6. `FeeFrequencyEnum`
+### 9.2.6. `FeeFrequencyEnum`
 
 An enum listing the frequency, or how often, a particular fee needs to be paid.
 
@@ -2116,7 +2154,7 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 ]
 ```
 
-### 8.2.7. `FiatAccountSchemaEnum`
+### 9.2.7. `FiatAccountSchemaEnum`
 
 ```
 [
@@ -2128,11 +2166,11 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 ]
 ```
 
-## 8.3. Initial Entity Support
+## 9.3. Initial Entity Support
 
-### 8.3.1. KYC Schemas
+### 9.3.1. KYC Schemas
 
-#### 8.3.1.1. `PersonalDataAndDocuments`
+#### 9.3.1.1. `PersonalDataAndDocuments`
 
 A KYC schema containing personal data about a user, as well as documents such as an ID photo and selfie.
 
@@ -2162,14 +2200,14 @@ A KYC schema containing personal data about a user, as well as documents such as
 
 The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
 
-### 8.3.2. Fiat Account Schemas
+### 9.3.2. Fiat Account Schemas
 
 All Fiat Account Schemas supported by FiatConnect MUST contain the `accountName`, `institutionName`, and `fiatAccountType` fields. `accountName` is a friendly, user-definable name for the account.
 `institutionName` is a user-friendly name representing the financial institution/organization the account is with, and `fiatAccountType` is a `FiatAccountTypeEnum` value,
 representing the type of fiat account this schema represents. The `institutionName` and `accountName` fields are required in order for the API to return obfuscated but distinguishable
 account information from the `GET /accounts` endpoint.
 
-####  8.3.2.1. `AccountNumber`
+####  9.3.2.1. `AccountNumber`
 
 `AccountNumber` is a Fiat Account schema that represents accounts where the only identifying information required is some `accountNumber` string.
 
@@ -2192,7 +2230,7 @@ is below:
 
 * `'NG'`: The account number should be exactly 10 digits long, and only include the numbers 0-9.
 
-#### 8.3.2.2. `MobileMoney`
+#### 9.3.2.2. `MobileMoney`
 
 Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
 `Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US). Finally, the `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
@@ -2208,7 +2246,7 @@ Most of the mobile money's providers require only the phone number to process a 
 }
 ```
 
-##### 8.3.2.2.1. `SupportedOperatorEnum`
+##### 9.3.2.2.1. `SupportedOperatorEnum`
 
 Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided. Depending on mobile money providers supported on a specific country, CI/CO providers will provide the list of `allowedValues`.
 Below you have a list of mobile money providers:
@@ -2229,7 +2267,7 @@ Below you have a list of mobile money providers:
 - `MTN` - [Momo or Mtn Money](https://www.mtn.ci/vos/depot-et-retrait-momo/)
 - `WAVE` - [Wave](https://www.wave.com/fr/)
 
-#### 8.3.2.3. `DuniaWallet`
+#### 9.3.2.3. `DuniaWallet`
 
 The Dunia wallet is a proprietary wallet for people that have an account on the [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
 platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
@@ -2243,7 +2281,7 @@ platform can be used to consume Fiat Connect services by providing their `mobile
 }
 ```
 
-####  8.3.2.4. `IBANNumber`
+####  9.3.2.4. `IBANNumber`
 
 `IBANNumber` is a representation of a bank account that is agnostic to the user's home country. The primary identifying field is `iban`, which represents an
 [International Bank Account Number](https://en.wikipedia.org/wiki/International_Bank_Account_Number). See [here](https://www.worldfirst.com/uk/help-support/what-is-an-iban-number/) for more context.
@@ -2261,7 +2299,7 @@ platform can be used to consume Fiat Connect services by providing their `mobile
 The `country` field MUST be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. The syntax of the `iban` field MUST correspond to that of a valid International
 Bank Account Number.
 
-#### 8.3.2.5. `IFSCAccount`
+#### 9.3.2.5. `IFSCAccount`
 
 `IFSCAccount` is an account schema that represents transfers for `INR` currency.
 
@@ -2281,60 +2319,64 @@ The `ifsc` or Indian Financial System Code is an 11-digit alpha-numeric code tha
 The `accountNumber` field is unique between individuals and no two banks or account holders can have the same account number.
 Banks use different starting codes for their branches for differentiation. (In India, bank account numbers usually contain 7 to 21 digits.)
 
-# 9. References
+# 10. References
 
-## 9.1. Normative References
+## 10.1. Normative References
 
-### 9.1.1. [RFC2119]
+### 10.1.1. [RFC2119]
 
 Bradner, S., "Key words for use in RFCs to Indicate Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997, <https://www.rfc-editor.org/info/rfc2119>.
 
-### 9.1.2. [RFC8174]
+### 10.1.2. [RFC8174]
 
 Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
-### 9.1.3. [RFC7519]
+### 10.1.3. [RFC7519]
 
 M. Jones, "JSON Web Token", RFC7519, May 2015, <https://datatracker.ietf.org/doc/html/rfc7519>.
 
-### 9.1.4. [EIP-4361]
+### 10.1.4. [EIP-4361]
 
 EIP-4361: Sign-In with Ethereum, <https://eips.ethereum.org/EIPS/eip-4361>
 
-### 9.1.5. [EIP-55]
+### 10.1.5. [EIP-55]
 
 EIP-55: Mixed-case checksum address encoding, <https://eips.ethereum.org/EIPS/eip-55>
 
-### 9.1.6. [EIP-191]
+### 10.1.6. [EIP-191]
 
 EIP-191: Signed Data Standard, <https://eips.ethereum.org/EIPS/eip-191>
 
-### 9.1.7. [EIP-1271]
+### 10.1.7. [EIP-1271]
 
 EIP-1271: Standard Signature Validation Method for Contracts, <https://eips.ethereum.org/EIPS/eip-1271>
 
-### 9.1.8. [EIP-2098]
+### 10.1.8. [EIP-2098]
 
 EIP-2098: Compact Signature Representation, <https://eips.ethereum.org/EIPS/eip-2098>
 
-## 9.2. Informative References
+## 10.2. Informative References
 
-### 9.2.1. Webhook Best Practices
+### 10.2.1. Webhook Best Practices
 
 Persona, "Best Practices", <https://docs.withpersona.com/docs/best-practices>.
 
-### 9.2.2. Idempotency Keys
+### 10.2.2. Idempotency Keys
 
 J. Jena, The Idempotency-Key HTTP Header Field, July 2021, <https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header-00>
 
-### 9.2.3. ISO 3166-1
+### 10.2.3. ISO 3166-1
 
 ISO 3166-1 <https://en.wikipedia.org/wiki/ISO_3166-1>
 
-### 9.2.4. ISO 3166-2
+### 10.2.4. ISO 3166-2
 
 ISO 3166-2 <https://en.wikipedia.org/wiki/ISO_3166-2>
 
-### 9.2.5. ISO 8601
+### 10.2.5. ISO 8601
 
 ISO 8601 <https://en.wikipedia.org/wiki/ISO_8601>
+
+## 10.2.6 Decimal notation
+
+Decimal notation <https://en.wikipedia.org/wiki/Decimal#Decimal_notation>
