@@ -1915,7 +1915,7 @@ Amounts of fiat currencies MUST be given in the units of that currency, e.g. `5.
 
 Given that amounts are communicated in divisible units-- such as US Dollars, which are divisible into `100` cents, or Celo, which 
 is divisible into `10^18` wei--  it is expected that the client or server will sometimes need to communicate non-integer amounts. 
-For all amounts, [decimal notation](https://en.wikipedia.org/wiki/Decimal#Decimal_notation) must be used-- for example, 
+For all amounts, [decimal notation](https://en.wikipedia.org/wiki/Decimal#Decimal_notation) MUST be used-- for example, 
 One half should be given as `0.5`.
 
 ## 6.3 Precision
