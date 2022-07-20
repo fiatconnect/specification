@@ -1914,11 +1914,11 @@ Amounts of fiat currencies MUST be given in the units of that currency, e.g. `5.
 ## 6.2 Decimal Places
 
 Given that amounts are communicated in divisible units-- such as US Dollars, which are divisible into `100` cents, or Celo, which 
-is divisible into `10^18` wei--  it is expected that the client or server will sometimes need to communicate non-integer amounts. 
-For all amounts, [decimal notation](https://en.wikipedia.org/wiki/Decimal#Decimal_notation) MUST be used, and the decimal 
-separator MUST be the period symbol: `.` . For example, one half should be given as `0.5`. 
-
-Put another way, all amounts MUST match the following regex: `/^[0-9]+\.?[0-9]*$/` .
+is divisible into `10^18` wei-- it is expected that the client or server will sometimes need to communicate non-integer amounts. 
+All amounts MUST match the following regex: `/^[0-9]+\.?[0-9]*$/` . Put in words, the required format is:
+- one or more digits 0-9
+- optionally, a period (used as a decimal mark for non-integer amounts)
+- zero or more digits 0-9
 
 ## 6.3 Precision
 
@@ -2380,7 +2380,3 @@ ISO 3166-2 <https://en.wikipedia.org/wiki/ISO_3166-2>
 ### 10.2.5. ISO 8601
 
 ISO 8601 <https://en.wikipedia.org/wiki/ISO_8601>
-
-## 10.2.6 Decimal notation
-
-Decimal notation <https://en.wikipedia.org/wiki/Decimal#Decimal_notation>
