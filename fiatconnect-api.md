@@ -1915,21 +1915,22 @@ Amounts of fiat currencies MUST be given in the units of that currency, e.g. `5.
 
 Given that amounts are communicated in divisible units-- such as US Dollars, which are divisible into `100` cents, or Celo, which 
 is divisible into `10^18` wei--  it is expected that the client or server will sometimes need to communicate non-integer amounts. 
-For all amounts, [decimal notation](https://en.wikipedia.org/wiki/Decimal#Decimal_notation) MUST be used-- for example, 
-One half should be given as `0.5`.
+For all amounts, [decimal notation](https://en.wikipedia.org/wiki/Decimal#Decimal_notation) MUST be used, and the decimal 
+separator MUST be the period symbol: `.` . For example, one half should be given as `0.5`. 
+
+Put another way, all amounts MUST match the following regex: `/^[0-9]+\.?[0-9]*$/` .
 
 ## 6.3 Precision
 
-FiatConnect-compliant API's MUST observe 18 decimal places of precision for all cryptocurrencies and 2 decimal places of
-precision for all fiat currencies. 
+FiatConnect-compliant API's MUST observe the maximum number of decimal places of precision for every cryptocurrency in `CryptoTypeEnum`, and 2 decimal places of
+precision for all fiat currencies. (Most, but not all, ERC-20 tokens offer up to 18 decimal places of precision.)
 
 Note that this does NOT mean a CICO provider is required to support transfers of 
 extremely small amounts; see [here](#3411322-cryptoamounttoolow).
 
-Note also that while client and server MUST give amounts in the full degree of precision to unambiguously communicate 
-the correct amount (up to 18 decimal places for crypto and 2 for fiat currencies), they MAY omit decimal places when it 
-does not serve to disambiguate the amount. For example, `0.5` is a valid fiat amount, even though it has only one decimal place, 
-as long as it is understood to mean one half, and not fifty-one one-hundredths. 
+Note also that client and server MUST include all [significant figures](https://en.wikipedia.org/wiki/Significant_figures)
+of an amount, but MAY omit trailing zeroes. For example, "half a US Dollar" could be given as `"0.5"` or `"0.50"`, 
+and "one and one-tenth Celo" could be given as `"1.1"`.
 
 # 7. AML Considerations
 
