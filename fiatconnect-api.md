@@ -1838,7 +1838,7 @@ though these are rough guidelines. Once a server has received an HTTP `200` stat
 ### 5.1.2. `WebhookTransferInStatusEventSchema`
 
 `WebhookTransferInStatusEventSchema` is the schema that defines webhook payloads for transfer in events. Note that this schema is *identical* to the
-one returned from the `GET /accounts/:transferId` endpoint
+one returned from the `GET /transfer/:transferId/status` endpoint
 
 ```
 {
@@ -1858,7 +1858,7 @@ one returned from the `GET /accounts/:transferId` endpoint
 ### 5.1.3. `WebhookTransferOutStatusEventSchema`
 
 `WebhookTransferOutStatusEventSchema` is the schema that defines webhook payloads for transfer out events. Note that this schema is *identical* to the
-one returned from the `GET /accounts/:transferId` endpoint
+one returned from the `GET /transfer/:transferId/status` endpoint
 
 ```
 {
