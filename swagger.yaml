@@ -107,9 +107,9 @@ definitions:
       cryptoType:
         $ref: '#/definitions/CryptoType'
       fiatAmount:
-        type: "number"
+        type: "string"
       cryptoAmount:
-        type: "number"
+        type: "string"
       country:
         type: "string"
       region:
@@ -125,9 +125,9 @@ definitions:
           cryptoType:
             $ref: '#/definitions/CryptoType'
           fiatAmount:
-            type: "number"
+            type: "string"
           cryptoAmount:
-            type: "number"
+            type: "string"
           quoteId:
             type: "string"
           guaranteedUntil:
@@ -157,7 +157,7 @@ definitions:
                 items:
                   $ref: '#/definitions/FiatAccountSchemaEnum'
               fee?:
-                type: "number"
+                type: "string"
               feeType?:
                 $ref: '#/definitions/FeeType'
               feeFrequency?:
@@ -177,13 +177,13 @@ definitions:
       error:
          $ref: '#/definitions/QuoteErrorEnum'
       minimumFiatAmount?:
-        type: "number"
+        type: "string"
       maximumFiatAmount?:
-        type: "number"
+        type: "string"
       minimumCryptoAmount?:
-        type: "number"
+        type: "string"
       maximumCryptoAmount?:
-        type: "number"
+        type: "string"
   ClockResponse:
     type: "object"
     properties:
@@ -259,11 +259,11 @@ definitions:
       cryptoType:
         $ref: '#/definitions/CryptoType'
       amountProvided:
-        type: "number"
+        type: "string"
       amountRecieved:
-        type: "number"
+        type: "string"
       fee:
-        type: "number"
+        type: "string"
       fiatAccountId:
         type: "string"
       transferId:
