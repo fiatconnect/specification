@@ -1324,7 +1324,7 @@ On success, the server MUST respond with an HTTP `200` status code, along with a
 	accountName: `string`,
 	institutionName: `string`,
 	fiatAccountType: `FiatAccountTypeEnum`,
-  fiatAccountSchema: `FiatAccountSchemaEnum`
+	fiatAccountSchema: `FiatAccountSchemaEnum`
 }
 ```
 
@@ -1398,8 +1398,8 @@ this is a mapping from fiat account types that the user has on file to metadata 
 		fiatAccountId: `string`,
 		accountName: `string`,
 		institutionName: `string`,
-		fiatAccountType: `FiatAccountTypeEnum`
-    fiatAccountSchema: `FiatAccountSchemaEnum`,
+		fiatAccountType: `FiatAccountTypeEnum`,
+		fiatAccountSchema: `FiatAccountSchemaEnum`
 	}]
 }
 ```
