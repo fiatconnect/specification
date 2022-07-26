@@ -217,6 +217,8 @@ definitions:
         type: "string"
       fiatAccountType: 
         $ref: '#/definitions/FiatAccountTypeEnum'
+      fiatAccountSchema:
+        $ref: '#/definitions/FiatAccountSchemaEnum'
   TransferRequest:
     type: "object"
     properties:
