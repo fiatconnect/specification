@@ -132,6 +132,8 @@ definitions:
             type: "string"
           guaranteedUntil:
             type: "string"
+          transferType:
+            $ref: '#/definitions/TransferTypeEnum'
       kyc:
         type: "object"
         properties:
@@ -246,16 +248,18 @@ definitions:
       - TransferReceivedCryptoFunds
       - TransferComplete
       - TransferFailed
+  TransferTypeEnum:
+    type: "string"
+    enum: &TransferTypeEnum
+      - TransferIn
+      - TransferOut
   TransferStatusResponse:
     type: "object"
     properties:
       status:
         $ref: '#/definitions/TransferStatusEnum'
       transferType:
-        type: "string"
-        enum:
-          - TransferIn
-          - TransferOut
+        $ref: '#/definitions/TransferTypeEnum'
       fiatType:
         $ref: '#/definitions/FiatType'
       cryptoType:

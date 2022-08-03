@@ -790,7 +790,8 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		fiatAmount: `string`,
 		cryptoAmount: `string`,
 		quoteId: `string`,
-		guaranteedUntil: `string`
+		guaranteedUntil: `string`,
+		transferType: `TransferTypeEnum.TransferIn`
 	},
 	kyc: {
 		kycRequired: `boolean`,
@@ -961,7 +962,8 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		fiatAmount: `string`,
 		cryptoAmount: `string`,
 		quoteId: `string`,
-		guaranteedUntil: `string`
+		guaranteedUntil: `string`,
+		transferType: `TransferTypeEnum.TransferOut`
 	},
 	kyc: {
 		kycRequired: `boolean`,
