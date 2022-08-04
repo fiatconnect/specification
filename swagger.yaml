@@ -321,7 +321,7 @@ definitions:
         $ref: '#/definitions/CryptoType'
       amountProvided:
         type: "string"
-      amountRecieved:
+      amountReceived:
         type: "string"
       fee:
         type: "string"
