@@ -62,7 +62,7 @@ definitions:
       - FKP
       - GYD
       - PYG
-      - PEN 
+      - PEN
       - SRD
       - UYU
       - VES
@@ -116,6 +116,10 @@ definitions:
         type: "string"
   QuoteResponse:
     type: "object"
+    required:
+      - quote
+      - kyc
+      - fiatAccount
     properties:
       quote:
         type: "object"
@@ -134,15 +138,28 @@ definitions:
             type: "string"
           transferType:
             $ref: '#/definitions/TransferTypeEnum'
+        required:
+          - fiatType
+          - cryptoType
+          - fiatAmount
+          - cryptoAmount
+          - quoteId
+          - guaranteedUntil
+          - transferType
       kyc:
         type: "object"
+        required:
+          - kycRequired
+          - kycSchemas
         properties:
-          kycRequired: 
+          kycRequired:
             type: "boolean"
           kycSchemas:
             type: "array"
             items:
               type: "object"
+              required:
+                - kycSchema
               properties:
                 kycSchema:
                   $ref: '#/definitions/KycSchemaEnum'
@@ -150,11 +167,15 @@ definitions:
                   type: "object"
       fiatAccount:
         type: "object"
+        minProperties: 1
         properties:
           <FiatAccountTypeEnum>:
             type: "object"
+            required:
+              - fiatAccountSchemas
             properties:
               fiatAccountSchemas:
+                minimum: 1
                 type: "array"
                 items:
                   $ref: '#/definitions/FiatAccountSchemaEnum'
@@ -170,11 +191,15 @@ definitions:
                 type: "string"
   LoginErrorResponse:
     type: "object"
+    required:
+      - error
     properties:
       error:
         $ref: "#/definitions/LoginErrorEnum"
   QuoteErrorResponse:
     type: "object"
+    required:
+      - error
     properties:
       error:
          $ref: '#/definitions/QuoteErrorEnum'
@@ -188,6 +213,8 @@ definitions:
         type: "string"
   ClockResponse:
     type: "object"
+    required:
+      - time
     properties:
       time:
         type: "string"
@@ -210,17 +237,31 @@ definitions:
             $ref: '#/definitions/FiatAccountTypeEnum'
   FiatAccountInfoResponse:
     type: "object"
-    properties: 
-      fiatAccountId: 
+    required:
+      - fiatAccountId
+      - name
+      - institution
+      - fiatAccountType
+      - fiatAccountSchema
+    properties:
+      fiatAccountId:
         type: "string"
-      name: 
+      name:
         type: "string"
       institution:
         type: "string"
-      fiatAccountType: 
+      fiatAccountType:
         $ref: '#/definitions/FiatAccountTypeEnum'
       fiatAccountSchema:
         $ref: '#/definitions/FiatAccountSchemaEnum'
+  GetFiatAccountsResponse:
+    type: object
+    properties:
+      <FiatAccountTypeEnum>:
+        type: "array"
+        minimum: 1
+        items:
+          $ref: '#/definitions/FiatAccountInfoResponse'
   TransferRequest:
     type: "object"
     properties:
@@ -230,10 +271,14 @@ definitions:
         type: "string"
   TransferResponse:
     type: "object"
+    required:
+      - transferId
+      - transferStatus
+      - transferAddress
     properties:
-      transferId: 
+      transferId:
         type: "string"
-      transferStatus: 
+      transferStatus:
         $ref: '#/definitions/TransferStatusEnum'
       transferAddress:
         type: "string"
@@ -255,6 +300,16 @@ definitions:
       - TransferOut
   TransferStatusResponse:
     type: "object"
+    required:
+      - status
+      - transferType
+      - fiatType
+      - cryptoType
+      - amountProvided
+      - amountReceived
+      - fiatAccountId
+      - transferId
+      - transferAddress
     properties:
       status:
         $ref: '#/definitions/TransferStatusEnum'
@@ -310,11 +365,11 @@ definitions:
       - InvalidParameters
   ResourceExists:
     type: "string"
-    enum: 
+    enum:
       - ResourceExists
   ResourceNotFound:
     type: "string"
-    enum: 
+    enum:
       - ResourceNotFound
 paths:
   /clock:
@@ -444,6 +499,8 @@ paths:
           description: "successful operation"
           schema:
             type: "object"
+            required:
+              - "kycStatus"
             properties:
               kycStatus:
                 $ref: '#/definitions/KycStatusEnum'
@@ -451,6 +508,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/SchemaErrorEnum'
@@ -458,6 +517,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/ResourceExists'
@@ -487,6 +548,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/ResourceNotFound'
@@ -513,6 +576,8 @@ paths:
           description: "successful operation"
           schema:
             type: "object"
+            required:
+              - "kycStatus"
             properties:
               kycStatus:
                 $ref: '#/definitions/KycStatusEnum'
@@ -520,6 +585,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/ResourceNotFound'
@@ -552,6 +619,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/SchemaErrorEnum'
@@ -559,6 +628,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/ResourceExists'
@@ -576,12 +647,7 @@ paths:
         "200":
           description: "successful operation"
           schema:
-            type: object
-            properties:
-              <FiatAccountTypeEnum>:
-                type: "array"
-                items:  
-                  $ref: '#/definitions/FiatAccountInfoResponse'
+            $ref: '#/definitions/GetFiatAccountsResponse'
       security:
         - siwe_auth: []
   /accounts/{fiatAccountId}:
@@ -608,6 +674,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/ResourceNotFound'
@@ -645,6 +713,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/TransferErrorEnum'
@@ -652,6 +722,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/ResourceNotFound'
@@ -689,6 +761,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/TransferErrorEnum'
@@ -696,6 +770,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/ResourceNotFound'
@@ -725,6 +801,8 @@ paths:
           description: "failed operation"
           schema:
             type: "object"
+            required:
+              - "error"
             properties:
               error:
                 $ref: '#/definitions/ResourceNotFound'
