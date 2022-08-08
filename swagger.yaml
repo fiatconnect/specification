@@ -239,16 +239,16 @@ definitions:
     type: "object"
     required:
       - fiatAccountId
-      - name
-      - institution
+      - accountName
+      - institutionName
       - fiatAccountType
       - fiatAccountSchema
     properties:
       fiatAccountId:
         type: "string"
-      name:
+      accountName:
         type: "string"
-      institution:
+      institutionName:
         type: "string"
       fiatAccountType:
         $ref: '#/definitions/FiatAccountTypeEnum'
@@ -256,12 +256,11 @@ definitions:
         $ref: '#/definitions/FiatAccountSchemaEnum'
   GetFiatAccountsResponse:
     type: object
-    properties:
-      <FiatAccountTypeEnum>:
-        type: "array"
-        minimum: 1
-        items:
-          $ref: '#/definitions/FiatAccountInfoResponse'
+    additionalProperties:
+      type: "array"
+      minimum: 1
+      items:
+        $ref: '#/definitions/FiatAccountInfoResponse'
   TransferRequest:
     type: "object"
     properties:
