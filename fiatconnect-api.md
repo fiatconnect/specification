@@ -775,6 +775,8 @@ used for the transfer.
 * `address`: {`string`} [REQUIRED]
   - An [EIP-55](https://eips.ethereum.org/EIPS/eip-55) formatted address, representing the Celo address of the user to get the quote for. For contract-owned accounts, this should be
 	the address of the contract itself.
+* `preview`: {`boolean`}
+  - An optional boolean flag, that if included, will cause the server not to generate a `quoteId` for the request.
 
 ##### 3.4.1.1.2. Responses
 
@@ -789,8 +791,8 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `string`,
 		cryptoAmount: `string`,
-		quoteId: `string`,
-		guaranteedUntil: `string`,
+		quoteId?: `string`,
+		guaranteedUntil: `string`
 		transferType: `TransferTypeEnum.TransferIn`
 	},
 	kyc: {
@@ -837,7 +839,8 @@ On failure, the server MUST return an HTTP `400`, with a response body as follow
 ##### 3.4.1.1.3. Semantics
 
 All transfer in quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
-If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support a transfer in for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
+`preview` is also an optional parameter. If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support
+a transfer in for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
 
 ###### 3.4.1.1.3.1. Success
 
@@ -865,6 +868,11 @@ values for those fields. On the client-side, this could be used to render a list
 
 Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, what schemas are allowed to communicate
 those account details, and what fee, if any, is associated with the requested quote when using a fiat account of a particular type.
+
+If the quote request contains a value of `true` for the `preview` field, the returned quote SHOULD represent a preview; the provider has no obligation to persist
+any information relating to the generated quote on the server. If a quote preview is requested, the provider MUST NOT populate the `quoteId` field in the response
+body. This prevents clients from actually attempting to use this quote for a transfer. Besides the exclusion of the `quoteId` field, *all other aspects* of a preview
+quote response MUST be identical to those of the response had the client requested a non-preview quote.
 
 On success, the server MUST return a mapping from fiat account types to lists of schemas that the client may use to add a new account of that
 type. This is expected to vary by geographical region as well as quote details provided by the request body.
@@ -947,6 +955,8 @@ The `POST /quote/out` endpoint is used to retrieve quotes used for transfers out
 * `address`: {`string`} [REQUIRED]
   - An [EIP-55](https://eips.ethereum.org/EIPS/eip-55) formatted address, representing the Celo address of the user to get the quote for. For contract-owned accounts, this should be
 	the address of the contract itself.
+* `preview`: {`boolean`}
+  - An optional boolean flag, that if included, will cause the server not to generate a `quoteId` for the request.
 
 ##### 3.4.1.2.2. Responses
 
@@ -961,7 +971,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `string`,
 		cryptoAmount: `string`,
-		quoteId: `string`,
+		quoteId?: `string`,
 		guaranteedUntil: `string`,
 		transferType: `TransferTypeEnum.TransferOut`
 	},
@@ -1010,7 +1020,7 @@ On failure, the MUST return an HTTP `400`, with a response body as follows. Refe
 ##### 3.4.1.2.3. Semantics
 
 All transfer out quotes require the `fiatType`, `cryptoType`, and exactly *one of* `fiatAmount` or `cryptoAmount`. `country` is required, and `region` is optional.
-If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support
+`preview` is also an optional parameter. If these requirements are not met, the server MUST return an HTTP `400` error. If the server responds with an HTTP `200`, the provider MUST support
 a transfer out for the requested details. If the requested quote is not supported, the server MUST return an HTTP `400` error.
 
 ###### 3.4.1.2.3.1. Success
@@ -1036,6 +1046,11 @@ with the given quote parameters. If KYC is required, the server MUST set `kyc.ky
 The `kycSchema` field within this object represents the type of KYC schema that can be used. The `allowedValues` object is an optional mapping from any number of keys in the selected
 KYC schema to values that are allowed for that key. For example, if a server wants to limit the selection for certain fields on the schema, `allowedValues` can contain lists of selectable
 values for those fields. On the client-side, this could be used to render a list of options, for example.
+
+If the quote request contains a value of `true` for the `preview` field, the returned quote SHOULD represent a preview; the provider has no obligation to persist
+any information relating to the generated quote on the server. If a quote preview is requested, the provider MUST NOT populate the `quoteId` field in the response
+body. This prevents clients from actually attempting to use this quote for a transfer. Besides the exclusion of the `quoteId` field, *all other aspects* of a preview
+quote response MUST be identical to those of the response had the client requested a non-preview quote.
 
 Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, what schemas are allowed to communicate
 those account details, and what fee, if any, is associated with the requested quote when using a fiat account of a particular type.
