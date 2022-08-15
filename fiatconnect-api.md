@@ -971,7 +971,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `string`,
 		cryptoAmount: `string`,
-		quoteId: `string`,
+		quoteId?: `string`,
 		guaranteedUntil: `string`,
 		transferType: `TransferTypeEnum.TransferOut`
 	},
