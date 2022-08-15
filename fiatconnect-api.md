@@ -793,6 +793,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoAmount: `string`,
 		quoteId?: `string`,
 		guaranteedUntil: `string`
+		transferType: `TransferTypeEnum.TransferIn`
 	},
 	kyc: {
 		kycRequired: `boolean`,
@@ -971,7 +972,8 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		fiatAmount: `string`,
 		cryptoAmount: `string`,
 		quoteId: `string`,
-		guaranteedUntil: `string`
+		guaranteedUntil: `string`,
+		transferType: `TransferTypeEnum.TransferOut`
 	},
 	kyc: {
 		kycRequired: `boolean`,
@@ -1338,7 +1340,8 @@ On success, the server MUST respond with an HTTP `200` status code, along with a
 	fiatAccountId: `string`,
 	accountName: `string`,
 	institutionName: `string`,
-	fiatAccountType: `FiatAccountTypeEnum`
+	fiatAccountType: `FiatAccountTypeEnum`,
+	fiatAccountSchema: `FiatAccountSchemaEnum`
 }
 ```
 
@@ -1412,7 +1415,8 @@ this is a mapping from fiat account types that the user has on file to metadata 
 		fiatAccountId: `string`,
 		accountName: `string`,
 		institutionName: `string`,
-		fiatAccountType: `FiatAccountTypeEnum`
+		fiatAccountType: `FiatAccountTypeEnum`,
+		fiatAccountSchema: `FiatAccountSchemaEnum`
 	}]
 }
 ```
