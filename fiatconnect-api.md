@@ -791,9 +791,9 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `string`,
 		cryptoAmount: `string`,
-        fee?: `string`,
-        feeType?: `FeeTypeEnum`,
-        feeFrequency?: `FeeFrequencyEnum`,
+		fee?: `string`,
+		feeType?: `FeeTypeEnum`,
+		feeFrequency?: `FeeFrequencyEnum`,
 		quoteId?: `string`,
 		guaranteedUntil: `string`
 		transferType: `TransferTypeEnum.TransferIn`
@@ -975,9 +975,9 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `string`,
 		cryptoAmount: `string`,
-        fee?: `string`,
-        feeType?: `FeeTypeEnum`,
-        feeFrequency?: `FeeFrequencyEnum`,
+		fee?: `string`,
+		feeType?: `FeeTypeEnum`,
+		feeFrequency?: `FeeFrequencyEnum`,
 		quoteId?: `string`,
 		guaranteedUntil: `string`,
 		transferType: `TransferTypeEnum.TransferOut`
