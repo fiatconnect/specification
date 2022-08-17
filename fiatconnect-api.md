@@ -1069,7 +1069,7 @@ This is identical in purpose and function to the `allowedValues` field for KYC s
 
 The `quote.fee` field is an optional return value, used to represent an optional fixed fee as a string-ified numerical
 amount (e.g. `"1.0"`) for the transfer. Note that `fee` is meant for end-user informational purposes only, and `fee`
-MUST be included in the exchange rate (ratio of `fiatAcmount` to `cryptoAmount`) already in the provided quote. For
+MUST be included in the exchange rate (ratio of `fiatAmount` to `cryptoAmount`) already in the provided quote. For
 example, if `cryptoAmount` is 15 in the quote response for some transfer out of cUSD for USD, and `fiatAmount` is 12,
 and `fee` is 3, the end user MUST receive 12 USD for 15 cUSD (not 9, which would double-count the fee).
 
