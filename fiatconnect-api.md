@@ -1223,7 +1223,7 @@ On success, the server MUST return an HTTP `200` status code, with the following
 
 ```
 {
-	status: `KycStatusEnum`
+	kycStatus: `KycStatusEnum`
 }
 ```
 
