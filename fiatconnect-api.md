@@ -791,6 +791,9 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `string`,
 		cryptoAmount: `string`,
+		fee?: `string`,
+		feeType?: `FeeTypeEnum`,
+		feeFrequency?: `FeeFrequencyEnum`,
 		quoteId?: `string`,
 		guaranteedUntil: `string`
 		transferType: `TransferTypeEnum.TransferIn`
@@ -812,9 +815,6 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 					[string]: `string[]`
 				}
 			}[],
-			fee?: `string`,
-			feeType?: `FeeTypeEnum`,
-			feeFrequency?: `FeeFrequencyEnum`,
 			settlementTimeLowerBound?: `string`,
 			settlementTimeUpperBound?: `string`
 		}
@@ -855,6 +855,17 @@ is a globally unique identifier for the quote, and is used by the client to init
 conversion rate, fee, amount, crypto type, fiat type, etc. A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
 
+The `quote.fee` field is an optional return value, used to represent an optional fixed fee as a string-ified numerical
+amount (e.g. `"1.0"`) for the transfer. Note that `fee` is meant for end-user informational purposes only, and `fee`
+MUST be included in the exchange rate (ratio of `cryptoAmount` to `fiatAmount`) already in the provided quote. For
+example, if `fiatAmount` is 15 in the quote response for some transfer in of USD for cUSD, and `cryptoAmount` is 12,
+and `fee` is 3, the end user MUST receive 12 cUSD for 15 USD (not 9, which would double-count the fee).
+
+For transfers in, `fee` is assumed to be denominated in the selected `fiatType`. If `fee` is provided, the server MAY
+return `quote.feeType` and/or `quote.feeFrequency`. `feeType` represents the *type* of fee; e.g, if it's for KYC or a
+fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time, or on each
+transfer.
+
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
 a particular `FiatAccountType` respectively. A server MAY include these in the response. If included, these MUST be strings representing time deltas in number of seconds. If included, a server
 SHOULD try to honor the advertised settlement time bounds when performing a related transfer, but it is not required.
@@ -866,8 +877,8 @@ The `kycSchema` field within this object represents the type of KYC schema that 
 KYC schema to values that are allowed for that key. For example, if a server wants to limit the selection for certain fields on the schema, `allowedValues` can contain lists of selectable
 values for those fields. On the client-side, this could be used to render a list of options, for example.
 
-Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, what schemas are allowed to communicate
-those account details, and what fee, if any, is associated with the requested quote when using a fiat account of a particular type.
+Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, and what schemas are allowed to communicate
+those account details.
 
 If the quote request contains a value of `true` for the `preview` field, the returned quote SHOULD represent a preview; the provider has no obligation to persist
 any information relating to the generated quote on the server. If a quote preview is requested, the provider MUST NOT populate the `quoteId` field in the response
@@ -881,13 +892,6 @@ Each `fiatAccount[FiatAccountTypeEnum]` MUST correspond to a fiat account type t
 about the corresponding fiat account type. Each object MUST contain a `fiatAccountSchema` field representing the actual fiat account schema that can be used, and an
 optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
 This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
-
-The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee as a string-ified numerical amount (e.g. `"1.0"`) for the transfer
-when using a fiat account of the corresponding type. A server MAY choose to include this for a particular fiat account type, though it MUST be included
-if the provider requires a fee for the transfer. For transfers in, this fee is assumed to be denominated in the selected `fiatType`. If
-`fiatAccount[FiatAccountTypeEnum].fee` is provided, the server MAY return `fiatAccount[FiatAccountTypeEnum].feeType` and/or `fiatAccount[FiatAccountTypeEnum].feeFrequency`.
-`feeType` represents the *type* of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
-or on each transfer.
 
 ###### 3.4.1.1.3.2. Failure
 
@@ -971,6 +975,9 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		cryptoType: `CryptoTypeEnum`,
 		fiatAmount: `string`,
 		cryptoAmount: `string`,
+		fee?: `string`,
+		feeType?: `FeeTypeEnum`,
+		feeFrequency?: `FeeFrequencyEnum`,
 		quoteId?: `string`,
 		guaranteedUntil: `string`,
 		transferType: `TransferTypeEnum.TransferOut`
@@ -992,9 +999,6 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 					[string]: `string[]`
 				}
 			}[],
-			fee?: `string`,
-			feeType?: `FeeTypeEnum`,
-			feeFrequency?: `FeeFrequencyEnum`,
 			settlementTimeLowerBound?: `string`,
 			settlementTimeUpperBound?: `string`
 		}
@@ -1036,6 +1040,17 @@ is a globally unique identifier for the quote, and is used by the client to init
 conversion rate, fee, amount, crypto type, fiat type, etc.  A server MUST provide `quote.guaranteedUntil` and `quote.quoteId`, and MUST honor the
 provided conversion rate and fee if the client initiates a transfer with the `quoteId` before the time `quote.guaranteedUntil`.
 
+The `quote.fee` field is an optional return value, used to represent an optional fixed fee as a string-ified numerical
+amount (e.g. `"1.0"`) for the transfer. Note that `fee` is meant for end-user informational purposes only, and `fee`
+MUST be included in the exchange rate (ratio of `fiatAmount` to `cryptoAmount`) already in the provided quote. For
+example, if `cryptoAmount` is 15 in the quote response for some transfer out of cUSD for USD, and `fiatAmount` is 12,
+and `fee` is 3, the end user MUST receive 12 USD for 15 cUSD (not 9, which would double-count the fee).
+
+For transfers out, `fee` is assumed to be denominated in the selected `cryptoType`. If `fee` is provided, the server MAY
+return `quote.feeType` and/or `quote.feeFrequency`. `feeType` represents the *type* of fee; e.g, if it's for KYC or a
+fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time, or on each
+transfer.
+
 The `quote.settlementTimeLowerBound` and `quote.settlementTimeUpperBound` fields are optional return values, representing the lower and upper bounds for transaction settlement time using
 a particular `FiatAccountType` respectively. A server MAY include these in the response. If included, these MUST be strings representing time deltas in number of seconds. If included, a server
 SHOULD try to honor the advertised settlement time bounds when performing a related transfer, but it is not required.
@@ -1052,8 +1067,8 @@ any information relating to the generated quote on the server. If a quote previe
 body. This prevents clients from actually attempting to use this quote for a transfer. Besides the exclusion of the `quoteId` field, *all other aspects* of a preview
 quote response MUST be identical to those of the response had the client requested a non-preview quote.
 
-Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, what schemas are allowed to communicate
-those account details, and what fee, if any, is associated with the requested quote when using a fiat account of a particular type.
+Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, and what schemas are allowed to communicate
+those account details.
 
 On success, the server MUST return a mapping from fiat account types to lists of schemas that the client may use to add a new account of that
 type. This is expected to vary by geographical region as well as quote details provided by the request body.
@@ -1062,13 +1077,6 @@ Each `fiatAccount[FiatAccountTypeEnum]` MUST correspond to a fiat account type t
 about the corresponding fiat account type. Each object MUST contain a `fiatAccountSchema` field representing the actual fiat account schema that can be used, and an
 optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
 This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
-
-The `fiatAccount[FiatAccountTypeEnum].fee` field is an optional return value, used to represent an optional fixed fee for the transfer
-when using a fiat account of the corresponding type. If present, the fee field is given as a string-ified numerical amount (e.g. `"1.0"`). A server MAY choose to include the fee field for a particular fiat account type, though it MUST be included
-if the provider requires a fee for the transfer. For transfers out, this fee is assumed to be denominated in the selected `cryptoType`. If
-`fiatAccount[FiatAccountTypeEnum].fee` is provided, the server MAY return `fiatAccount[FiatAccountTypeEnum].feeType` and/or `fiatAccount[FiatAccountTypeEnum].feeFrequency`.
-`feeType` represents the *type* of fee; e.g, if it's for KYC or a fixed platform fee. `feeFrequency` represents the frequency at which the fee is required; e.g., one-time,
-or on each transfer.
 
 ###### 3.4.1.2.3.2. Failure
 
