@@ -132,6 +132,12 @@ definitions:
             type: "string"
           cryptoAmount:
             type: "string"
+          fee?:
+            type: "string"
+          feeType?:
+            $ref: '#/definitions/FeeType'
+          feeFrequency?:
+            $ref: '#/definitions/FeeFrequency'
           quoteId:
             type: "string"
           guaranteedUntil:
@@ -179,12 +185,6 @@ definitions:
                 type: "array"
                 items:
                   $ref: '#/definitions/FiatAccountSchemaEnum'
-              fee?:
-                type: "string"
-              feeType?:
-                $ref: '#/definitions/FeeType'
-              feeFrequency?:
-                $ref: '#/definitions/FeeFrequency'
               settlementTimeLowerBound?:
                 type: "string"
               settlementTimeUpperBound?:
