@@ -2302,7 +2302,7 @@ Below you have a list of mobile money providers:
 
 #### 9.3.2.3. `DuniaWallet`
 
-The Dunia wallet is a proprietary wallet for people that have an account on the [**Dunia platform**](https://www.duniapay.net/). So, any account on Dunia
+The Dunia wallet is a proprietary wallet for people that have an account on the [**Dunia platform**](https://www.dunia.africa). So, any account on Dunia
 platform can be used to consume Fiat Connect services by providing their `mobile` as identifier. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US).
 
 ```
