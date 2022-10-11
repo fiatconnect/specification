@@ -1919,7 +1919,7 @@ with the client developer, a webhook can verify that a request is genuine by rec
 the CICO provider.
 
 The `FiatConnect-Signature` header MUST contain two comma-separated key-value pairs. The first is of the form `t=<unix_timestamp>`, and represents
-the UNIX timestamp that the request was sent. The second will be of the form `s=<signature>`, and contain the signature itself. The signature
+the UNIX timestamp that the request was sent. The second will be of the form `v1=<signature>`, and contain the signature itself. The signature
 MUST be computed from the shared webhook private key and a dot-separated string consisting of the UNIX timestamp joined with the request body.
 This signature verification design is based off of [Persona's webhook documentation](https://docs.withpersona.com/docs/best-practices).
 
