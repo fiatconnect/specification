@@ -2367,7 +2367,7 @@ Banks use different starting codes for their branches for differentiation. (In I
 
 ##### 9.3.2.6.1. `PIXKeyTypeEnum`
 
-`pixkeyType` MUST be one of the following values:
+`keyType` MUST be one of the following values:
 
 ```
 [
