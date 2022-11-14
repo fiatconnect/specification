@@ -2195,7 +2195,8 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 	`MobileMoney`,
 	`DuniaWallet`,
 	`IBANNumber`,
-	`IFSCAccount`
+	`IFSCAccount`,
+  `PIXAccount`
 ]
 ```
 
@@ -2235,7 +2236,7 @@ The `selfieDocument` and `identificationDocument` fields should be base64 encode
 
 ### 9.3.2. Fiat Account Schemas
 
-All Fiat Account Schemas supported by FiatConnect MUST contain the `accountName`, `institutionName`, and `fiatAccountType` fields. `accountName` is a friendly, user-definable name for the account.
+All Fiat Account Schemas supported by FiatConnect (except `PIXAccount`) MUST contain the `accountName`, `institutionName`, and `fiatAccountType` fields. `accountName` is a friendly, user-definable name for the account.
 `institutionName` is a user-friendly name representing the financial institution/organization the account is with, and `fiatAccountType` is a `FiatAccountTypeEnum` value,
 representing the type of fiat account this schema represents. The `institutionName` and `accountName` fields are required in order for the API to return obfuscated but distinguishable
 account information from the `GET /accounts` endpoint.
@@ -2351,6 +2352,34 @@ The `country` field is a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_
 The `ifsc` or Indian Financial System Code is an 11-digit alpha-numeric code that is unique for bank branches that offer online money transfer options.
 The `accountNumber` field is unique between individuals and no two banks or account holders can have the same account number.
 Banks use different starting codes for their branches for differentiation. (In India, bank account numbers usually contain 7 to 21 digits.)
+
+#### 9.3.2.6. `PIXAccount`
+
+`PIXAccount`  egg. [PIX](https://www.bcb.gov.br/estabilidadefinanceira/pix) is the Brazilian instant payment. The payment method created by the Central Bank (BC) in which funds are transferred between accounts in a few seconds, at any time or day. It's practical, fast and safe. Pix can be carried out from a checking account, savings account or prepaid payment account.
+
+```
+{
+  keyType: `PIXKeyTypeEnum`,
+  key: `string`,
+  fiatAccountType: `FiatAccountTypeEnum.BankAccount`
+}
+```
+
+##### 9.3.2.6.1. `PIXKeyTypeEnum`
+
+`pixkeyType` MUST be one of the following values:
+
+```
+[
+  `EMAIL`,
+  `CPF`,
+  `PHONE`,
+  `RANDOM`
+]
+```
+
+Depending on the type of key, the `key` field follows some validation rules. It MUST be an email, [CPF](https://en.wikipedia.org/wiki/CPF_number), mobile number (including area code) or a random key respectively.
+
 
 # 10. References
 
