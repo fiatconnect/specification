@@ -2355,7 +2355,7 @@ Banks use different starting codes for their branches for differentiation. (In I
 
 #### 9.3.2.6. `PIXAccount`
 
-`PIXAccount`  egg. [PIX](https://www.bcb.gov.br/estabilidadefinanceira/pix) is the Brazilian instant payment. The payment method created by the Central Bank (BC) in which funds are transferred between accounts in a few seconds, at any time or day. It's practical, fast and safe. Pix can be carried out from a checking account, savings account or prepaid payment account.
+`PIXAccount`  egg. [PIX](https://www.bcb.gov.br/estabilidadefinanceira/pix) is a Brazilian instant payment method created by the Central Bank (BC) in which funds are transferred between accounts in a few seconds, at any time or day. Pix transfers can be carried out from a checking account, savings account or prepaid payment account.
 
 ```
 {
