@@ -163,14 +163,7 @@ definitions:
           kycSchemas:
             type: "array"
             items:
-              type: "object"
-              required:
-                - kycSchema
-              properties:
-                kycSchema:
-                  $ref: '#/definitions/KycSchemaEnum'
-                allowedValues:
-                  type: "object"
+              $ref: '#/definitions/KycSchemaEnum'
       fiatAccount:
         type: "object"
         minProperties: 1

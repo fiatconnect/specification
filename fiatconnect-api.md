@@ -800,12 +800,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 	},
 	kyc: {
 		kycRequired: `boolean`,
-		kycSchemas: {
-			kycSchema: `KycSchemaEnum`,
-			allowedValues: {
-				[string]: `string[]`
-			}
-		}[]
+		kycSchemas: `KycSchemaEnum`[]
 	},
 	fiatAccount: {
 		[FiatAccountTypeEnum]: {
@@ -872,10 +867,9 @@ SHOULD try to honor the advertised settlement time bounds when performing a rela
 
 In addition to returning quote data, a successful response must also return information about which KYC schemas are acceptable/required in order to initiate a transfer
 with the given quote parameters. If KYC is required, the server MUST set `kyc.kycRequired` to `true` in the response body. Likewise, if no KYC is required, this value MUST be
-`false`. If `kyc.kycRequired` is `true`, the `kyc.kycSchemas` field MUST be present. `kyc.kycSchemas` is a list of objects. Each object corresponds to a single acceptable KYC schema.
-The `kycSchema` field within this object represents the type of KYC schema that can be used. The `allowedValues` object is an optional mapping from any number of keys in the selected
-KYC schema to values that are allowed for that key. For example, if a server wants to limit the selection for certain fields on the schema, `allowedValues` can contain lists of selectable
-values for those fields. On the client-side, this could be used to render a list of options, for example.
+`false`. If `kyc.kycRequired` is `true`, the `kyc.kycSchemas` field MUST be present. `kyc.kycSchemas` is a list of `KycSchemaEnum` values that represent KYC schemas that are accepted
+for execution of the returned quote. If KYC is required for the quote, the user MUST submit KYC information for at least one of these `KycSchemaEnum` values and have it accepted
+by the provider before executing the returned quote.
 
 Finally, a successful response must also return information about what fiat account types are allowed to be used for the transfer, and what schemas are allowed to communicate
 those account details.
@@ -891,7 +885,8 @@ Each `fiatAccount[FiatAccountTypeEnum]` MUST correspond to a fiat account type t
 `fiatAccount[FiatAccountTypeEnum].fiatAccountSchemas` is a list of objects, where each object represents a fiat account schema that can be used to communicate data
 about the corresponding fiat account type. Each object MUST contain a `fiatAccountSchema` field representing the actual fiat account schema that can be used, and an
 optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
-This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
+For example, if a server wants to limit the selection for certain fields on the schema, `allowedValues` can contain lists of selectable values for those fields.
+On the client-side, this could be used to render a list of options, for example.
 
 ###### 3.4.1.1.3.2. Failure
 
@@ -984,12 +979,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 	},
 	kyc: {
 		kycRequired: `boolean`,
-		kycSchemas: {
-			kycSchema: `KycSchemaEnum`,
-			allowedValues: {
-				[string]: `string[]`
-			}
-		}[]
+		kycSchemas: `KycSchemaEnum`[]
 	},
 	fiatAccount: {
 		[FiatAccountTypeEnum]: {
@@ -1057,10 +1047,9 @@ SHOULD try to honor the advertised settlement time bounds when performing a rela
 
 In addition to returning quote data, a successful response must also return information about which KYC schemas are acceptable/required in order to initiate a transfer
 with the given quote parameters. If KYC is required, the server MUST set `kyc.kycRequired` to `true` in the response body. Likewise, if no KYC is required, this value MUST be
-`false`. If `kyc.kycRequired` is `true`, the `kyc.kycSchemas` field MUST be present. `kyc.kycSchemas` is a list of objects. Each object corresponds to a single acceptable KYC schema.
-The `kycSchema` field within this object represents the type of KYC schema that can be used. The `allowedValues` object is an optional mapping from any number of keys in the selected
-KYC schema to values that are allowed for that key. For example, if a server wants to limit the selection for certain fields on the schema, `allowedValues` can contain lists of selectable
-values for those fields. On the client-side, this could be used to render a list of options, for example.
+`false`. If `kyc.kycRequired` is `true`, the `kyc.kycSchemas` field MUST be present. `kyc.kycSchemas` is a list of `KycSchemaEnum` values that represent KYC schemas that are accepted
+for execution of the returned quote. If KYC is required for the quote, the user MUST submit KYC information for at least one of these `KycSchemaEnum` values and have it accepted
+by the provider before executing the returned quote.
 
 If the quote request contains a value of `true` for the `preview` field, the returned quote SHOULD represent a preview; the provider has no obligation to persist
 any information relating to the generated quote on the server. If a quote preview is requested, the provider MUST NOT populate the `quoteId` field in the response
@@ -1076,7 +1065,8 @@ Each `fiatAccount[FiatAccountTypeEnum]` MUST correspond to a fiat account type t
 `fiatAccount[FiatAccountTypeEnum].fiatAccountSchemas` is a list of objects, where each object represents a fiat account schema that can be used to communicate data
 about the corresponding fiat account type. Each object MUST contain a `fiatAccountSchema` field representing the actual fiat account schema that can be used, and an
 optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
-This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
+For example, if a server wants to limit the selection for certain fields on the schema, `allowedValues` can contain lists of selectable values for those fields.
+On the client-side, this could be used to render a list of options, for example.
 
 ###### 3.4.1.2.3.2. Failure
 
