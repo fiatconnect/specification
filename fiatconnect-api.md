@@ -2226,12 +2226,15 @@ A KYC schema containing personal data about a user, as well as documents such as
 		postalCode?: `string`
 	},
 	phoneNumber: `string`,
+  idNumber?: `string`,
+  email?: `string`,
 	selfieDocument: `string`,
-	identificationDocument: `string`
+	identificationDocument: `string`,
+  identificationDocumentBack?: `string`
 }
 ```
 
-The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
+The `selfieDocument`, `identificationDocument` and `identificationDocumentBack` fields should be base64 encoded binary blobs representing images.
 
 ### 9.3.2. Fiat Account Schemas
 
