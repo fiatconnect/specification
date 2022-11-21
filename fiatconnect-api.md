@@ -2226,11 +2226,11 @@ A KYC schema containing personal data about a user, as well as documents such as
 		postalCode?: `string`
 	},
 	phoneNumber: `string`,
-  idNumber?: `string`,
-  email?: `string`,
+	idNumber?: `string`,
+	email?: `string`,
 	selfieDocument: `string`,
 	identificationDocument: `string`,
-  identificationDocumentBack?: `string`
+	identificationDocumentBack?: `string`,
 }
 ```
 
