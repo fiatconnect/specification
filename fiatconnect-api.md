@@ -2360,7 +2360,7 @@ Banks use different starting codes for their branches for differentiation. (In I
 ```
 {
   accountName: `string`,
-	institutionName: `string`,
+  institutionName: `string`,
   keyType: `PIXKeyTypeEnum`,
   key: `string`,
   fiatAccountType: `FiatAccountTypeEnum.BankAccount`
