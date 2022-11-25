@@ -2149,7 +2149,7 @@ An enum listing the KYC schema types recognized by the FiatConnect specification
 ```
 [
 	`PersonalDataAndDocuments`,
-  `PersonalDataAndDocumentsWithBack`
+	`PersonalDataAndDocumentsWithBack`
 ]
 ```
 
