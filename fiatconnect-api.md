@@ -2148,7 +2148,8 @@ An enum listing the KYC schema types recognized by the FiatConnect specification
 
 ```
 [
-	`PersonalDataAndDocuments`
+	`PersonalDataAndDocuments`,
+  `PersonalDataAndDocumentsWithBack`
 ]
 ```
 
@@ -2226,11 +2227,39 @@ A KYC schema containing personal data about a user, as well as documents such as
 		postalCode?: `string`
 	},
 	phoneNumber: `string`,
-	idNumber?: `string`,
-	email?: `string`,
 	selfieDocument: `string`,
-	identificationDocument: `string`,
-	identificationDocumentBack?: `string`,
+	identificationDocument: `string`
+}
+```
+
+The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
+
+#### 9.3.1.2. `PersonalDataAndDocumentsWithBack`
+
+A brasilian standard KYC schema containing personal data about a user, as well as documents such as an ID photo and selfie.
+
+```
+{
+	fullName: `string`,
+	dateOfBirth: {
+		day: `string`,
+		month: `string`,
+		year: `string`
+	},
+	address: {
+		address1: `string`,
+		address2?: `string`,
+		isoCountryCode: `string`,
+		isoRegionCode: `string`,
+		city: `string`,
+		postalCode?: `string`
+	},
+	phoneNumber: `string`,
+	idNumber: `string`,
+	email: `string`,
+	selfieDocument: `string`,
+	identificationDocumentFront: `string`,
+	identificationDocumentBack: `string`,
 }
 ```
 
