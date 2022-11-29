@@ -2263,6 +2263,9 @@ A brasilian standard KYC schema containing personal data about a user, as well a
 }
 ```
 
+`idNumber` MUST be a [CPF number](https://en.wikipedia.org/wiki/CPF_number).
+`email` MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
+`phoneNumber` MUST be an 11-digit [Brazilian mobile phone number](https://en.wikipedia.org/wiki/Telephone_numbers_in_Brazil) including area code. The string MUST match the regex `/[0-9]{11}/`.
 The `selfieDocument`, `identificationDocument` and `identificationDocumentBack` fields should be base64 encoded binary blobs representing images.
 
 ### 9.3.2. Fiat Account Schemas
