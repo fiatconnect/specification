@@ -99,6 +99,7 @@ definitions:
       - DuniaWallet
       - IBANNumber
       - IFSCAccount
+      - PIXAccount
   QuoteRequest:
     type: "object"
     properties:
