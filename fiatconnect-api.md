@@ -236,7 +236,6 @@
     - [9.3.2. Fiat Account Schemas](#932-fiat-account-schemas)
       - [9.3.2.1. `AccountNumber`](#9321-accountnumber)
       - [9.3.2.2. `MobileMoney`](#9322-mobilemoney)
-        - [9.3.2.2.1. `SupportedOperatorEnum`](#93221-supportedoperatorenum)
       - [9.3.2.3. `DuniaWallet`](#9323-duniawallet)
       - [9.3.2.4. `IBANNumber`](#9324-ibannumber)
       - [9.3.2.5. `IFSCAccount`](#9325-ifscaccount)
@@ -2266,8 +2265,10 @@ is below:
 
 #### 9.3.2.2. `MobileMoney`
 
-Most of the mobile money's providers require only the phone number to process a transaction.  So, the best approach to make this schema general, is to add the *operator*.
-`Operator` represents the name of the mobile operator and `mobile` the phone number of the end-users. The property `mobile` should follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) (i.e., +14155552671 for US). Finally, the `country` field should be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
+`MobileMoney` is a fiat account schema pertaining to virtual wallets provided by telecommunications companies in Africa.
+The `operator` field represents the name of the mobile operator, and `mobile` is the phone number of the end user. 
+The property `mobile` MUST follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) 
+with a plus sign prefix (i.e., +14155552671 for US). Finally, the `country` field MUST be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
 
 ```
 {
@@ -2275,31 +2276,10 @@ Most of the mobile money's providers require only the phone number to process a 
   institutionName: `string`,
   mobile: `string`,
   country: `string`,
-  operator: `SupportedOperatorEnum`,
+  operator: `string`,
   fiatAccountType: `FiatAccountTypeEnum.MobileMoney`
 }
 ```
-
-##### 9.3.2.2.1. `SupportedOperatorEnum`
-
-Depending on the `allowedValues` field for `operator` in each country, the client SHOULD impose restrictions on the type of data the user can provide for the `operator` field. This data should be part of the `SupportedOperatorEnum` provided. Depending on mobile money providers supported on a specific country, CI/CO providers will provide the list of `allowedValues`.
-Below you have a list of mobile money providers:
-
-(PS: Only missing mobile money providers should be added regardless of the country).
-
-```
-[
-  `ORANGE`,
-  `MOOV`,
-  `MTN`,
-  `WAVE`
-]
-```
-
-- `ORANGE` - [Orange Money](https://en.wikipedia.org/wiki/Orange_Money)
-- `MOOV` - [Moov Money](https://www.moov-africa.ci/moov-money/)
-- `MTN` - [Momo or Mtn Money](https://www.mtn.ci/vos/depot-et-retrait-momo/)
-- `WAVE` - [Wave](https://www.wave.com/fr/)
 
 #### 9.3.2.3. `DuniaWallet`
 
