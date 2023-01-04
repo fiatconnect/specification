@@ -2236,7 +2236,8 @@ The `selfieDocument` and `identificationDocument` fields should be base64 encode
 
 #### 9.3.1.2. `PersonalDataAndDocumentsWithBack`
 
-A brasilian standard KYC schema containing personal data about a user, as well as documents such as an ID photo and selfie.
+A brasilian standard KYC schema containing personal data about a user, as well as documents such as an ID, photo and selfie.
+The accepted documents are [RG](https://en.wikipedia.org/wiki/Brazilian_identity_card), [CNH](https://en.wikipedia.org/wiki/Driving_licence_in_Brazil) and [RNM](https://en.wikipedia.org/wiki/Registro_Nacional_de_Estrangeiros)
 
 ```
 {
