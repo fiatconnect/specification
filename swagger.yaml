@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "FiatConnect provides a standardized server-side API specification for CICO providers to provide cash-in/cash-out functionality to clients."
-  version: "0.1.0"
+  version: "1.0.1"
   title: "FiatConnect Specification"
 tags:
 - name: "clock"
