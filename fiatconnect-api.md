@@ -2227,14 +2227,43 @@ A KYC schema containing personal data about a user, as well as documents such as
 	},
 	phoneNumber: `string`,
 	selfieDocument: `string`,
-	identificationDocumentFront: `string`,
-    identificationDocumentBack: `string`
+    identificationDocument: `string`
 }
 ```
 
 The `selfieDocument`, `identificationDocumentFront` and `identificationDocumentBack` fields should be base64 encoded binary blobs representing images.
 
+#### 9.3.1.2. `PersonalDataAndDocumentsDetailed`
+A more detailed Schema allowing the user to provide more information to give them a greater chance to be admitted.
+
+```
+{
+	firstName: `string`,
+	middleName?: `string`,
+	lastName: `string`,
+	dateOfBirth: {
+		day: `string`,
+		month: `string`,
+		year: `string`
+	},
+	address: {
+		address1: `string`,
+		address2?: `string`,
+		isoCountryCode: `string`,
+		isoRegionCode: `string`,
+		city: `string`,
+		postalCode?: `string`
+	},
+	phoneNumber: `string`,
+	selfieDocument: `string`,
+    identificationDocumentType: `string`,
+	identificationDocumentFront: `string`,
+    identificationDocumentBack: `string`
+}
+```
+
 The `identificationDocumentBack` field is OPTIONAL as some Id documents like a passport do not require a Back image for a full KYC check, but some others like an Identity Card do.
+
 
 ### 9.3.2. Fiat Account Schemas
 
