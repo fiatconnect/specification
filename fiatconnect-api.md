@@ -2258,11 +2258,17 @@ A more detailed Schema allowing the user to provide more information to give the
 	selfieDocument: `string`,
     identificationDocumentType: `string`,
 	identificationDocumentFront: `string`,
-    identificationDocumentBack: `string`
+    identificationDocumentBack?: `string` 
 }
 ```
 
 The `identificationDocumentBack` field is OPTIONAL as some Id documents like a passport do not require a Back image for a full KYC check, but some others like an Identity Card do.
+
+The `identificationDocumentType` field should contain either of the following options:
+- `IDC`: Identity card
+- `PAS`: Passport
+- `DL`: Driving Liscense
+- `DNI`: Documento Nacional de Identidad
 
 
 ### 9.3.2. Fiat Account Schemas
