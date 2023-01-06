@@ -2236,7 +2236,7 @@ The `selfieDocument` and `identificationDocument` fields should be base64 encode
 
 #### 9.3.1.2. `PersonalDataAndDocumentsWithBack`
 
-A brasilian standard KYC schema containing personal data about a user, as well as documents such as an ID, photo and selfie.
+A KYC schema containing personal data about a user, as well as documents such as an ID, photo and selfie.
 The accepted documents are [RG](https://en.wikipedia.org/wiki/Brazilian_identity_card), [CNH](https://en.wikipedia.org/wiki/Driving_licence_in_Brazil) and [RNM](https://en.wikipedia.org/wiki/Registro_Nacional_de_Estrangeiros)
 
 ```
@@ -2256,7 +2256,6 @@ The accepted documents are [RG](https://en.wikipedia.org/wiki/Brazilian_identity
 		postalCode?: `string`
 	},
 	phoneNumber: `string`,
-	idNumber: `string`,
 	email: `string`,
 	selfieDocument: `string`,
 	identificationDocumentFront: `string`,
@@ -2264,7 +2263,6 @@ The accepted documents are [RG](https://en.wikipedia.org/wiki/Brazilian_identity
 }
 ```
 
-`idNumber` MUST be a [CPF number](https://en.wikipedia.org/wiki/CPF_number).
 `email` MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
 `phoneNumber` MUST be an 11-digit [Brazilian mobile phone number](https://en.wikipedia.org/wiki/Telephone_numbers_in_Brazil) including area code. The string MUST match the regex `/[0-9]{11}/`.
 The `selfieDocument`, `identificationDocument` and `identificationDocumentBack` fields should be base64 encoded binary blobs representing images.
