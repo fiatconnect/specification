@@ -2232,7 +2232,7 @@ A KYC schema containing personal data about a user, as well as documents such as
 }
 ```
 
-The `selfieDocument`, `identificationDocumentFront` and `identificationDocumentBack` fields should be base64 encoded binary blobs representing images.
+The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
 
 #### 9.3.1.2. `PersonalDataAndDocumentsDetailed`
 A more detailed Schema allowing the user to provide more information to give them a greater chance to be admitted.
@@ -2284,6 +2284,8 @@ The accepted documents can be found [here](https://en.wikipedia.org/wiki/Identit
 - `PAS`: Passport
 - `DL`: Driving Liscense
 - `DNI`: Documento Nacional de Identidad
+
+The `selfieDocument`, `identificationDocumentFront` and `identificationDocumentFront` fields should be base64 encoded binary blobs representing images.
 
 The `identificationDocumentBack` field is OPTIONAL as some Id documents like a passport do not require a Back image for a full KYC check, but some others like an Identity Card do.
 
