@@ -2147,7 +2147,8 @@ An enum listing the KYC schema types recognized by the FiatConnect specification
 
 ```
 [
-	`PersonalDataAndDocuments`
+	`PersonalDataAndDocuments`,
+	`PersonalDataAndDocumentsWithBack`
 ]
 ```
 
@@ -2270,6 +2271,39 @@ The `identificationDocumentType` field should contain either of the following op
 - `DL`: Driving Liscense
 - `DNI`: Documento Nacional de Identidad
 
+
+#### 9.3.1.2. `PersonalDataAndDocumentsWithBack`
+
+A KYC schema containing personal data about a user, as well as documents such as an ID, photo and selfie.
+The accepted documents are [RG](https://en.wikipedia.org/wiki/Brazilian_identity_card), [CNH](https://en.wikipedia.org/wiki/Driving_licence_in_Brazil) and [RNM](https://en.wikipedia.org/wiki/Registro_Nacional_de_Estrangeiros)
+
+```
+{
+	fullName: `string`,
+	dateOfBirth: {
+		day: `string`,
+		month: `string`,
+		year: `string`
+	},
+	address: {
+		address1: `string`,
+		address2?: `string`,
+		isoCountryCode: `string`,
+		isoRegionCode: `string`,
+		city: `string`,
+		postalCode?: `string`
+	},
+	phoneNumber: `string`,
+	email: `string`,
+	selfieDocument: `string`,
+	identificationDocumentFront: `string`,
+	identificationDocumentBack: `string`,
+}
+```
+
+`email` MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
+`phoneNumber` MUST be an 11-digit [Brazilian mobile phone number](https://en.wikipedia.org/wiki/Telephone_numbers_in_Brazil) including area code. The string MUST match the regex `/[0-9]{11}/`.
+The `selfieDocument`, `identificationDocument` and `identificationDocumentBack` fields should be base64 encoded binary blobs representing images.
 
 ### 9.3.2. Fiat Account Schemas
 
