@@ -2255,55 +2255,38 @@ A more detailed Schema allowing the user to provide more information to give the
 		city: `string`,
 		postalCode?: `string`
 	},
+    countryCode: `enum`,
 	phoneNumber: `string`,
+    email?: `string`,
 	selfieDocument: `string`,
-    identificationDocumentType: `string`,
+    identificationDocumentType: `enum`,
 	identificationDocumentFront: `string`,
     identificationDocumentBack?: `string` 
 }
 ```
 
-The `identificationDocumentBack` field is OPTIONAL as some Id documents like a passport do not require a Back image for a full KYC check, but some others like an Identity Card do.
+The `countryCode` field is REQUIRED and MUST follow the formating of the [E.164 international standard](https://en.wikipedia.org/wiki/E.164), here is the format simplified:
+- +XZZ
 
-The `identificationDocumentType` field should contain either of the following options:
+`X` MUST be a number and `Z` is an OPTIONAL potential numbers.
+
+Examples:
+- +1 for the United States
+- +44 for the United Kingdom
+- +250 for Rwanda
+
+The `phoneNumber` field is REQUIRED and MUST follow the formating of the [E.164 international standard](https://en.wikipedia.org/wiki/E.164). It MUST contain all parts of the phone number EXPECT the `countryCode`
+
+The `email` field is OPTIONAL but if provided MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
+
+The accepted documents can be found [here](https://en.wikipedia.org/wiki/Identity_document). The document should fit one of the `identificationDocumentType` field options:
 - `IDC`: Identity card
 - `PAS`: Passport
 - `DL`: Driving Liscense
 - `DNI`: Documento Nacional de Identidad
 
+The `identificationDocumentBack` field is OPTIONAL as some Id documents like a passport do not require a Back image for a full KYC check, but some others like an Identity Card do.
 
-#### 9.3.1.2. `PersonalDataAndDocumentsWithBack`
-
-A KYC schema containing personal data about a user, as well as documents such as an ID, photo and selfie.
-The accepted documents are [RG](https://en.wikipedia.org/wiki/Brazilian_identity_card), [CNH](https://en.wikipedia.org/wiki/Driving_licence_in_Brazil) and [RNM](https://en.wikipedia.org/wiki/Registro_Nacional_de_Estrangeiros)
-
-```
-{
-	fullName: `string`,
-	dateOfBirth: {
-		day: `string`,
-		month: `string`,
-		year: `string`
-	},
-	address: {
-		address1: `string`,
-		address2?: `string`,
-		isoCountryCode: `string`,
-		isoRegionCode: `string`,
-		city: `string`,
-		postalCode?: `string`
-	},
-	phoneNumber: `string`,
-	email: `string`,
-	selfieDocument: `string`,
-	identificationDocumentFront: `string`,
-	identificationDocumentBack: `string`,
-}
-```
-
-`email` MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
-`phoneNumber` MUST be an 11-digit [Brazilian mobile phone number](https://en.wikipedia.org/wiki/Telephone_numbers_in_Brazil) including area code. The string MUST match the regex `/[0-9]{11}/`.
-The `selfieDocument`, `identificationDocument` and `identificationDocumentBack` fields should be base64 encoded binary blobs representing images.
 
 ### 9.3.2. Fiat Account Schemas
 
