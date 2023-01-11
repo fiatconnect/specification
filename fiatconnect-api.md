@@ -2255,7 +2255,6 @@ A more detailed Schema allowing the user to provide more information to give the
 		city: `string`,
 		postalCode?: `string`
 	},
-    countryCode: `enum`,
 	phoneNumber: `string`,
     email?: `string`,
 	selfieDocument: `string`,
@@ -2265,17 +2264,7 @@ A more detailed Schema allowing the user to provide more information to give the
 }
 ```
 
-The `countryCode` field is REQUIRED and MUST follow the formating of the [E.164 international standard](https://en.wikipedia.org/wiki/E.164), here is the format simplified:
-- +XZZ
-
-`X` MUST be a number and `Z` is an OPTIONAL potential numbers.
-
-Examples:
-- +1 for the United States
-- +44 for the United Kingdom
-- +250 for Rwanda
-
-The `phoneNumber` field is REQUIRED and MUST follow the formating of the [E.164 international standard](https://en.wikipedia.org/wiki/E.164). It MUST contain all parts of the phone number EXPECT the `countryCode`
+The `phoneNumber` field is REQUIRED and MUST follow the formating of the [E.164 international standard](https://en.wikipedia.org/wiki/E.164). It MUST contain all parts of the phone number INCLUDING the Country Code.
 
 The `email` field is OPTIONAL but if provided MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
 
