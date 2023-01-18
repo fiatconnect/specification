@@ -2269,14 +2269,13 @@ The `phoneNumber` field is REQUIRED and MUST follow the formating of the [E.164 
 The `email` field is OPTIONAL but if provided MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
 
 The accepted documents can be found [here](https://en.wikipedia.org/wiki/Identity_document). The document should fit one of the `identificationDocumentType` field options:
-- `IDC`: Identity card
+- `IDC`: State issued identity card
 - `PAS`: Passport
 - `DL`: Driving Liscense
-- `DNI`: Documento Nacional de Identidad
 
 The `selfieDocument`, `identificationDocumentFront` and `identificationDocumentFront` fields should be base64 encoded binary blobs representing images.
 
-The `identificationDocumentBack` field is OPTIONAL as some Id documents like a passport do not require a Back image for a full KYC check, but some others like an Identity Card do.
+The `identificationDocumentBack` field is REQUIRED if the `identificationDocumentType` is `IDC` or `DL`
 
 
 ### 9.3.2. Fiat Account Schemas
