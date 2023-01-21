@@ -2235,7 +2235,7 @@ A KYC schema containing personal data about a user, as well as documents such as
 The `selfieDocument` and `identificationDocument` fields should be base64 encoded binary blobs representing images.
 
 #### 9.3.1.2. `PersonalDataAndDocumentsDetailed`
-A more detailed Schema allowing the user to provide more information to give them a greater chance to be admitted.
+A more detailed Schema allowing the user to provide more information to work with CICO providers that require it.
 
 ```
 {
@@ -2256,7 +2256,7 @@ A more detailed Schema allowing the user to provide more information to give the
 		postalCode?: `string`
 	},
 	phoneNumber: `string`,
-    email?: `string`,
+    email: `string`,
 	selfieDocument: `string`,
     identificationDocumentType: `enum`,
 	identificationDocumentFront: `string`,
@@ -2266,7 +2266,7 @@ A more detailed Schema allowing the user to provide more information to give the
 
 The `phoneNumber` field is REQUIRED and MUST follow the formating of the [E.164 international standard](https://en.wikipedia.org/wiki/E.164). It MUST contain all parts of the phone number INCLUDING the Country Code.
 
-The `email` field is OPTIONAL but if provided MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
+The `email` field MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
 
 The accepted documents can be found [here](https://en.wikipedia.org/wiki/Identity_document). The document should fit one of the `identificationDocumentType` field options:
 - `IDC`: State issued identity card
@@ -2275,7 +2275,7 @@ The accepted documents can be found [here](https://en.wikipedia.org/wiki/Identit
 
 The `selfieDocument`, `identificationDocumentFront` and `identificationDocumentFront` fields should be base64 encoded binary blobs representing images.
 
-The `identificationDocumentBack` field is REQUIRED if the `identificationDocumentType` is `IDC` or `DL`
+The `identificationDocumentBack` field is REQUIRED if the `identificationDocumentType` is `IDC` or `DL`. Otherwise, it is optional.
 
 
 ### 9.3.2. Fiat Account Schemas
