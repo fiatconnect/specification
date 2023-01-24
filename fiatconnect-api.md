@@ -2045,7 +2045,8 @@ An enum listing the error types used by various endpoints.
 	`NonceInUse`,
 	`IssuedTooEarly`,
 	`ExpirationTooLong`,
-	`InvalidFiatAccount`
+	`InvalidFiatAccount`,
+	`InvalidQuote`
 ]
 ```
 
@@ -2084,6 +2085,7 @@ An enum listing the types of transfer statuses recognized by FiatConnect.
 	`TransferAmlFailed`,
 	`TransferReadyForUserToSendCryptoFunds`,
 	`TransferReceivedCryptoFunds`,
+	`TransferReceivedFiatFunds`,
 	`TransferComplete`,
 	`TransferFailed`
 ]
