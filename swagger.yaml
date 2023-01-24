@@ -291,6 +291,7 @@ definitions:
       - TransferAmlFailed
       - TransferReadyForUserToSendCryptoFunds
       - TransferReceivedCryptoFunds
+      - TransferReceivedFiatFunds
       - TransferComplete
       - TransferFailed
   TransferTypeEnum:
