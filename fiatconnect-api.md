@@ -2258,11 +2258,7 @@ A more detailed Schema allowing the user to provide more information to work wit
 		postalCode?: `string`
 	},
 	phoneNumber: `string`,
-<<<<<<< HEAD
-    email: `string`,
-=======
   email?: `string`,
->>>>>>> 42f0d44 (added a desciption of the)
 	selfieDocument: `string`,
   identificationDocumentType: `IdentificationDocumentTypeEnum`,
 	identificationDocumentFront: `string`,
@@ -2274,14 +2270,7 @@ The `phoneNumber` field is REQUIRED and MUST follow the formating of the [E.164 
 
 The `email` field MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
 
-<<<<<<< HEAD
-The accepted documents can be found [here](https://en.wikipedia.org/wiki/Identity_document). The document should fit one of the `identificationDocumentType` field options:
-- `IDC`: State issued identity card
-- `PAS`: Passport
-- `DL`: Driving Liscense
-=======
 The `identificationDocumentType` field must be selected from `IdentificationDocumentTypeEnum`, and is used to represent the kind of document being submitted.
->>>>>>> 42f0d44 (added a desciption of the)
 
 The `selfieDocument`, `identificationDocumentFront` and `identificationDocumentFront` fields MUST be base64 encoded binary blobs representing images.
 
