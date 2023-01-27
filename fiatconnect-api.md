@@ -234,7 +234,7 @@
     - [9.3.1. KYC Schemas](#931-kyc-schemas)
       - [9.3.1.1. `PersonalDataAndDocuments`](#9311-personaldataanddocuments)
       - [9.3.1.2. `PersonalDataAndDocumentsDetailed`](#9312-personaldataanddocumentsdetailed)
-        - [9.3.1.2.1. `]
+        - [9.3.1.2.1. `IdentificationDocumentType`] (#93121-identificationdocumenttype)
     - [9.3.2. Fiat Account Schemas](#932-fiat-account-schemas)
       - [9.3.2.1. `AccountNumber`](#9321-accountnumber)
       - [9.3.2.2. `MobileMoney`](#9322-mobilemoney)
@@ -2136,10 +2136,10 @@ An enum listing the types of crypto tokens supported by FiatConnect.
 
 ```
 [
-  `cUSD`,
-  `cEUR`,
-  `cREAL`,
-  `CELO`
+	`cUSD`,
+	`cEUR`,
+	`cREAL`,
+	`CELO`
 ]
 ```
 
@@ -2230,7 +2230,7 @@ A KYC schema containing personal data about a user, as well as documents such as
 	},
 	phoneNumber: `string`,
 	selfieDocument: `string`,
-  identificationDocument: `string`
+	identificationDocument: `string`
 }
 ```
 
@@ -2258,31 +2258,31 @@ A more detailed Schema allowing the user to provide more information to work wit
 		postalCode?: `string`
 	},
 	phoneNumber: `string`,
-  email?: `string`,
+	email?: `string`,
 	selfieDocument: `string`,
-  identificationDocumentType: `IdentificationDocumentTypeEnum`,
+	identificationDocumentType: `IdentificationDocumentTypeEnum`,
 	identificationDocumentFront: `string`,
-  identificationDocumentBack?: `string` 
+	identificationDocumentBack?: `string` 
 }
 ```
 
-The `phoneNumber` field is REQUIRED and MUST follow the formating of the [E.164 international standard](https://en.wikipedia.org/wiki/E.164). It MUST contain all parts of the phone number INCLUDING the Country Code.
+The `phoneNumber` field is REQUIRED and MUST follow the formating of the [E.164 international standard](https://en.wikipedia.org/wiki/E.164). It MUST contain all parts of the phone number including the Country Code.
 
 The `email` field MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
 
-The `identificationDocumentType` field must be selected from `IdentificationDocumentTypeEnum`, and is used to represent the kind of document being submitted.
+The `identificationDocumentType` field MUST be selected from `IdentificationDocumentTypeEnum`, and is used to represent the kind of document being submitted.
 
-The `selfieDocument`, `identificationDocumentFront` and `identificationDocumentFront` fields MUST be base64 encoded binary blobs representing images.
+The `selfieDocument`, `identificationDocumentFront` and `identificationDocumentBack` fields MUST be base64 encoded binary blobs representing images.
 
-The `identificationDocumentBack` field is REQUIRED if the `identificationDocumentType` is `IDC` or `DL`. Otherwise, it is optional.
+The `identificationDocumentBack` field is REQUIRED if the `identificationDocumentType` is `IDC` or `DL`. Otherwise, it is OPTIONAL.
 
 ##### 9.3.1.2.1. `IdentificationDocumentType`
 `IdentificationDocumentType` is used to represent the type of document being submitted with a `PersonalDataAndDocumentsDetailed` KYC schema.
 ```
 [
-  `IDC`,
-  `PAS`,
-  `DL`
+	`IDC`,
+	`PAS`,
+	`DL`
 ]
 ```
 The enum values represent the following forms of identification:
