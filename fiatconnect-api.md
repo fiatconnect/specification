@@ -2240,7 +2240,8 @@ The `selfieDocument` and `identificationDocument` fields should be base64 encode
 
 #### 9.3.1.2. `PersonalDataAndDocumentsDetailed`
 
-A more detailed Schema allowing the user to provide more information to work with CICO providers that require it.
+`PersonalDataAndDocumentsDetailed` is a more detailed version of the `PersonalDataAndDocuments` KYC Schema,
+allowing the user to provide more information for CICO providers which require it.
 
 ```
 {
