@@ -36,6 +36,7 @@ definitions:
       - NameAndAddress
       - IdAndSelfie
       - PersonalDataAndDocuments
+      - PersonalDataAndDocumentsDetailed
   FiatType:
     type: "string"
     enum: &FiatType
