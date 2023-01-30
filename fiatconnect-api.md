@@ -2262,7 +2262,7 @@ allowing the user to provide more information for CICO providers which require i
 		postalCode?: `string`
 	},
 	phoneNumber: `string`,
-	email?: `string`,
+	email: `string`,
 	selfieDocument: `string`,
 	identificationDocumentType: `IdentificationDocumentTypeEnum`,
 	identificationDocumentFront: `string`,
@@ -2272,7 +2272,7 @@ allowing the user to provide more information for CICO providers which require i
 
 The `phoneNumber` field is REQUIRED and MUST follow the formating of the [E.164 international standard](https://en.wikipedia.org/wiki/E.164). It MUST contain all parts of the phone number including the Country Code.
 
-The `email` field MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
+The `email` field is REQUIRED and MUST be a [valid email](https://en.wikipedia.org/wiki/Email_address#Syntax).
 
 The `identificationDocumentType` field MUST be selected from `IdentificationDocumentTypeEnum`, and is used to represent the kind of document being submitted.
 
