@@ -1731,7 +1731,8 @@ On success, the server MUST return an HTTP `200` status code, along with a respo
 	fee?: `string`,
 	fiatAccountId: `string`,
 	transferId: `string`,
-	transferAddress: `string`
+	transferAddress: `string`,
+	txHash?: `string`
 }
 ```
 
@@ -1759,6 +1760,11 @@ If the user has a transfer on file with the corresponding `transferId`, the serv
 `amountProvided` refers to the amount of fiat or crypto that the user has provided for the transfer. `amountReceived` refers to the amount
 of crypto or fiat that the server will be crediting to the user. `fee`, if present refers to the fee, if any, associated with the transfer,
 denominated in fiat or crypto, depending on the transfer type. `fee` is given as a string-ified numerical amount (e.g. `"1.0"`).
+
+If the queried transfer represents a transfer in, and if the transfer has progressed to the point where the provider has sent crypto funds to the user,
+the `txHash` field MUST be present, and represent the hash of the transaction in which the provider sent the user crypto funds.
+The `txHash` MUST correspond to a valid transaction hash on the Celo blockchain, and its syntax must match the following regex: `/^0x([A-Fa-f0-9]{64})$/`;
+namely, it must be exactly the string `0x` followed by 64 hexadecimal characters.
 
 ###### 3.4.4.3.3.2. Failure
 
@@ -1872,7 +1878,7 @@ though these are rough guidelines. Once a server has received an HTTP `200` stat
 ### 5.1.2. `WebhookTransferInStatusEventSchema`
 
 `WebhookTransferInStatusEventSchema` is the schema that defines webhook payloads for transfer in events. Note that this schema is *identical* to the
-one returned from the `GET /transfer/:transferId/status` endpoint
+one returned from the `GET /transfer/:transferId/status` endpoint.
 
 ```
 {
@@ -1886,13 +1892,14 @@ one returned from the `GET /transfer/:transferId/status` endpoint
 	fiatAccountId: `string`,
 	transferId: `string`,
 	transferAddress: `string`
+	txHash?: `string`
 }
 ```
 
 ### 5.1.3. `WebhookTransferOutStatusEventSchema`
 
-`WebhookTransferOutStatusEventSchema` is the schema that defines webhook payloads for transfer out events. Note that this schema is *identical* to the
-one returned from the `GET /transfer/:transferId/status` endpoint
+`WebhookTransferOutStatusEventSchema` is the schema that defines webhook payloads for transfer out events. Note that this schema is nearly identical to the
+one returned from the `GET /transfer/:transferId/status` endpoint; it lacks the optional `txHash` field, since it is not relevenat for transfers out.
 
 ```
 {

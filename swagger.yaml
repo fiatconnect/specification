@@ -333,6 +333,8 @@ definitions:
         type: "string"
       transferAddress:
         type: "string"
+      txHash:
+        type: "string"
   TransferErrorEnum:
     type: "string"
     enum: &TransferErrorEnum
