@@ -2136,6 +2136,7 @@ An enum listing the types of fiat currencies supported by FiatConnect. All value
   `VES`,
   `MXN`,
   `PAB`,
+  `ZMW`,
 ]
 ```
 

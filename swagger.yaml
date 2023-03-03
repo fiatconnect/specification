@@ -69,6 +69,7 @@ definitions:
       - VES
       - MXN
       - PAB
+      - ZMW
   CryptoType:
     type: "string"
     enum: &CryptoType
