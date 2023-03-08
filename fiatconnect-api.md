@@ -748,8 +748,8 @@ We assume that the lifecycle of a transfer begins with an end-user requesting a 
 a user providing their desired transfer parameters (crypto type, fiat type, amount), and the client then proceeding to show
 them a list of supported providers.
 
-We assume that different quotes represent transfers that may have differing requirements regarding KYC and fiat accounts.
-To support this, the quote endpoints must return information about KYC and fiat account schemas that are required in order to actually perform a transaction for the requested quote.
+We assume that different quotes represent transfers that may have differing requirements regarding KYC and fiat accounts. To support this, the quote
+endpoints must return information about KYC and fiat account schemas that are required in order to actually perform a transaction for the requested quote.
 
 Quotes may vary depending on geo, and certain specific transfers may be unavailable in certain regions entirely. As such, we assume that the
 client will interpret a 200 response from this endpoint as verification that the provider is supported for the particular transfer parameters,
@@ -1838,12 +1838,13 @@ graph LR
 
    TransferStarted---->TransferFailed
    TransferFiatFundsDebited---->TransferFailed
+   TransferWaitingForUserAction---->TransferFailed
    TransferReceivedFiatFunds---->TransferFailed
    TransferSendingCryptoFunds---->TransferFailed
 
    TransferStarted---->TransferWaitingForUserAction
    TransferWaitingForUserAction---->TransferReceivedFiatFunds
-   TransferStarted---->TransferFailed
+
 ```
 
 ## 4.2. Transfers Out
