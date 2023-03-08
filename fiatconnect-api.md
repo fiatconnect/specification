@@ -230,6 +230,8 @@
     - [9.2.5. `FeeTypeEnum`](#925-feetypeenum)
     - [9.2.6. `FeeFrequencyEnum`](#926-feefrequencyenum)
     - [9.2.7. `FiatAccountSchemaEnum`](#927-fiataccountschemaenum)
+    - [9.2.8. `TransferInUserActionTypeEnum`](#928-transferinuseractiontypeenum)
+    - [9.2.9. `TransferInUserActionDetailsEnum`](#929-transferinuseractiondetailsenum)
   - [9.3. Initial Entity Support](#93-initial-entity-support)
     - [9.3.1. KYC Schemas](#931-kyc-schemas)
       - [9.3.1.1. `PersonalDataAndDocuments`](#9311-personaldataanddocuments)
@@ -241,6 +243,10 @@
       - [9.3.2.3. `DuniaWallet`](#9323-duniawallet)
       - [9.3.2.4. `IBANNumber`](#9324-ibannumber)
       - [9.3.2.5. `IFSCAccount`](#9325-ifscaccount)
+    - [9.3.3. User Action Details Schemas](#933-user-action-details-schemas)
+      - [9.3.3.1. `PIXUserActionDetailsSchema`](#9331-pixuseractiondetailsschema)
+      - [9.3.3.2. `IBANUserActionDetailsSchema`](#9332-ibanuseractiondetailsschema)
+      - [9.3.3.3. `PSEUserActionDetailsSchema`](#9333-pseuseractiondetailsschema)
 - [10. References](#10-references)
   - [10.1. Normative References](#101-normative-references)
     - [10.1.1. [RFC2119]](#1011-rfc2119)
@@ -742,8 +748,8 @@ We assume that the lifecycle of a transfer begins with an end-user requesting a 
 a user providing their desired transfer parameters (crypto type, fiat type, amount), and the client then proceeding to show
 them a list of supported providers.
 
-We assume that different quotes represent transfers that may have differing requirements regarding KYC and fiat accounts. To support this, the quote
-endpoints must return information about KYC and fiat account schemas that are required in order to actually perform a transaction for the requested quote.
+We assume that different quotes represent transfers that may have differing requirements regarding KYC and fiat accounts.
+To support this, the quote endpoints must return information about KYC and fiat account schemas that are required in order to actually perform a transaction for the requested quote.
 
 Quotes may vary depending on geo, and certain specific transfers may be unavailable in certain regions entirely. As such, we assume that the
 client will interpret a 200 response from this endpoint as verification that the provider is supported for the particular transfer parameters,
@@ -756,6 +762,15 @@ Some non-200s may be recovered from by modifying the transfer parameters; others
 The `POST /quote/in` endpoint is used to retrieve quotes used for transfers in to crypto from fiat currencies. In addition to returning quote information, it also
 returns the permissable types of KYC that a user must have on file to initiate the corresponding transfer, as well as the fiat account types that are allowed to be
 used for the transfer.
+
+Transfers in are notably different from transfers out, since they require the user to send fiat funds to a provider in exchange for crypto. Certain providers, or certain
+types of fiat accounts may have restrictions on *how* these fiat funds are transferred from the user to the provider. While some types of fiat accounts may support
+*debiting* the user's fiat account (i.e., initiating the transfer of fiat funds on behalf of the user), other types of fiat accounts may not support this behavior, and require
+the user themselves to initiate the transfer of fiat funds from their account to ther provider's.
+
+Certain types of fiat accounts may support *both* methods of fiat transfer, either initiated by the provider or the user. For such accounts, providers must choose one of these
+methods of transfer when returning the `/quote/in` response. By "default", it is assumed that a supported fiat account for a transfer in will be debited *by the provider*.
+Fiat account schema data in `/quote/in` responses may be augmented with additional information in order to denote that a transfer requires user action.
 
 ##### 3.4.1.1.1. Parameters
 
@@ -812,6 +827,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		[FiatAccountTypeEnum]: {
 			fiatAccountSchemas: {
 				fiatAccountSchema: `FiatAccountSchemaEnum`,
+				userActionType?: `TransferInUserActionTypeEnum`
 				allowedValues: {
 					[string]: `string[]`
 				}
@@ -890,9 +906,13 @@ On success, the server MUST return a mapping from fiat account types to lists of
 type. This is expected to vary by geographical region as well as quote details provided by the request body.
 Each `fiatAccount[FiatAccountTypeEnum]` MUST correspond to a fiat account type that is allowed to be used for the requested quote.
 `fiatAccount[FiatAccountTypeEnum].fiatAccountSchemas` is a list of objects, where each object represents a fiat account schema that can be used to communicate data
-about the corresponding fiat account type. Each object MUST contain a `fiatAccountSchema` field representing the actual fiat account schema that can be used, and an
-optional `allowedValues` field. The `allowedValues` object is an optional mapping from any number of keys in the selected fiat account schema to values that are allowed for that key.
-This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
+about the corresponding fiat account type. Each object MUST contain a `fiatAccountSchema` field representing the actual fiat account schema that can be used, an
+optional `allowedValues` field, and an optional `userActionType` field. The `allowedValues` object is an optional mapping from any number of keys in the selected
+fiat account schema to values that are allowed for that key. This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
+`userActionType`, if present, denotes that this account schema, if used for the transfer, will require user action in order to transfer fiat funds from the user
+to the provider. Different values of `TransferInUserActionTypeEnum` denote different semantics with respect to what *kind* of action the user will have to perform
+in order to send fiat funds to the provider. If a fiat account schema requiring user action is used to execute a transfer with a compatible quote, the semantics
+of the `/transfer/in` endpoint will from normal, as discussed later.
 
 ###### 3.4.1.1.3.2. Failure
 
@@ -1496,7 +1516,9 @@ the risk of creating a duplicate transaction. Idempotency keys MUST be implement
 
 #### 3.4.4.1. `POST /transfer/in`
 
-The `POST /transfer/in` endpoint is used to initiate a new transfer in from fiat to crypto.
+The `POST /transfer/in` endpoint is used to initiate a new transfer in from fiat to crypto. Since the transfer of fiat funds from a user to a provider
+may be user or provider-initiated, the semantics of the `/transfer/in` response differ depending on whether or not the fiat account schema used to execute
+the given quote requires user action, as specified in the initial `/quote/in` response associated with the provided `quoteId`.
 
 ##### 3.4.4.1.1. Parameters
 
@@ -1524,7 +1546,8 @@ On a successfully initiated transfer in request, the server MUST respond with an
 {
 	transferId: `string`,
 	transferStatus: `TransferStatusEnum`,
-	transferAddress: `string`
+	transferAddress: `string`,
+	userActionDetails?: `TransferInUserActionDetailsEnum`
 }
 ```
 
@@ -1567,10 +1590,18 @@ generate a transfer ID that the client can use to monitor the progress of the tr
 MUST call the user-specified webhook before returning an HTTP `200`. The response body MUST contain a `transferAddress`, indicating the address that the provider will
 use to send funds to the user's address from.
 
+If the `fiatAccountId` used to initiate the transfer in has a Fiat Account schema that was denoted in the initial `/quote/in` response as requiring user action,
+the response body MUST contain a `userActionDetails` object containing the details required for the user to complete the desired action in order to send
+fiat funds to the provider. The `userActionDetails` object returned MUST be one of the schemas specified in `TransferInUserActionDetailsEnum`, and correspond to the
+`TransferInUserActionTypeEnum` value specified for the Fiat Account schema used for this transfer. If the `fiatAccountId` selected for this transfer does not have a
+Fiat Account schema that was specified as requiring user action in the initial `/quote/in` response associated with the given `quoteId`, the response body
+MUST NOT contain a `userActionDetails` field.
+
 ###### 3.4.4.1.3.1. Success
 
 On success, the server MUST return the `transferId` associated with the pending transfer, as well as the initial status of the transfer and the address that funds will be
-sent from. If supported and configured, the endpoint MUST also report the initial status of the transfer to the client-specified webhook.
+sent from. If the selected Fiat Account requires user action in order to send fiat funds to the provider, the response body MUST contain a `userActionDetails` field, as discussed
+above, otherwise it MUST NOT. If supported and configured, the endpoint MUST also report the initial status of the transfer to the client-specified webhook.
 
 ###### 3.4.4.1.3.2. Failure
 
@@ -1732,7 +1763,8 @@ On success, the server MUST return an HTTP `200` status code, along with a respo
 	fiatAccountId: `string`,
 	transferId: `string`,
 	transferAddress: `string`,
-	txHash?: `string`
+	txHash?: `string`,
+	userActionDetails?: `TransferInUserActionDetailsEnum`
 }
 ```
 
@@ -1766,6 +1798,11 @@ the `txHash` field MUST be present, and represent the hash of the transaction in
 The `txHash` MUST correspond to a valid transaction hash on the Celo blockchain, and its syntax must match the following regex: `/^0x([A-Fa-f0-9]{64})$/`;
 namely, it must be exactly the string `0x` followed by 64 hexadecimal characters.
 
+Further, for queried transfers that represent transfers in, if the transfer required user action, the response body MUST contain `userActionDetails`.
+`userActionDetails`, if present MUST be identical to the `userActionDetails` object returned from the original `/transfer/in` response
+that initiated the transfer. If the requested transfer does not represent a transfer in requiring user action, `userActionDetails`
+MUST NOT be present in the response.
+
 ###### 3.4.4.3.3.2. Failure
 
 This endpoint MUST fail when the user has no transfer on file with the provided `transferId`.
@@ -1788,6 +1825,10 @@ specified for the quote associated with the transfer, if one exists. Note that s
 from the user's fiat account but before crypto funds are sent to the user, the server MUST return any fiat funds to the user's fiat account in case
 of such a failure.
 
+Since the transfer of fiat funds to the provider may require user action, *or* be provider-initiated, there are two unique paths
+that a transfer can take to reach the terminal states. Transfers in requiring user action MUST NOT enter the `TransferFiatFundsDebited`
+state, and transfers in requiring no user action (provider-initiated transfers) MUST NOT enter the `TransferWaitingForUserAction` state.
+
 ```mermaid
 graph LR
    TransferStarted---->TransferFiatFundsDebited
@@ -1799,6 +1840,10 @@ graph LR
    TransferFiatFundsDebited---->TransferFailed
    TransferReceivedFiatFunds---->TransferFailed
    TransferSendingCryptoFunds---->TransferFailed
+
+   TransferStarted---->TransferWaitingForUserAction
+   TransferWaitingForUserAction---->TransferReceivedFiatFunds
+   TransferStarted---->TransferFailed
 ```
 
 ## 4.2. Transfers Out
@@ -1878,7 +1923,8 @@ though these are rough guidelines. Once a server has received an HTTP `200` stat
 ### 5.1.2. `WebhookTransferInStatusEventSchema`
 
 `WebhookTransferInStatusEventSchema` is the schema that defines webhook payloads for transfer in events. Note that this schema is *identical* to the
-one returned from the `GET /transfer/:transferId/status` endpoint.
+one returned from the `GET /transfer/:transferId/status` endpoint. The semantics for fields and their inclusion are also identical to those of the
+`GET /transfer:transferId/status` endpoint.
 
 ```
 {
@@ -1891,15 +1937,18 @@ one returned from the `GET /transfer/:transferId/status` endpoint.
 	fee?: `string`,
 	fiatAccountId: `string`,
 	transferId: `string`,
-	transferAddress: `string`
-	txHash?: `string`
+	transferAddress: `string`,
+	txHash?: `string`,
+	userActionDetails?: `TransferInUserActionDetailsEnum`
 }
 ```
 
 ### 5.1.3. `WebhookTransferOutStatusEventSchema`
 
 `WebhookTransferOutStatusEventSchema` is the schema that defines webhook payloads for transfer out events. Note that this schema is nearly identical to the
-one returned from the `GET /transfer/:transferId/status` endpoint; it lacks the optional `txHash` field, since it is not relevenat for transfers out.
+one returned from the `GET /transfer/:transferId/status` endpoint; it lacks the optional `txHash`, `userActionType` and `userActionDetails` field,
+since these are not relevant to transfers out. The semantics for fields and their inclusion are otherwise identical to those of the `GET /transfer:transferId/status`
+endpoint.
 
 ```
 {
@@ -2090,6 +2139,7 @@ An enum listing the types of transfer statuses recognized by FiatConnect.
 [
 	`TransferStarted`,
 	`TransferFiatFundsDebited`,
+	`TransferWaitingForUserAction`,
 	`TransferSendingCryptoFunds`,
 	`TransferAmlFailed`,
 	`TransferReadyForUserToSendCryptoFunds`,
@@ -2200,6 +2250,8 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 
 ### 9.2.7. `FiatAccountSchemaEnum`
 
+An enum lsiting the types of supported Fiat Account schemas.
+
 ```
 [
 	`AccountNumber`,
@@ -2208,6 +2260,30 @@ An enum listing the frequency, or how often, a particular fee needs to be paid.
 	`IBANNumber`,
 	`IFSCAccount`,
 	`PIXAccount`,
+]
+```
+
+### 9.2.8. `TransferInUserActionTypeEnum`
+
+An enum listing the types of supported User Actions Types for transfers in.
+
+```
+[
+	`PIX`,
+	`IBAN`,
+	`PSE`
+]
+```
+
+### 9.2.9. `TransferInUserActionDetailsEnum`
+
+An enum listing the types of User Action Detail Schemas for transfers in.
+
+```
+[
+	`PIXUserActionDetailsSchema`,
+	`IBANUserActionDetailsSchema`,
+	`PSEUserActionDetailsSchema`
 ]
 ```
 
@@ -2337,8 +2413,8 @@ is below:
 #### 9.3.2.2. `MobileMoney`
 
 `MobileMoney` is a fiat account schema pertaining to virtual wallets provided by telecommunications companies in Africa.
-The `operator` field represents the name of the mobile operator, and `mobile` is the phone number of the end user. 
-The property `mobile` MUST follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164) 
+The `operator` field represents the name of the mobile operator, and `mobile` is the phone number of the end user.
+The property `mobile` MUST follow the [International format E.164 from ITU-T](https://en.wikipedia.org/wiki/E.164)
 with a plus sign prefix (i.e., +14155552671 for US). Finally, the `country` field MUST be a [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code.
 
 ```
@@ -2439,7 +2515,51 @@ If `keyType` is `PHONE`, `key` MUST be an 11-digit [Brazilian mobile phone numbe
 
 Otherwise, if `keyType` is `RANDOM`, `key` MUST be [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier). If `keyType` is `RANDOM`, `key` represents a random key generated by the user's bank.
 
+### 9.3.3. User Action Details Schemas
 
+All User Action Details Schemas supported by FiatConnect MUST contain the `userActionType` field. The `userActionType` field denotes which `TransferInUserActionType` this schema is associated with; its
+value MUST be one of the values in `TransferInUserActionType`, and it MUST be unique across all supported User Action Details Schemas.
+
+#### 9.3.3.1. `PIXUserActionDetailsSchema`
+
+`PIXUserActionDetailsSchema` is a User Action Details Schema for transfers in requiring user action which use the `PIXAccount` Fiat Account Schema.
+
+```
+{
+	userActionType: `TransferInUserActionType.PIX`,
+	pixString: `string`
+}
+```
+
+The `pixString` field is a copy-and-pastable code that the user can enter into the Pix payment system to initiate the transfer of fiat funds to the provider.
+
+#### 9.3.3.2. `IBANUserActionDetailsSchema`
+
+`IBANUserActionDetailsSchema` is a User Action Details Schema for transfers in requiring user action which use the `IBANAccount` Fiat Account Schema.
+
+```
+{
+	userActionType: `TransferInUserActionType.IBAN`,
+	iban: `string`,
+	bic: `string`
+}
+```
+
+The `iban` field represents the IBAN number for the provider-controlled bank account that the user should send funds to. The `bic` field represents the
+[Bank Identifier Code](https://www.business.hsbc.uk/en-gb/solutions/iban-and-bic) associated with the institution with which the provider-controlled bank account is registered.
+
+#### 9.3.3.3. `PSEUserActionDetailsSchema`
+
+`PSEUserActionDetailsSchema` is a User Action Details Schema for transfers in requiring use of the Colombian [PSE payment system](https://www.pse.com.co/persona).
+
+```
+{
+	userActionType: `TransferInUserActionType.PSE`,
+	url: `string`,
+}
+```
+
+The `url` field contains a uniquely generated URL which the user can follow in order to complete their transfer of fiat funds to the provider using the PSE payment system.
 
 # 10. References
 

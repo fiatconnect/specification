@@ -101,6 +101,17 @@ definitions:
       - IBANNumber
       - IFSCAccount
       - PIXAccount
+  UserActionTypeEnum:
+    type: "string"
+    enum: &UserActionTypeEnum
+      - PIX
+      - IBAN
+      - PSE
+  UserActionDetails:
+    type: "object"
+    properties:
+      userActionType:
+        $ref: '#/definitions/UserActionTypeEnum'
   QuoteRequest:
     type: "object"
     properties:
@@ -186,7 +197,16 @@ definitions:
                 minimum: 1
                 type: "array"
                 items:
-                  $ref: '#/definitions/FiatAccountSchemaEnum'
+                  type: "object"
+                  required:
+                    - fiatAccountSchema
+                  properties:
+                    fiatAccountSchema:
+                      $ref: '#/definitions/FiatAccountSchemaEnum'
+                    userActionType:
+                      $ref: '#/definitions/UserActionTypeEnum'
+                    allowedValues:
+                      type: "object"
               settlementTimeLowerBound?:
                 type: "string"
               settlementTimeUpperBound?:
@@ -283,12 +303,15 @@ definitions:
         $ref: '#/definitions/TransferStatusEnum'
       transferAddress:
         type: "string"
+      userActionDetails:
+        $ref: '#/definitions/UserActionDetails'
   TransferStatusEnum:
     type: "string"
     enum: &TransferStatusEnum
       - TransferStarted
       - TransferFiatFundsDebited
       - TransferSendingCryptoFunds
+      - TransferWaitingForUserAction
       - TransferAmlFailed
       - TransferReadyForUserToSendCryptoFunds
       - TransferReceivedCryptoFunds
@@ -335,6 +358,8 @@ definitions:
         type: "string"
       txHash:
         type: "string"
+      userActionDetails:
+        $ref: '#/definitions/UserActionDetails'
   TransferErrorEnum:
     type: "string"
     enum: &TransferErrorEnum
