@@ -230,8 +230,7 @@
     - [9.2.5. `FeeTypeEnum`](#925-feetypeenum)
     - [9.2.6. `FeeFrequencyEnum`](#926-feefrequencyenum)
     - [9.2.7. `FiatAccountSchemaEnum`](#927-fiataccountschemaenum)
-    - [9.2.8. `TransferInUserActionTypeEnum`](#928-transferinuseractiontypeenum)
-    - [9.2.9. `TransferInUserActionDetailsEnum`](#929-transferinuseractiondetailsenum)
+    - [9.2.8. `TransferInUserActionDetailsEnum`](#928-transferinuseractiondetailsenum)
   - [9.3. Initial Entity Support](#93-initial-entity-support)
     - [9.3.1. KYC Schemas](#931-kyc-schemas)
       - [9.3.1.1. `PersonalDataAndDocuments`](#9311-personaldataanddocuments)
@@ -766,11 +765,12 @@ used for the transfer.
 Transfers in are notably different from transfers out, since they require the user to send fiat funds to a provider in exchange for crypto. Certain providers, or certain
 types of fiat accounts may have restrictions on *how* these fiat funds are transferred from the user to the provider. While some types of fiat accounts may support
 *debiting* the user's fiat account (i.e., initiating the transfer of fiat funds on behalf of the user), other types of fiat accounts may not support this behavior, and require
-the user themselves to initiate the transfer of fiat funds from their account to ther provider's.
+the user to initiate the transfer of fiat funds from their account to the provider's. For example, in the US, transfers of fiat from bank accounts - *ACH transfers* -
+may be initiated by the account owner themselves, or requested by a third party.
 
-Certain types of fiat accounts may support *both* methods of fiat transfer, either initiated by the provider or the user. For such accounts, providers must choose one of these
-methods of transfer when returning the `/quote/in` response. By "default", it is assumed that a supported fiat account for a transfer in will be debited *by the provider*.
-Fiat account schema data in `/quote/in` responses may be augmented with additional information in order to denote that a transfer requires user action.
+For certain types of fiat accounts, *both* methods of fiat transfer may be possible, either initiated by the provider or the user. For such accounts, providers must choose one of these
+methods of transfer when returning the `/quote/in` response. Providers may specify that a Fiat Account Schema requires user action by returning an optional `userActionType` field in the
+quote response. If `userActionType` is null or undefined, there MUST be no user action required in order to initaite a transfer in using an account of that kind.
 
 ##### 3.4.1.1.1. Parameters
 
@@ -827,7 +827,7 @@ On success, the server MUST return an HTTP `200`, with the following response bo
 		[FiatAccountTypeEnum]: {
 			fiatAccountSchemas: {
 				fiatAccountSchema: `FiatAccountSchemaEnum`,
-				userActionType?: `TransferInUserActionTypeEnum`
+				userActionType?: `TransferInUserActionDetailsEnum`
 				allowedValues: {
 					[string]: `string[]`
 				}
@@ -910,9 +910,9 @@ about the corresponding fiat account type. Each object MUST contain a `fiatAccou
 optional `allowedValues` field, and an optional `userActionType` field. The `allowedValues` object is an optional mapping from any number of keys in the selected
 fiat account schema to values that are allowed for that key. This is identical in purpose and function to the `allowedValues` field for KYC schemas, discussed earlier.
 `userActionType`, if present, denotes that this account schema, if used for the transfer, will require user action in order to transfer fiat funds from the user
-to the provider. Different values of `TransferInUserActionTypeEnum` denote different semantics with respect to what *kind* of action the user will have to perform
+to the provider. Different values of `TransferInUserActionDetailEnum` denote different semantics with respect to what *kind* of action the user will have to perform
 in order to send fiat funds to the provider. If a fiat account schema requiring user action is used to execute a transfer with a compatible quote, the semantics
-of the `/transfer/in` endpoint will from normal, as discussed later.
+of the `/transfer/in` endpoint will differ, as discussed later.
 
 ###### 3.4.1.1.3.2. Failure
 
@@ -1593,7 +1593,7 @@ use to send funds to the user's address from.
 If the `fiatAccountId` used to initiate the transfer in has a Fiat Account schema that was denoted in the initial `/quote/in` response as requiring user action,
 the response body MUST contain a `userActionDetails` object containing the details required for the user to complete the desired action in order to send
 fiat funds to the provider. The `userActionDetails` object returned MUST be one of the schemas specified in `TransferInUserActionDetailsEnum`, and correspond to the
-`TransferInUserActionTypeEnum` value specified for the Fiat Account schema used for this transfer. If the `fiatAccountId` selected for this transfer does not have a
+`TransferInUserActionDetailsEnum` value specified for the Fiat Account schema used for this transfer. If the `fiatAccountId` selected for this transfer does not have a
 Fiat Account schema that was specified as requiring user action in the initial `/quote/in` response associated with the given `quoteId`, the response body
 MUST NOT contain a `userActionDetails` field.
 
@@ -2264,27 +2264,15 @@ An enum lsiting the types of supported Fiat Account schemas.
 ]
 ```
 
-### 9.2.8. `TransferInUserActionTypeEnum`
-
-An enum listing the types of supported User Actions Types for transfers in.
-
-```
-[
-	`PIX`,
-	`IBAN`,
-	`PSE`
-]
-```
-
-### 9.2.9. `TransferInUserActionDetailsEnum`
+### 9.2.8. `TransferInUserActionDetailsEnum`
 
 An enum listing the types of User Action Detail Schemas for transfers in.
 
 ```
 [
-	`PIXUserActionDetailsSchema`,
-	`IBANUserActionDetailsSchema`,
-	`PSEUserActionDetailsSchema`
+	`PIXUserAction`,
+	`IBANUserAction`,
+	`PSEUserAction`
 ]
 ```
 
@@ -2518,29 +2506,28 @@ Otherwise, if `keyType` is `RANDOM`, `key` MUST be [UUID](https://en.wikipedia.o
 
 ### 9.3.3. User Action Details Schemas
 
-All User Action Details Schemas supported by FiatConnect MUST contain the `userActionType` field. The `userActionType` field denotes which `TransferInUserActionType` this schema is associated with; its
-value MUST be one of the values in `TransferInUserActionType`, and it MUST be unique across all supported User Action Details Schemas.
+All User Action Details Schemas supported by FiatConnect MUST contain the `userActionType` field. The `userActionType` field denotes which `TransferInUserActionDetailsEnum` this schema is associated with; its value MUST be one of the values in `TransferInUserAction`, and it MUST be unique across all supported User Action Details Schemas.
 
-#### 9.3.3.1. `PIXUserActionDetailsSchema`
+#### 9.3.3.1. `PIXUserAction`
 
-`PIXUserActionDetailsSchema` is a User Action Details Schema for transfers in requiring user action which use the `PIXAccount` Fiat Account Schema.
+`PIXUserAction` is a User Action Details Schema for transfers in requiring user action which use the `PIXAccount` Fiat Account Schema.
 
 ```
 {
-	userActionType: `TransferInUserActionType.PIX`,
+	userActionType: `TransferInUserActionDetailsEnum.PIXUserAction`,
 	pixString: `string`
 }
 ```
 
 The `pixString` field is a copy-and-pastable code that the user can enter into the Pix payment system to initiate the transfer of fiat funds to the provider.
 
-#### 9.3.3.2. `IBANUserActionDetailsSchema`
+#### 9.3.3.2. `IBANUserAction`
 
-`IBANUserActionDetailsSchema` is a User Action Details Schema for transfers in requiring user action which use the `IBANAccount` Fiat Account Schema.
+`IBANUserAction` is a User Action Details Schema for transfers in requiring user action which use the `IBANAccount` Fiat Account Schema.
 
 ```
 {
-	userActionType: `TransferInUserActionType.IBAN`,
+	userActionType: `TransferInUserActionDetailsEnum.IBANUserAction`,
 	iban: `string`,
 	bic: `string`
 }
@@ -2549,13 +2536,13 @@ The `pixString` field is a copy-and-pastable code that the user can enter into t
 The `iban` field represents the IBAN number for the provider-controlled bank account that the user should send funds to. The `bic` field represents the
 [Bank Identifier Code](https://www.business.hsbc.uk/en-gb/solutions/iban-and-bic) associated with the institution with which the provider-controlled bank account is registered.
 
-#### 9.3.3.3. `PSEUserActionDetailsSchema`
+#### 9.3.3.3. `PSEUserAction`
 
-`PSEUserActionDetailsSchema` is a User Action Details Schema for transfers in requiring use of the Colombian [PSE payment system](https://www.pse.com.co/persona).
+`PSEUserAction` is a User Action Details Schema for transfers in requiring use of the Colombian [PSE payment system](https://www.pse.com.co/persona).
 
 ```
 {
-	userActionType: `TransferInUserActionType.PSE`,
+	userActionType: `TransferInUserActionDetailsEnum.PSEUserAction`,
 	url: `string`,
 }
 ```
