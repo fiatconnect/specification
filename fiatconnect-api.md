@@ -766,7 +766,7 @@ Transfers in are notably different from transfers out, since they require the us
 types of fiat accounts may have restrictions on *how* these fiat funds are transferred from the user to the provider. While some types of fiat accounts may support
 *debiting* the user's fiat account (i.e., initiating the transfer of fiat funds on behalf of the user), other types of fiat accounts may not support this behavior, and require
 the user to initiate the transfer of fiat funds from their account to the provider's. For example, in the US, transfers of fiat from bank accounts - *ACH transfers* -
-may be initiated by the account owner themselves, or requested by a third party.
+may be initiated by the account owner themselves, or initiated by a third party with their bank account number.
 
 For certain types of fiat accounts, *both* methods of fiat transfer may be possible, either initiated by the provider or the user. For such accounts, providers must choose one of these
 methods of transfer when returning the `/quote/in` response. Providers may specify that a Fiat Account Schema requires user action by returning an optional `userActionType` field in the
@@ -1925,7 +1925,7 @@ though these are rough guidelines. Once a server has received an HTTP `200` stat
 
 `WebhookTransferInStatusEventSchema` is the schema that defines webhook payloads for transfer in events. Note that this schema is *identical* to the
 one returned from the `GET /transfer/:transferId/status` endpoint. The semantics for fields and their inclusion are also identical to those of the
-`GET /transfer:transferId/status` endpoint.
+`GET /transfer/:transferId/status` endpoint.
 
 ```
 {
@@ -1948,7 +1948,7 @@ one returned from the `GET /transfer/:transferId/status` endpoint. The semantics
 
 `WebhookTransferOutStatusEventSchema` is the schema that defines webhook payloads for transfer out events. Note that this schema is nearly identical to the
 one returned from the `GET /transfer/:transferId/status` endpoint; it lacks the optional `txHash`, `userActionType` and `userActionDetails` field,
-since these are not relevant to transfers out. The semantics for fields and their inclusion are otherwise identical to those of the `GET /transfer:transferId/status`
+since these are not relevant to transfers out. The semantics for fields and their inclusion are otherwise identical to those of the `GET /transfer/:transferId/status`
 endpoint.
 
 ```
