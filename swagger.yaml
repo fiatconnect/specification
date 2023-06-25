@@ -104,9 +104,9 @@ definitions:
   UserActionTypeEnum:
     type: "string"
     enum: &UserActionTypeEnum
-      - PIX
-      - IBAN
-      - PSE
+      - PIXUserAction
+      - IBANUserAction
+      - PSEUserAction
   UserActionDetails:
     type: "object"
     properties:
