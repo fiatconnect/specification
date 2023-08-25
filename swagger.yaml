@@ -109,9 +109,19 @@ definitions:
       - PSEUserAction
   UserActionDetails:
     type: "object"
+    required:
+      - userActionType
     properties:
       userActionType:
         $ref: '#/definitions/UserActionTypeEnum'
+      iban:
+        type: "string"
+      bic:
+        type: "string"
+      url:
+        type: "string"
+      pixString:
+        type: "string"
   QuoteRequest:
     type: "object"
     properties:
