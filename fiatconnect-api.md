@@ -246,7 +246,7 @@
       - [9.3.3.1. `PIXUserAction`](#9331-pixuseraction)
       - [9.3.3.2. `IBANUserAction`](#9332-ibanuseraction)
       - [9.3.3.3. `PSEUserAction`](#9333-pseuseraction)
-      - [9.3.3.3. `URLUserAction`](#9333-urluseraction)
+      - [9.3.3.4. `URLUserAction`](#9333-urluseraction)
 - [10. References](#10-references)
   - [10.1. Normative References](#101-normative-references)
     - [10.1.1. [RFC2119]](#1011-rfc2119)
