@@ -246,6 +246,7 @@
       - [9.3.3.1. `PIXUserAction`](#9331-pixuseraction)
       - [9.3.3.2. `IBANUserAction`](#9332-ibanuseraction)
       - [9.3.3.3. `PSEUserAction`](#9333-pseuseraction)
+      - [9.3.3.4. `URLUserAction`](#9333-urluseraction)
 - [10. References](#10-references)
   - [10.1. Normative References](#101-normative-references)
     - [10.1.1. [RFC2119]](#1011-rfc2119)
@@ -2272,7 +2273,8 @@ An enum listing the types of User Action Detail Schemas for transfers in.
 [
 	`PIXUserAction`,
 	`IBANUserAction`,
-	`PSEUserAction`
+	`PSEUserAction`,
+	`URLUserAction`
 ]
 ```
 
@@ -2538,6 +2540,9 @@ The `iban` field represents the IBAN number for the provider-controlled bank acc
 
 #### 9.3.3.3. `PSEUserAction`
 
+**Deprecated:** Note that `PSEUserAction` is deprecated and its use is discouraged, in favor of the more general `URLUserAction` schema. Consider migrating
+existing implementations over to using this schema instead of `PSEUserAction`.
+
 `PSEUserAction` is a User Action Details Schema for transfers in requiring use of the Colombian [PSE payment system](https://www.pse.com.co/persona).
 
 ```
@@ -2548,6 +2553,21 @@ The `iban` field represents the IBAN number for the provider-controlled bank acc
 ```
 
 The `url` field contains a uniquely generated URL which the user can follow in order to complete their transfer of fiat funds to the provider using the PSE payment system.
+
+#### 9.3.3.4. `URLUserAction`
+
+`URLUserAction` is a User Action Details Schema for transfers in which require the user to follow a URL to complete the transfer of fiat funds. The URL itself, and
+action required by the user after navigating to the URL are unspecified by this schema; no particular semantics are required or imparted by use of the `URLUserAction`
+schema.
+
+```
+{
+	userActionType: `TransferInUserActionDetailsEnum.URLUserAction`,
+	url: `string`,
+}
+```
+
+The `url` field contains a URL which the user can follow in order to complete thier transfer of fiat funds to the provider.
 
 # 10. References
 

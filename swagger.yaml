@@ -107,6 +107,7 @@ definitions:
       - PIXUserAction
       - IBANUserAction
       - PSEUserAction
+      - URLUserAction
   UserActionDetails:
     type: "object"
     required:
