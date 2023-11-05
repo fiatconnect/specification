@@ -108,6 +108,7 @@ definitions:
       - IBANUserAction
       - PSEUserAction
       - URLUserAction
+      - BankAccountTransferUserAction
   UserActionDetails:
     type: "object"
     required:
@@ -122,6 +123,14 @@ definitions:
       url:
         type: "string"
       pixString:
+        type: "string"
+      accountName:
+        type: "string"
+      accountNumber:
+        type: "string"
+      bankName:
+        type: "string"
+      transactionReference:
         type: "string"
   QuoteRequest:
     type: "object"
