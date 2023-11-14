@@ -246,7 +246,8 @@
       - [9.3.3.1. `PIXUserAction`](#9331-pixuseraction)
       - [9.3.3.2. `IBANUserAction`](#9332-ibanuseraction)
       - [9.3.3.3. `PSEUserAction`](#9333-pseuseraction)
-      - [9.3.3.4. `URLUserAction`](#9333-urluseraction)
+      - [9.3.3.4. `URLUserAction`](#9334-urluseraction)
+      - [9.3.3.5. `AccountNumberUserAction`](#9335-AccountNumberUserAction)
 - [10. References](#10-references)
   - [10.1. Normative References](#101-normative-references)
     - [10.1.1. [RFC2119]](#1011-rfc2119)
@@ -2568,6 +2569,30 @@ schema.
 ```
 
 The `url` field contains a URL which the user can follow in order to complete thier transfer of fiat funds to the provider.
+
+#### 9.3.3.5. `AccountNumberUserAction`
+
+`AccountNumberUserAction` is a User Action Details Schema for transfers in which require the user to send funds to 
+an account identified by some number to complete the transfer of fiat funds. 
+
+```
+{
+	userActionType: `TransferInUserActionDetailsEnum.AccountNumberUserAction`,
+	institutionName: `string`,
+	accountName: `string`,
+	accountNumber: `string`,
+	transactionReference?: `string`,
+	deadline?: `string`
+}
+```
+
+The `institutionName`, `accountName`, and `accountNumber` fields describe a provider-controlled 
+account that the user should send funds to. The `transactionReference` field is a string that is intended to help providers 
+determine which FiatConnect transfer is associated with an incoming fiat transfer. If included, the user MUST include 
+the `transactionReference` string in the transaction details when sending funds to the provider's account. The `deadline` 
+field, if included, MUST be an ISO 8601 datetime string, and represents the time by which the user needs to send funds 
+to the provider's fiat account. If the user sends fiat funds after this time, the provider may choose whether to complete the 
+transfer or return the funds and mark the transfer as failed. 
 
 # 10. References
 
