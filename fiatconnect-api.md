@@ -2275,7 +2275,8 @@ An enum listing the types of User Action Detail Schemas for transfers in.
 	`PIXUserAction`,
 	`IBANUserAction`,
 	`PSEUserAction`,
-	`URLUserAction`
+	`URLUserAction`,
+	`AccountNumberUserAction`
 ]
 ```
 
