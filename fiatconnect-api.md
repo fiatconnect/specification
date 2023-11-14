@@ -2582,12 +2582,16 @@ an account identified by some number to complete the transfer of fiat funds.
 	accountName: `string`,
 	accountNumber: `string`,
 	transactionReference: `string`,
+	deadline?: `string`
 }
 ```
 
 The `institutionName`, `accountName`, and `accountNumber` fields describe a provider-controlled 
 account that the user should send funds to. The `transactionReference` field is a string that the user MUST include 
-in the transaction details when sending funds to the provider's account, for identification purposes. 
+in the transaction details when sending funds to the provider's account, for identification purposes. The `deadline` 
+field, if included, MUST be an ISO 8601 datetime string, and represents the time by which the user needs to send funds 
+to the provider's fiat account. If the user sends fiat funds after this time, the provider may choose whether to complete the 
+transfer or return the funds and mark the transfer as failed. 
 
 # 10. References
 
