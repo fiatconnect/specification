@@ -132,6 +132,8 @@ definitions:
         type: "string"
       transactionReference:
         type: "string"
+      deadline:
+        type: "string"
   QuoteRequest:
     type: "object"
     properties:
