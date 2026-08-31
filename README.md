@@ -4,7 +4,7 @@ The FiatConnect API Specification.
 
 ## Specification
 
-[fiatconnect-api.md](./fiatconnect-api.md) describes the FiaConnect
+[fiatconnect-api.md](./fiatconnect-api.md) describes the FiatConnect
 API specification.
 
 [swagger.yaml](./swagger.yaml) is an OpenAPI 2.0 specification for
